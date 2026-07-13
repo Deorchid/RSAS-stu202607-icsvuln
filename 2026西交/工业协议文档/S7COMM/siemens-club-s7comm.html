@@ -1,0 +1,3753 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="applicable-device" content="pc" />
+    <title>
+        
+
+        
+    
+    使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim-技术论坛-工业支持中心-西门子中国
+
+
+    </title>
+    
+    
+    <meta name="Keywords" content="西门子分享帖,自动化系统,SIMATIC S7-1500系列,使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim" />
+
+
+    
+    
+    <meta name="Description" content="本文为您解答使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim，更多关于自动化系统 / SIMATIC S7-1500系列的内容请继续关注西门子技术论坛！" />
+
+
+
+
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://wap.siemens.com.cn/club/bbs/post/1974605.html">
+    <link href="/club/bbs/Styles/ctc.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/club/bbs/Styles/button.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/club/bbs/Styles/bbs.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/club/bbs/Styles/jquery-ui-search.min.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="Styles/leftMenu.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/Styles/qt_Unitag.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/resource/styles/jquery.sitemap.css?v=20260708" type="text/css" rel="stylesheet" />
+    <link href="/MySupport/Styles/content.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/Styles/question.css?v1=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/Styles/ToolTips.css?v1=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/resource/styles/ny19_mask.css?v=20260708" rel="stylesheet" />
+    <link href="/MySupport/Scripts/AdvSearch/css/AdvSearch.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/Styles/cookie-mask.css?v=20260708" rel="stylesheet" />
+    <link href="/MySupport/Styles/main_master.css?v=20260708" rel="stylesheet" type="text/css" />
+
+    
+    <link href="/club/bbs/Content/newPattern/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/club/bbs/Content/newPattern/css/fontsstyle-3.9.css" rel="stylesheet" />
+    <link href="/club/bbs/Content/newPattern/css/element.css" rel="stylesheet" />
+    
+    <meta name="mobile-agent" content="format=xhtml;url=http://wap.siemens.com.cn/club/bbs/post/1974605.html" />
+    <link href="/club/bbs/Styles/jquery-ui-search.min.css" rel="stylesheet" type="text/css" />
+    <link href="/club/bbs/Styles/bbs/postmask.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="Styles/bbs/sidebar.css" rel="stylesheet" type="text/css" />
+    <link href="Styles/bbs/QRCode_popup.css" rel="stylesheet" type="text/css" />
+    <link href="Styles/contentRS.css" rel="stylesheet" type="text/css" />
+    <link href="css/swiper.min.css" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/NewResources/css/Paganition/pageNav.css" rel="stylesheet" />
+    <link href="/MySupport/NewResources/css/Paganition/pageNavColor.css" rel="stylesheet" />
+    <link href="Content/newPattern/css/bbs_newpost.css?v=202607082" rel="stylesheet" />
+
+
+    <style type="text/css">
+        /*for left menu */
+        .teaser li.menulev3 {
+            margin-left: 22px;
+        }
+
+        .teaser li.menulev4 {
+            margin-left: 26px;
+        }
+
+        .teaser .menulev5 {
+            margin-left: 30px;
+        }
+
+        .teaser .menulev6 {
+            margin-left: 36px;
+        }
+
+        ul.Snav {
+            padding-bottom: 4px;
+        }
+
+        .Snav .noshow {
+            display: none;
+        }
+
+        .Snav li {
+            height: 22px;
+            line-height: 22px;
+        }
+
+        #tbn1 {
+            border: none;
+        }
+
+            #tbn1 thead {
+                border-bottom: #6a96ca 4px solid;
+            }
+
+        .ul_1 li {
+            margin: 2px;
+        }
+
+        div.teasor h3 {
+            padding-bottom: 0px;
+        }
+
+        table.biaoqingtb td {
+            text-align: left;
+            width: 12.5%;
+            padding: 0;
+        }
+
+        .tip {
+            /* width: 116px;*/
+            z-index: 9999;
+            margin-right: 4px;
+            float: right;
+            padding: 0px;
+        }
+
+            .tip .words {
+                height: 18px;
+                background-color: #990000;
+                border-top-width: 1px;
+                border-right-width: 1px;
+                border-bottom-width: 1px;
+                border-top-style: solid;
+                border-right-style: solid;
+                border-bottom-style: solid;
+                border-left-style: none;
+                border-top-color: #330102;
+                border-right-color: #330102;
+                border-bottom-color: #330102;
+                font-size: 12px;
+                line-height: 17px;
+                width: 105px;
+                display: block;
+                float: left;
+                color: #FFF;
+                text-decoration: none;
+                text-indent: 4px;
+            }
+
+            .tip .close {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                font-weight: normal;
+                cursor: pointer;
+            }
+
+        #cate_item li h3 {
+            padding-top: 5px;
+        }
+
+        .teaser h1 {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+        a {
+            color: #323232;
+        }
+
+        #div_newLogin .popbd02 .border, #div_newLogin .popbd02 .txt_r {
+            margin-bottom: 0px;
+        }
+
+        #div_newLogin .popbd02 .border_r {
+            margin-bottom: 0px;
+            height: 14px;
+        }
+
+        .top-img {
+            float: right;
+            /*margin-top:-60px;*/
+            /*margin-right:40px;*/
+        }
+
+        .leftfloatad {
+            position: fixed;
+            bottom: 200px;
+            left: 0px;
+            z-index: 1000;
+            display: none;
+            animation-name: draw;
+            animation-duration: 2s; /* 动画时长 */
+            animation-iteration-count: 1; /* 动画播放次数设置为1 */
+        }
+
+        @keyframes draw {
+            0% {
+                left: -340px;
+            }
+
+            100% {
+                left: 0px;
+            }
+        }
+        
+    </style>
+    
+    <link href="/MySupport/Styles/newsupport_shadow.css?v=20260708" rel="stylesheet" type="text/css" />
+
+
+
+    <script src="/club/bbs/Scripts/jquery.js?v=20260708" type="text/javascript"></script>
+    <script src="/club/bbs/Scripts/Common.js?v=20260708" type="text/javascript"></script>
+    <script src="/club/bbs/Scripts/sitemap.js?v=20260708" type="text/javascript"></script>
+    <script src="/club/bbs/Scripts/jquery-1.7.2.min.js?v=20260708" type="text/javascript"></script>
+    <script src="Scripts/welcome.js?v=20260708" type="text/javascript"></script>
+
+    <script type="text/javascript" src="/MySupport/resource/scripts/jquery.sitemap.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/NavigationLog.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/Question.js?v2=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/ToolTips.js?v2=20260708"></script>
+    <script src="/club/bbs/Scripts/jquery-ui.js?v=20260708" type="text/javascript"></script>
+    <script src="/club/bbs/Scripts/jqueryui-inits.js?v=20260708" type="text/javascript"></script>
+    <script src="/MySupport/Scripts/Tools/regex-helper.js?v=20260708" type="text/javascript"></script>
+    <script src="Scripts/jquery.cookie.js?v=20260708" type="text/javascript"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/cookie.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/plugins.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/swiper.min.js?v=20260708"></script>
+    <!--IDaaS弹层登录-->
+    <script type="text/javascript">
+        //idaas.login.js用到
+        var idaasParams = {
+            idaasAppId: "siemens_ciam136",
+            idaasClientId: "f3bb332bc008997d07a81712720d374fGlu9hW1syVI",
+            idaasBaseUrl: "https://api.oneid.siemens.com.cn",
+            postFrontLogin: "https://oso.siemens.com.cn/sso/IDaas/PostFrontLogin",
+            logoutUrl: "https://www.ad.siemens.com.cn/club/bbs/logout.aspx?from=" + encodeURIComponent(location.href),
+            platform: 2, //SSO Platform
+            deviceType: 'pc',
+            ssoDomain: "https://oso.siemens.com.cn/sso/"
+        };
+    </script>
+    <link href="https://oso.siemens.com.cn/sso/css/idaas.login.css?v=20260708" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://g.alicdn.com/idaas-frontend/idaas-login-sdk/1.1.7/index.js"></script>
+    <script type="text/javascript" src="https://oso.siemens.com.cn/sso/js/idaas.login.js?v=20260708"></script>
+
+    <script type="text/javascript" src="/MySupport/Scripts/main_master.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/Scripts/newHeader.js?v=20260708" id="newHeader" searchtype="2"></script>
+
+    <script type="text/javascript" src="/MySupport/Scripts/agreementalert.js?v1=20260708"></script>
+
+    <!--2023新年活动样式-->
+    <link rel="stylesheet" type="text/css" href="/MySupport/resource/newYear2023Mask/css/animate.min.css?v=20260708" />
+    <link rel="stylesheet" type="text/css" href="/MySupport/resource/newYear2023Mask/css/swiper.min.css?v=20260708" />
+    
+    <script type="text/javascript" src="/MySupport/Scripts/eventTaskMain.js?v=20260708"></script>
+
+    <script type="text/javascript">
+        function OnAfterImageClick(keyword, platform, gotoUrl) {
+            var fullUrl = window.location.href;
+            var urlreferrer = '';
+            $.ajax({ url: "/mysupport/AjaxApi/ClickVolume.ashx", type: "POST", data: { keyword: keyword, fullurl: fullUrl, urlreferrer: urlreferrer, platform: platform, gotoUrl: gotoUrl } });
+        }
+
+        $(window).scroll(function () {
+            ScollPostion();
+        });
+
+        function ScollPostion() { //滚动条位置
+            var height = $(window).scrollTop();
+
+            if (height > 130) {
+                $(".header-content").hide();
+                $("#navigation-two-rightdiv").show();
+            }
+            else {
+                $(".header-content").show();
+                $("#navigation-two-rightdiv").hide();
+            }
+
+        };
+    </script>
+    <script type="text/javascript">
+        var i = 0;
+
+        function GetUrlParam(paraName) {
+            var url = document.location.toString();
+            var arrObj = url.split("?");
+
+            if (arrObj.length > 1) {
+                var arrPara = arrObj[1].split("&");
+                var arr;
+
+                for (var i = 0; i < arrPara.length; i++) {
+                    arr = arrPara[i].split("=");
+
+                    if (arr != null && arr[0] == paraName) {
+                        return arr[1];
+                    }
+                }
+                return "";
+            }
+            else {
+                return "";
+            }
+        }
+
+        function showrel(num, e) {
+            var $id = $(".rel" + num);
+            var $parentId = $(".a" + num);
+            var $imgId = $(".aImg" + num);
+            var $divId = $("#div" + num);
+            if (!$(e).hasClass('cate_content_block_wrapper')) {
+                var li_Y = $(e).position().top;
+                $divId.css('top', li_Y - 5);
+            }
+            var $liId = $("#li" + num);
+            if ($divId.css("display") == "none") {
+                $id.show();
+                $divId.show();
+                document.getElementById("li" + num).className = "cate_item_hover";
+                document.getElementById("div" + num).style.display = "block";
+                $liId.attr("class", "cate_item_hover");
+            }
+        }
+
+        function killErr() {
+            return true;
+        }
+        function showli(num) {
+            var $id = $(".rel" + num);
+            var $imgId = $("#imag" + num);
+            if ($id.css("display") == "none") {
+                $id.show();
+                $imgId.attr("src", "/club/bbs/css/skin4/up.gif");
+            }
+            else if ($id.css("display") == "list-item" || $id.css("display") == "block") {
+                $id.hide();
+                $imgId.attr("src", "/club/bbs/css/skin4/opened.gif");
+            }
+
+        }
+
+
+        function userBrowser() {
+            var browserName = navigator.userAgent.toLowerCase();
+            if (/msie/i.test(browserName) && !/opera/.test(browserName)) {
+                return;
+            } else if (/firefox/i.test(browserName)) {
+                $('.cate_content_block_wrapper').each(function (index) {
+                    var result = parseInt($(this).css("top").replace("px", ""));
+                    $(this).css("top", result + 2 + "px");
+
+                })
+                return;
+            } else if (/chrome/i.test(browserName) && /webkit/i.test(browserName) && /mozilla/i.test(browserName)) {
+                $('.cate_content_block_wrapper').each(function (index) {
+                    var result = parseInt($(this).css("top").replace("px", ""));
+                    $(this).css("top", result + 1 + "px");
+
+                })
+                return;
+            } else if (/opera/i.test(browserName)) {
+
+                return;
+            } else if (/webkit/i.test(browserName) && !(/chrome/i.test(browserName) && /webkit/i.test(browserName) && /mozilla/i.test(browserName))) {
+
+                return;
+            } else {
+
+            }
+        }
+
+        function aColse() {
+            $("#divAuditTip").fadeOut();
+        }
+
+        function imgUpdate(num) {
+            alert(num);
+        }
+
+        function hiderel(num) {
+            var $id = $(".rel" + num);
+            var $parentId = $(".a" + num);
+            var $imgId = $(".aImg" + num);
+            var $divId = $("#div" + num);
+            var $liId = $("#li" + num);
+            if ($divId.css("display") == "list-item" || $divId.css("display") == "block") {
+
+
+                document.getElementById("div" + num).style.display = "none";
+                document.getElementById("li" + num).className = "";
+                $liId.attr("class", "");
+
+            }
+        }
+        $(function () {
+            userBrowser();
+            $("#myNav").toggle(function () {
+                $(".noshow").show();
+                $("#myNav").attr("src", "/club/bbs/Img/bbs/top_arrow.jpg");
+            },
+                function () {
+                    $(".noshow").hide();
+                    $("#myNav").attr("src", "/club/bbs/Img/bbs/bottom_arrow.jpg");
+                }
+            );
+
+            ShowMaskingOutWelcomeTip("bbs");
+            ShowMaskingOutQuestionTip("bbs");
+            SaveSurveyVisitPath();
+            //侧边栏活动，初始化任务
+            eventTask.userId = 0;
+            eventTask.initTasks();
+
+        });
+        function oneKeyIndex() {
+            if (confirm("选择保存\"技术论坛\"的快捷图标至您的桌面，点击后实现\"技术论坛\"的一键进入。")) { window.open("http://www.ad.siemens.com.cn/_links/dlicon/url.asp?id=7&down=1", "_blank"); }
+        }
+        $(function () {
+            var curbide =66;
+            if (curbide != 0) {
+                var curbid =1;
+
+                /*2012-01-10,当前版区菜单展开，其余关闭*/
+                $(".menuli").each(function () {
+                    $(this).hide();
+                });
+
+                var strrelid = ".rel" + curbid;
+                //alert(strrelid);
+                var $rel = $(strrelid);
+
+                $rel.show();
+            }
+
+        });
+        function clickclear(thisfield, defaulttext) {
+            if (thisfield.value == "页码") {
+                thisfield.value = "";
+            }
+        }
+
+        function clickrecall(thisfield, defaulttext) {
+            if (thisfield.value == "") {
+                thisfield.value = "页码";
+            }
+        }
+
+        function pageGo() {
+            var page = $("#txtPage").val();
+            var url = window.location.href;
+            if (url.indexOf('pno') < 0) {
+                if (url.indexOf('#') < 0) {
+                    url = url + "&pno=" + $("#txtPage").val();
+                }
+                else {
+                    url = url.substring(0, url.indexOf('#')) + "&pno=" + $("#txtPage").val() + url.substring(url.indexOf('#'), url.length);
+                }
+
+            }
+            else {
+                if (url.indexOf('#') < 0) {
+                    url = url.substring(0, url.lastIndexOf('=') + 1) + $("#txtPage").val();
+                }
+                else {
+                    url = url.substring(0, url.lastIndexOf('=') + 1) + $("#txtPage").val() + url.substring(url.indexOf('#'), url.length);
+                }
+            }
+            location.href = url;
+        }
+    </script>
+    
+
+<!--百度统计代码-->
+<script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        //hm.src = "//hm.baidu.com/hm.js?4c23a9826f81a847ff04e5c7e51da023";
+        hm.src = "https://hm.baidu.com/hm.js?e4d27e7d7bdbf6bb2ee1442986635af5";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?4c23a9826f81a847ff04e5c7e51da023";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+        <!--自动推送代码-->
+    <script type="text/javascript">
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https'){
+           bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+          }
+          else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+          }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0BCCGW54XK" type="text/javascript"></script>
+<script src="/MySupport/Scripts/google/gtagscript.js?v=20260708" type="text/javascript"></script>
+<!-- Google tag (gtag.js) end-->
+
+    
+    
+    <script src="/club/bbs/Scripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="/club/bbs/Scripts/jqueryui-inits.js" type="text/javascript"></script>
+    <script type="text/javascript" src="Scripts/AtTool.js"></script>
+    <script src="Scripts/qrcode.js" type="text/javascript"></script>
+    <script src="/MySupport/Scripts/allSiteCommon.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8" src="ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="ueditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="ueditor/lang/zh-cn/zh-cn.js"></script>
+
+
+    <!–[if lt IE8]>
+    <link href="/club/bbs/Styles/core/breadcrumbie7.css?v=20260708" rel="stylesheet"
+        type="text/css" />
+    <![endif]–>
+
+    <link href="/MySupport/Styles/biaodanstyle.css?v=20260708" rel="stylesheet" type="text/css" />
+
+
+
+    <style type="text/css">
+        #header .input-group {
+            display: table;
+        }
+
+        .input-group-addon {
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .input-group-addon, .input-group-btn {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .input-group-addon {
+            display: table-cell;
+            -webkit-box-sizing: border-box;
+        }
+
+        #header .input-group input {
+            width: 100%;
+        }
+
+        .btn {
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            user-select: none;
+            text-decoration: none;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+
+    <!--newVersion-->
+    <link href="/MySupport/navVersion/css/fontsstyle.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/navVersion/css/common.css?v=20260708" rel="stylesheet" type="text/css" />
+    <link href="/MySupport/navVersion/css/header.css?v=20260708" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/MySupport/navVersion/js/main.js?v=20260708"></script>
+
+    <link href="/MySupport/navVersion/csscompatible/csscompatible.css?v=20260708" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .popUp .btn {
+            line-height: 40px !important;
+        }
+
+        #header {
+            box-sizing: border-box;
+        }
+
+            #header .code-box-img img {
+                padding: 0px;
+            }
+    </style>
+    <script type="text/javascript">
+        /*面包屑鼠标移入移出*/
+        function crumbsMouseIn(e) {
+            //去除面包屑展开项
+            //$(e).children('.Crumbs-menu').show();
+        }
+        function crumbsMouseOut(e) {
+            //去除面包屑展开项
+            //$('.Crumbs-menu').hide();
+        }
+    </script>
+    <link href="/club/bbs/newedition/css/index.css?v2=20260708" rel="stylesheet" type="text/css" />
+
+</head>
+<body class="page-type-entry MyC_page">
+
+    <div id="header">
+        <span id="ctl00_ctl00_Nav"></span><div class="content header-content" style="width:100%;display:block;">
+    <div class="header-top clearfix" style="width:1200px;margin:0 auto;">
+        <div class="header-logo fl">
+            <a href="https://www.ad.siemens.com.cn/home/" target="_blank"><img src="/mysupport/navVersion/img/nav/siemens-logo-new.png" alt="" srcset="" class="wh100"></a>
+        </div>
+        <!-- <div class="header-person fr">
+            <div class="header-user fr">
+              <img src="/MySupport/navVersion/img/siemens-logo-new.png" class="wh100"/>
+            </div>
+          </div> -->
+        <div class="mid fl">
+            <!-- 搜索框 -->
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="PLC编程" id="exampleInputAmount"
+                       autocomplete="new-password">
+                <input type="hidden" />
+                <div id="searchBtn" onclick="monitorClickUU('702','16')" class="input-group-addon">
+                    <i class="icon-new-Search"></i>
+                </div>
+            </div>
+            <a id="aixiaoxiLink" href="https://www.ad.siemens.com.cn/aixiaoxi/" target="_blank">
+                <img style="position:absolute;right:-102px;top:-8px;height:61px;width:90px;"
+                     src="/MySupport/navVersion/img/aixiaoxi_nav.png" alt="AI小西" title="AI小西" />
+            </a>
+            <div class="login-search-tip2">
+                <div class="search-his">
+                    <h6>热门搜索</h6>
+                    <div class="tips">
+                        <a target="_blank"  style="cursor:pointer;padding-right:20px;" href="https://1847.siemens.com.cn/" ">1847工业学习平台</a><a style="cursor:pointer" onclick="SearchGo('选型')">选型</a><a style="cursor:pointer" onclick="SearchGo('定位器资料汇总')">定位器资料汇总</a><a style="cursor:pointer" onclick="SearchGo('售前选型')">售前选型</a><a style="cursor:pointer" onclick="SearchGo('非接触雷达资料汇总')">非接触雷达资料汇总</a><a style="cursor:pointer" onclick="SearchGo('PLC编程')">PLC编程</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sevenday fr">
+            <div class="iconLin QianDao" onclick="signinclick()">
+                <p>签到有奖</p>
+            </div>
+            <div class="iconLin show-code">
+                <div class="code-box">
+                    <ul class="fl">
+                        <li class="title">
+                            <h4>移动端入口</h4>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                工业服务小程序<img class="right-arrow"
+                                            src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                支持中心移动端首页<img class="right-arrow"
+                                              src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                AI小西-AI智能问答助手<img class="right-arrow" src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                SIEMENS工业找答案小程序<img class="right-arrow" src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                工业培训与认证<img class="right-arrow" src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                西门子工业1847俱乐部<img class="right-arrow"
+                                                 src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">
+                                SIEMENS工业技术支持与服务<img class="right-arrow"
+                                                     src="/MySupport/navVersion/img/right-L.png">
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="code-box-img fl">
+                        <img src="/MySupport/navVersion/img/7.jpg" style="display: block;">
+                        <img src="/MySupport/navVersion/img/5.jpeg">
+                        <img src="/MySupport/navVersion/img/6.jpg">
+                        <img src="/MySupport/navVersion/img/1.png">
+                        <img src="/MySupport/navVersion/img/21.png">
+                        <img src="/MySupport/navVersion/img/3.jpg">
+                        <img src="/mysupport/nav/img/nav/4.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="iconLin BellMessage">
+                <span class="Message EmailCount" style="display:none">@CurrentUser.EmailCount@</span>
+                <p>消息提醒</p>
+            </div>
+            <!-- 未登录 -->
+            <span class="login" id="third_login_btn">
+                <a href="javascript:void(0)" onclick="show_thirdLoginBox()">登录</a>
+                | <a href="javascript:void(0)" onclick="show_thirdLoginBox()">注册</a>
+            </span>
+            <!-- 已登录 -->
+            <div class="show-user" style="display:none">
+                <div class="user-img">
+                    <img src="@CurrentUser.FacePath@" />
+                </div>
+                <i class="icon-new-Arrow-down"></i>
+                <div class="popUp member-box">
+                    <div class="title">
+                        <div class="user-img-mid">
+                            <img src="@CurrentUser.FacePath@" />
+                        </div>
+                        <div>
+                            <a href="/MySupport/index.aspx" target="_blank">
+                                <h6 class="singleLine">@CurrentUser.NickName@</h6>
+                            </a>
+                            <a id="MemberIdentity1847Vip" style="display:none"></a>
+                            <a href="https://1847.siemens.com.cn/vip/buydetail/"
+                               id="MemberIdentityNot1847Vip">1847会员：未开通</a>
+                        </div>
+                    </div>
+                    <div class="msg-box-btn p_lr_20">
+                        <a class="btn" href="/1847/benefit/index?IsBuyAdvance=1" target="_blank" id="1847Vipbtn"></a>
+                    </div>
+                    <div class="member-box-list sb p_lr_20">
+                        <dl>
+                            <dt>VIP等级 @CurrentUser.vipLevel@</dt>
+                            <dd>
+                                <a target="_blank" href="/mysupport/MyVIPInfo.aspx">
+                                    <img src="/mysupport/navVersion/img/@CurrentUser.vipImg@" />
+                                </a>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <a target="_blank"
+                                   href="https://www.ad.siemens.com.cn/MySupport/AdAndAnnouncementDetail.aspx?id=329">西币</a>
+                            </dt>
+                            <dd><a target="_blank" href="/MySupport/MyPrize.aspx">@CurrentUser.coin@</a></dd>
+                        </dl>
+                        <!--<dl>
+                            <dt>西豆</dt>
+                            <dd><a target="_blank" href="/MySupport/MyXiDou.aspx">@CurrentUser.xidou@</a></dd>
+                        </dl>-->
+                    </div>
+                    <ul class="member-menu-list bgcolor-ul">
+                        <li>
+                            <a href="/MySupport/index.aspx" target="_blank"
+                               onclick="monitorClickUU('702','17')">
+                                我的支持中心<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/1847/PersonalCenter/LearnedHistory" target="_blank">
+                                我的1847会员<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserMySupport">
+                            <a href="/MySupport/mypost.aspx">
+                                我的技术论坛<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserMySupport">
+                            <a href="/MySupport/MyAnswer.aspx">
+                                我的找答案<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserMySupport">
+                            <a href="/MySupport/MyDownload.aspx">
+                                我的下载中心<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserMySupport">
+                            <a href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/home">
+                                我的售后服务<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserMySupport">
+                            <a href="/study/person/course.aspx?person=course">
+                                我的培训认证<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserbbs">
+                            <a href="/MySupport/mypost.aspx?type=post">
+                                我发的帖子<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserbbs">
+                            <a href="/MySupport/mypost.aspx?type=reply">
+                                我跟的帖子<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserbbs">
+                            <a href="/MySupport/MyBBSViewSet.aspx">
+                                我的论坛设置<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserbbs">
+                            <a href="/club/bbs/bbs_help.aspx">
+                                论坛用户指南<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserdownload">
+                            <a href="/MySupport/MyDownload.aspx">
+                                我的下载中心<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserstudy">
+                            <a href="/study/person/course.aspx?person=course">
+                                我的培训认证<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserfa">
+                            <a href="/MySupport/MyAnswerAsk.aspx">
+                                我的提问<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserfa">
+                            <a href="/MySupport/MyAnswerReply.aspx">
+                                我的回答<i class="icon-new-Arrow-right fr"></i>
+                            </a>
+                        </li>
+                        <li class="loginuserfa">
+                            已经帮助了<span id="allAnswercount">@CurrentUser.allAnswercount@</span>人<a class="btn-bor-green" href="/service/answer/question_more_0.html">我要回答</a>
+                        </li>
+                        <li class="loginuserfa">
+                            已连续活跃<span>@CurrentUser.allLoginDayCount@</span>天</i><a class="btn-bor-green" href="/service/answer/questionIn.aspx">我要提问</a>
+                        </li>
+                        <li class="loginuserfa" id="firstanswer">首次<span>回答</span>问题获得<span>双倍西币积分</span></li>
+                    </ul>
+                    <ul class="member-menu-list bottom-but">
+                        <li class="fl">
+                            <a href="/MySupport/MyInfoSetting.aspx" target="_blank">
+                                <i class="icon-new-Settings"></i>个人设置
+                            </a>
+                        </li>
+                        <li class="fr"><a id="LoginOut"><i class="icon-new-Logout"></i>退出</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="position:relative">
+        <div class="header-btm flex" style="width:1200px;margin:0 auto;">
+            <ul class="clearfix flex1 navTab">
+                <li class="fl">
+                    <a fromplatform='702' toplatform='100' href="https://www.ad.siemens.com.cn/home"
+                       target="_blank" class="choose">
+                        <img src="/MySupport/navVersion/img/home.png" style="width: 20px;">
+                    </a>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='101' href="https://www.ad.siemens.com.cn/aixiaoxi/home"
+                       target="_blank" class="choose">技术支持<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    技术支持
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='101' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/aixiaoxi/home" target="_blank">
+                                                技术支持
+                                            </a>
+                                        </li>
+                                        <li class="singleLine second-code">
+                                            <a fromplatform='702' toplatform='102'
+                                               href="https://www.ad.siemens.com.cn/aixiaoxi/home" target="_blank">
+                                                AI小西
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='103'
+                                               href="https://www.ad.siemens.com.cn/service/FCK.html" target="_blank">
+                                                风驰卡
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right">
+                                <img src="/MySupport/navVersion/img/navad1.png" class="navigation-secondlistdiv-right-img">
+                                <!--<p class="submenu__box__ad__text1" style="line-height: 1;padding: 10px 0px;font-size: 18px;">Siemens Xcelerator</p>
+                    <p class="submenu__box__ad__text2" style="font-size: 13px;">Siemens Xcelerator将使您比以往任何时候都更轻松地实现数字化和可持续转型速度更快，规模化。</p>
+                    <div class="btn" style="margin-top: 10px;">
+                        <a href="#" target="_blank" class="btn_1"
+                           style="color: rgb(0, 0, 40);font-size: 16px;font-style: normal;text-align: center;padding: 5px 15px;font-weight: 400;background: linear-gradient(90deg, #00ffb9 0%, #00e6dc 100%);">了解更多信息</a>
+                    </div>-->
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='201' href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/home"
+                       target="_blank" class="choose">售后服务<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    售后服务
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='201' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/home" target="_blank">
+                                                我要报修
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='202'
+                                               href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/progress" target="_blank">
+                                                服务进度查询
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='203'
+                                               href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/quality-assurance" target="_blank">
+                                                质保及权益查询
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='204'
+                                               href="https://www.ad.siemens.com.cn/service/myservice/page/czgcs/gongchengshi.html" target="_blank">
+                                                ASP工程师验证
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='205'
+                                               href="https://ptm.siemens.com.cn/dpp/web/#/certificate/detail" target="_blank">
+                                                ASP公司证书验证
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='206'
+                                               href="https://www.ad.siemens.com.cn/topicportal/index_11.html" target="_blank">
+                                                全球服务指南
+                                            </a>
+                                        </li>
+                                        <li class="singleLine second-code">
+                                            <a fromplatform='702' toplatform='207'
+                                               href="https://www.ad.siemens.com.cn/service/myservice/page/FAQ.aspx" target="_blank">
+                                                售后服务常见问题
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right">
+                                <img src="/MySupport/navVersion/img/navad2.png" class="navigation-secondlistdiv-right-img">
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='301' href="https://www.ad.siemens.com.cn/download/"
+                       target="_blank" class="choose">下载中心<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    下载中心
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='301' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/download/" target="_blank">
+                                                下载中心首页
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='302'
+                                               href="https://www.ad.siemens.com.cn/download/recommendtopiclist" target="_blank">
+                                                下载中心精选主题
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='303'
+                                               href="https://www.ad.siemens.com.cn/download/materiallist?id=2" target="_blank">
+                                                常见问题大全
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right" style="display:none;">
+                                <img src="/MySupport/navVersion/img/navad3.png" class="navigation-secondlistdiv-right-img">
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='401' href="https://1847.siemens.com.cn/"
+                       target="_blank" class="choose">学习与培训<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    学习与培训
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='401' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://1847.siemens.com.cn/" target="_blank">
+                                                1847工业学习平台
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='402'
+                                               href="https://www.ad.siemens.com.cn/study/product/Default.aspx" target="_blank">
+                                                取证训练营
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='403'
+                                               href="https://www.ad.siemens.com.cn/training/classification?id=1&trainingMode=0" target="_blank">
+                                                教室培训
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right">
+                                <a href="https://1847.siemens.com.cn/" target="_blank"><img src="/MySupport/navVersion/img/navad4.png" class="navigation-secondlistdiv-right-img"></a>
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='501' href="https://mall.siemens.com.cn/pcweb/listSearch?frontCategoryUuid=dd5b3a2c278e4730a211cb5cc422f2a6&keyword="
+                       target="_blank" class="choose">备件与增值服务<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    备件与增值服务
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='501' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://mall.siemens.com.cn/pcweb/listSearch?frontCategoryUuid=dd5b3a2c278e4730a211cb5cc422f2a6&keyword=" target="_blank">
+                                                标准备件采购
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='502'
+                                               href="https://www.ad.siemens.com.cn/download/documentdetail_17515.html" target="_blank">
+                                                DCMA变频器健康管家
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='503'
+                                               href="https://www.ad.siemens.com.cn/service/FCK.html" target="_blank">
+                                                风驰卡
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='504'
+                                               href="https://www.ad.siemens.com.cn/download/recommendtopicdetail?id=10" target="_blank">
+                                                百数达
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='505'
+                                               href="https://www.ad.siemens.com.cn/download/recommendtopicdetail?id=13" target="_blank">
+                                                孔明策
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='506'
+                                               href="https://mall.siemens.com.cn/pcweb/listSearch?keyword=%E8%A5%BF%E6%9C%8D%E6%97%A0%E5%BF%A7&keyWordType=%E6%90%9C%E7%B4%A2%E8%AF%8D" target="_blank">
+                                                西服无忧
+                                            </a>
+                                        </li>
+                                        <li class="singleLine second-code">
+                                            <a fromplatform='702' toplatform='507'
+                                               href="https://www.siemens-x.com.cn/offering/3eaa13ba4ee811ed8c238adefecd334d" target="_blank">
+                                                SIMACAS@智维宝
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right" style="display:none;">
+                                <img src="/MySupport/navVersion/img/navad5.png" class="navigation-secondlistdiv-right-img">
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='601' href="https://www.it-application.siemens.com.cn/diomis/#/login"
+                       target="_blank" class="choose">DIOMIS订单管理<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    DIOMIS订单管理
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='601' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.it-application.siemens.com.cn/diomis/#/login" target="_blank">
+                                                DIOMIS订单管理
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right" style="display:none;">
+                                <img src="/MySupport/navVersion/img/navad6.png" class="navigation-secondlistdiv-right-img">
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='701' href="javascript:void(0);" style="cursor: default;" class="choose">用户互动<i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    用户互动
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='701' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/service/answer/" target="_blank">
+                                                找答案
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='702'
+                                               href="https://www.ad.siemens.com.cn/club/bbs/" target="_blank">
+                                                技术论坛
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right" style="display:none;">
+                                <a href="https://www.ad.siemens.com.cn/topicportal/index_102.html?utm_term=618%E9%80%90%E6%96%B0%E4%B9%8B%E6%97%85&utm_campaign=%E5%85%A8%E7%AB%99%E5%AF%BC%E8%88%AA&utm_medium=%E6%B4%BB%E5%8A%A8%E9%A1%B5%E9%9D%A2&_channel_track_key=CF9vsYUC&utm_source=CKM-%E5%85%A8%E7%AB%99&utm_content=%E6%B4%BB%E5%8A%A8%E8%90%BD%E5%9C%B0%E9%A1%B5" target="_blank"><img src="/MySupport/navVersion/img/navad7.png" class="navigation-secondlistdiv-right-img"></a>
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="fl">
+                    <a fromplatform='702' toplatform='801' href="javascript:void(0);" class="choose navigation-jxzt">精选主题<sub style=" font-weight: 400; color: #ff5400; font-size: 11px; top: -15px;">new</sub><i class="icon-new-Arrow-down"></i></a>
+                    <div class="second-level">
+                        <div class="navigation-secondlistdiv">
+                            <div class="navigation-secondlistdiv-left">
+                                <h2 class="navigation-secondlistdiv-left-h2">
+                                    精选主题
+                                </h2>
+                                <div class="navigation-secondlistdiv-left-div">
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="navigation-secondlistdiv-left-div-ul-li no-activate">
+                                            <a fromplatform="702" href="javascript:void(0);">
+                                                产品主题
+                                            </a>
+                                        </li>
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='801' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/topicportal/index_26.html" target="_blank">
+                                                产品入门
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='802'
+                                               href="https://www.ad.siemens.com.cn/topicportal/index_63.html" target="_blank">
+                                                产品技术专题
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='803'
+                                               href="https://www.ad.siemens.com.cn/smart" target="_blank">
+                                                SMART系列产品<i class="icon-arrow"></i>
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='804'
+                                               href="https://www.ad.siemens.com.cn/wincc" target="_blank">
+                                                WinCC官方网站<i class="icon-arrow"></i>
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='805'
+                                               href="https://www.ad.siemens.com.cn/topicportal/index_99.html" target="_blank">
+                                                WinCC Unified技术主页<i class="icon-arrow"></i>
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform="702" toplatform="806" href="https://www.ad.siemens.com.cn/topicportal/index_103.html" target="_blank">
+                                                SIMATIC S7-1200技术主页
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <ul class="navigation-secondlistdiv-left-div-ul">
+                                        <li class="navigation-secondlistdiv-left-div-ul-li no-activate">
+                                            <a fromplatform="702" href="javascript:void(0);">
+                                                应用主题
+                                            </a>
+                                        </li>
+                                        <li class="singleLine navigation-secondlistdiv-left-div-ul-firstli">
+                                            <a fromplatform='702' toplatform='807' class="navigation-secondlistdiv-left-div-ul-firstli-a"
+                                               href="https://www.ad.siemens.com.cn/fa" target="_blank">
+                                                自动化标准机型应用中心
+                                            </a>
+                                        </li>
+                                        <li class="singleLine">
+                                            <a fromplatform='702' toplatform='808'
+                                               href="https://www.ad.siemens.com.cn/topicportal/index_9.html" target="_blank">
+                                                运动控制专区
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="navigation-secondlistdiv-right" style="display:none;">
+                                <img src="/MySupport/navVersion/img/navad8.png" class="navigation-secondlistdiv-right-img">
+                            </div>
+                            <div style="position:relative;">
+                                <i class="iconClose navigation-close">×</i>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <a id="guanfangshangcheng" fromplatform='702' toplatform='901'
+               href="https://mall.siemens.com.cn/?utm_source=OnlineSupport_Navigation&utm_campaign=OnlineSupportToMall&_channel_track_key=v1JQ4wco"
+               target="_blank">
+                <p class="fr right-link"><img class="cart" src="/MySupport/navVersion/img/gou.png" />西门子商城</p>
+            </a>
+        </div>
+    </div>
+</div><div class='navigation-two-outer'>
+                                    <div class='navigation-two'>
+                                        <a  href=/club/bbs/>技术论坛首页</a>
+                                        <a  href=/club/bbs/bbs_latest.aspx>最新发帖</a>
+                                        <a  href=/club/bbs/elites.html>精华帖</a>
+                                        <a  href=/club/bbs/post_new.aspx?b_id=0&s_id=&postType=4>发新帖</a>
+                                        <div style='float:right;display:none;' id='navigation-two-rightdiv'><a  href='javascript:void(0)' onclick='show_thirdLoginBox()'>登录</a><a href='javascript:void(0)' onclick='show_thirdLoginBox()'>注册</a> </div></div></div>
+    </div>
+
+    <header class="header headerbbs">
+        <div class="eventTasks" id="eventTasks"></div>
+    </header>
+    <div style="width: 1200px;margin: 0 auto;position:relative;">
+    <div id="navigationGuide"></div>
+    <div class="Crumbs" style="margin-top:0px;padding-top:14px;">
+        <ul>
+            
+
+    <li onmouseenter="crumbsMouseIn(this)" onmouseleave="crumbsMouseOut(this)">
+        <a href="JavaScript:viod(0);" style="cursor: default;">
+                    <img src="/club/bbs/newedition/img/home.png" />西门子中国<i class="icon-new-Arrow-right"></i></a>
+        
+    </li>
+    <li onmouseenter="crumbsMouseIn(this)" onmouseleave="crumbsMouseOut(this)">
+        <a target="_blank" href="/home/">支持与服务门户网站<i class="icon-new-Arrow-right"></i></a>
+        <div class="Crumbs-menu" style="display: none;">
+              <a  target="_blank"  href="/mysupport/index.aspx"><div class="item">我的支持中心</div></a>
+              <a  target="_blank"  href="/download/default.aspx"><div class="item">下载中心首页</div></a>
+              <a  target="_blank"  href="https://support.industry.siemens.com/cs/cn/zh/ps"><div class="item">全球技术资源</div></a>
+              <a  target="_blank"  href="/1847"><div class="item">1847工业学习平台</div></a>
+              <a  target="_blank"  href="/productportal/default.aspx"><div class="item">产品入门新手必读</div></a>
+              <a  target="_blank"  href="/service/answer/"><div class="item">找答案</div></a>
+              <a  target="_blank"  href="/club/bbs/"><div class="item">技术论坛</div></a>
+              <a  target="_blank"  href="/service/myservice/Page/Default.aspx"><div class="item">售后服务</div></a>
+              <a  target="_blank"  href="/mysupport/engineerresource/engineerresource.aspx"><div class="item">网络资源新手必读</div></a>
+              <a  target="_blank"  href="/service/search/default.aspx"><div class="item">高级搜索</div></a>
+        </div>
+    </li>
+    <li onmouseenter="crumbsMouseIn(this)" onmouseleave="crumbsMouseOut(this)"><a target="_blank" href="/club/bbs/">技术论坛<i class="icon-new-Arrow-right"></i></a>
+        <div class="Crumbs-menu" style="display: none;">
+                <a  target="_blank" href="/MySupport/AnnouncementList.aspx"><div class="item">论坛公告</div></a>
+                <a  target="_blank" href="/club/bbs/bbs_help.aspx"><div class="item">论坛使用指南</div></a>
+                <a  target="_blank" href="/club/bbs/bbs_latest.aspx"><div class="item">最新发帖</div></a>
+                <a  target="_blank" href="/club/bbs/elites.html"><div class="item">精华帖</div></a>
+                <a  target="_blank" href="/club/bbs/shares.html"><div class="item">分享帖</div></a>
+                <a  target="_blank" href="/club/bbs/likes.html"><div class="item">高赞帖</div></a>
+                <a  target="_blank" href="/club/bbs/bbshot.html"><div class="item">热门帖</div></a>
+                <a  target="_blank" href="/club/bbs/recommend.html"><div class="item">高端推荐帖</div></a>
+                <a  target="_blank" href="/club/bbs/favour.html"><div class="item">最高收藏帖</div></a>
+        </div>
+    </li>
+
+
+            
+    
+    <li><a target="_blank" rel="nofollow" href="/club/bbs/bbs_66.html">自动化系统 / SIMATIC S7-1500系列<i class="icon-new-Arrow-right"></i></a></li>
+    <li><a rel="nofollow">使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim</a></li>
+
+
+        </ul>
+    </div>
+
+    
+    <div class="BBS-main p_b_20">
+        <div class="menu-box">
+            
+            
+    <div class="menu-box-title">
+        <h2>技术论坛</h2>
+    </div>
+
+            <div class="result-menu"><h6 class="zeroDiv">&nbsp;&#8226&nbsp;产品分类</h6><h6 id="newMenu_1" onclick="ShowAndHideMenu(1)" class="menushow"><span>自动化系统</span></h6><ul ><li><a style="color:#990000" target="_blank" href="/club/bbs/bbs_66.html"><span>SIMATIC S7-1500系列</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_50.html"><span>SIMATIC S7-1200系列</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_3.html"><span>SIMATIC S7-200</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_64.html"><span>SIMATIC S7-200 SMART</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_4.html"><span>SIMATIC S7-300/400</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_7.html"><span>通信与网络组件</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_106.html"><span>Profinet技术开发专区</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_166.html"><span>工业边缘计算</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_5.html"><span>SIMATIC WinCC / Panel</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_65.html"><span>SIMATIC WinCC OA (原PVSS)</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_6.html"><span>DCS/SIMATIC PCS7</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_62.html"><span>IPC/PG</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_28.html"><span>LOGO!</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_114.html"><span>物联网（IOT）</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_53.html"><span>工业电源</span></a></li></ul><h6 id="newMenu_9" onclick="ShowAndHideMenu(9)" class="menushow"><span>驱动技术</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_47.html"><span>SINAMICS</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_172.html"><span>SINAMICS S200</span>&nbsp;<img src="/club/bbs/img/bbs/new.png" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_17.html"><span>直流调速器</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_18.html"><span>电机</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_46.html"><span>SIMOTION</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_10.html"><span>MicroMaster</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_104.html"><span>驱动技术综合产品</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_16.html"><span>MasterDrives</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_171.html"><span>DCMA 变频器健康管家 维护智库</span></a></li></ul><h6 id="newMenu_19" onclick="ShowAndHideMenu(19)" class="menushow"><span>数控系统</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_20.html"><span>SINUMERIK</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_21.html"><span>SIMODRIVE</span></a></li></ul><h6 id="newMenu_146" onclick="ShowAndHideMenu(146)" class="menushow"><span>低压电气</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_24.html"><span>低压电气</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_170.html"><span>低压数字化</span></a></li></ul><h6 id="newMenu_29" onclick="ShowAndHideMenu(29)" class="menuhide"><span>传感器与通讯</span></h6><ul style="display:none;"><li><a  target="_blank" href="/club/bbs/bbs_39.html"><span>过程仪表</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_51.html"><span>分析仪器</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_52.html"><span>工厂传感器</span></a></li></ul><h6 id="newMenu_147" onclick="ShowAndHideMenu(147)" class="menuhide"><span>谈天说地</span></h6><ul style="display:none;"><li><a  target="_blank" href="/club/bbs/bbs_25.html"><span>谈天说地</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_176.html"><span>新产品探秘</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li></ul><h6 class="zeroDiv">&nbsp;&#8226&nbsp;咱工程师的故事</h6><h6 id="newMenu_77" onclick="ShowAndHideMenu(77)" class="menushow"><span>咱工程师的故事</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_80.html"><span>网友专栏</span>&nbsp;<img src="/club/bbs/img/bbs/icoHottopic.gif" /></a></li><li><a  target="_blank" href="/club/bbs/bbs_167.html"><span>工程师随笔</span></a></li></ul><h6 id="newMenu_157" onclick="ShowAndHideMenu(157)" class="menushow"><span>1847大咖专栏</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_84.html"><span>崔工谈博途与PLC</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_144.html"><span>PROFINET工业通信详解</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_109.html"><span>冯工聊工业网络</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_87.html"><span>电磁兼容问题及处理</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_173.html"><span>大咖专栏合集</span></a></li></ul><h6 id="newMenu_79" onclick="ShowAndHideMenu(79)" class="menushow"><span>特别专题</span></h6><ul ><li><a  target="_blank" href="/club/bbs/bbs_130.html"><span>专家大讲堂课后探讨</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_156.html"><span>西门子工业1847俱乐部</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_174.html"><span>特别专题合集</span></a></li></ul><h6 class="zeroDiv">&nbsp;&#8226&nbsp;培训与认证答疑专区</h6><h6 id="newMenu_148" onclick="ShowAndHideMenu(148)" class="menuhide"><span>培训与认证答疑专区</span></h6><ul style="display:none;"><li><a  target="_blank" href="/club/bbs/bbs_150.html"><span>PLC编程精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_131.html"><span>MA 小型自动化系统</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_175.html"><span>WinCC系统开发工程师精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_124.html"><span>V90精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_122.html"><span>WinCC精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_120.html"><span>S7-1200精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_137.html"><span>G120变频器精英训练营</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_126.html"><span>S7-200SMART精英训练营</span></a></li></ul><h6 class="zeroDiv">&nbsp;&#8226&nbsp;服务合作伙伴专区</h6><h6 id="newMenu_149" onclick="ShowAndHideMenu(149)" class="menuhide"><span>服务合作伙伴专区</span></h6><ul style="display:none;"><li><a  target="_blank" href="/club/bbs/bbs_168.html"><span>FA合作伙伴共创社区</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_113.html"><span>Networks and Communication</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_141.html"><span>GMC蓝黄带考试-G120</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_142.html"><span>GMC蓝黄带考试-V90</span></a></li><li><a  target="_blank" href="/club/bbs/bbs_151.html"><span>GMC 合作伙伴专区</span></a></li></ul></div>
+<style type="text/css">
+    .result-menu {
+        /*width: 190px;*/
+        /*padding: 10px 5px;
+        margin-top: 10px;
+        border: 1px solid #E3EBEE;
+        border-radius: 4px;*/
+        float: left;
+        height: auto;
+        background:white;
+    }
+    .result-menu > h6 {
+        /*font-size: 14px;
+        color: #252525;
+        position: inherit;
+        font-weight: bold;
+        margin: 5px 0 5px 10px;
+        overflow: hidden;*/ /*自动隐藏文字*/
+        /*text-overflow: ellipsis;*/ /*文字隐藏后添加省略号*/
+        /*white-space: nowrap;*/ /*强制不换行*/
+        /*width: 160px;*/ /*不允许出现半汉字截断*/
+        /*display: block;
+        padding-left: 18px;
+        cursor: pointer;*/
+    }
+    .result-menu > .menushow {
+        background: url("/club/bbs/images/reduce.png") no-repeat left center;
+    }
+    .result-menu > .menuhide {
+        background: url("/club/bbs/images/plus.png") no-repeat left center;
+    }
+    .result-menu > ul > h6 > a {
+        font-size: 12px;
+        line-height: 24px;
+        overflow: hidden; /*自动隐藏文字*/
+        text-overflow: ellipsis; /*文字隐藏后添加省略号*/
+        white-space: nowrap; /*强制不换行*/
+        width: 160px; /*不允许出现半汉字截断*/
+        display: block;
+        background: url("/club/bbs/css/skin4/closed.gif") no-repeat 4px center;
+        padding-left: 20px;
+        color:#323232;
+        box-sizing: content-box;
+    }
+    .result-menu a:hover {
+        color: #7da8d5 !important;
+    }
+    .result-menu > ul > h6 {
+        position: relative;
+        margin:0 0 0 10px;
+    }
+    .result-menu > ul > h6:hover {
+        background: #7da8d5;
+        z-index: 3;
+    }
+    .result-menu > ul > h6:hover > a {
+        /*width: 284px;*/
+        background-color: #F2F6F8;
+    }
+    .result-menu > ul > h6:hover > .left-menu {
+        display: block;
+    }
+    .left-menu {
+        background: #F2F6F8;
+        position: absolute;
+        z-index: 2;
+        padding: 4px 16px 10px 16px;
+        border-radius: 4px;
+        left: 187px;
+        top: 0px;
+        display: none;
+        min-width: 155px;
+    }
+    .left-menu > h6 > a {
+        padding: 6px 0;
+        display: inline-block;
+    }
+	.zeroDiv{
+		background:linear-gradient(to right,#00ACC7,#7addea) !important;
+        width: 168px !important;
+        color: #fff !important;
+        padding-left: 5px !important;
+		height: 24px !important;
+        line-height: 24px;
+        /*background: url(./img/reduce.png) no-repeat left center;*/
+        cursor:default !important;
+	}
+    .menushow{
+        font-weight:bold !important;
+    }
+</style>
+
+
+
+<script type="text/javascript">
+    function ShowAndHideMenu(bid) {
+        var menuClass = $("#newMenu_" + bid).attr("class");
+        if (menuClass == "menushow") {
+            $("#newMenu_" + bid).attr("class", "menuhide");
+            $("#newMenu_" + bid).next("ul").hide();
+        } else {
+            $("#newMenu_" + bid).attr("class", "menushow");
+            $("#newMenu_" + bid).next("ul").show();
+        }
+    }
+</script>
+        </div>
+        <div class="left-main">
+            
+    
+    <div class="fixed-title">
+        <div style="max-width: 510px;">
+            <h4 class="singleLine">使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim</h4>
+            
+            <img src="/club/bbs/Content/newPattern/img/bbsdetail/icoLocktopic.png" class="lockicon" style="margin-top: 1px; float: right;" alt="已锁定" />
+            
+        </div>
+        <div>
+            <button class="share-button" style="margin-right: 5px;">
+                <i class="icon-new-Share"></i>分享
+            <div class="share-box">
+                <div class="qrcode"></div>
+                <p onclick="copyText('https://wap.siemens.com.cn/club/bbs/post/1974605.html')">点击复制链接</p>
+            </div>
+            </button>
+            <button class="follow-button">
+                <div id="guanzhugaitie"><i class="icon-new-Plus-small"></i>关注该帖</div>
+                <div class="R-tips guanzhugaitietips" style="display: none;">
+                    <p>关注该帖后，有多人参加探讨会对您通知与提示！</p>
+                    <i class="icon-new-Close"></i>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <div class="floor" id="tr_1974605">
+        <div class="floor-user Landlord">
+            <div class="head-box">
+                
+                <a target='_blank' href='/club/bbs/user_disp.aspx?u_id=1295834'>
+                    <img class="head-img" src='https://www.ad.siemens.com.cn/club/bbs/face/img01.gif' alt="" title="" />
+                </a>
+                
+            </div>
+            <h4 class="singleLine"><a target='_blank' href='/club/bbs/user_disp.aspx?u_id=1295834'>手机用户20241102635728 </a></h4>
+            <p>
+                <img style='display:none' class="prime-icon" alt="西门子1847工业学习平台" src="Content/newPattern/img/1847-logo-small.png" style="width: 34px;vertical-align: baseline;">
+            </p>
+            <ul>
+                <li style="border: none">
+                    <p>帖子</p>
+                    <h6>1</h6>
+                </li>
+                <li>
+                    <p>精华</p>
+                    <h6>0</h6>
+                </li>
+                <li>
+                    <p>被关注</p>
+                    <h6>0</h6>
+                </li>
+            </ul>
+            <p style="width: 127px;" class="fontweightbold"><span class="fontweightnonebold">论坛等级：</span>新手</p>
+            <p style="width: 127px;"><span>注册时间：</span>2024-11-02</p>
+            <p style="width: 127px; height: 20px;">
+                <img style='width:20px;margin-top:-2.8px' alt='普通' src='/MySupport/navVersion/img/potong.png' /> 普通
+                <a target="_blank" style="display: inline-block; margin-left: 8px; color: #00ACC7;" href="https://www.ad.siemens.com.cn/mysupport/MyVIPInfo.aspx"><span>如何晋级?</span></a>
+            </p>
+            
+
+            <button class="focus_1295834" onclick="FocusUser(1295834)"><i class="icon-new-Plus-small"></i>关注</button>
+        </div>
+        <div class="floor-content essence ">
+            <div class="floor-title">
+                <h4 class="moreLine">使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim</h4>
+                
+            </div>
+            <div class="floor-information">
+                <div class="left-information">
+                    <p><i class="icon-new-Show"></i>5224</p>
+                    <p><i class="icon-new-Chat-1"></i>8</p>
+                    <p><i class="icon-new-Reading-time"></i>2025-11-17 17:12:07</p>
+                </div>
+                <div class="starts-box">
+                    
+                </div>
+                <div class="right-button">
+                    
+                    
+                    <button onclick="gototypepage('poster')">只看楼主</button>
+                    
+                </div>
+            </div>
+            <ul class="label-box" id="tagplace">
+            </ul>
+            <div class="articlecontent">
+                <div style="max-height: 280px;overflow: hidden;min-height: 140px;">
+                    <p>有很多人问我西门子的PLC如何在不使用OPC UA的情况下实现优化DB块后仍然可以用标签与之通讯，其实是可以的，西门子PLC使用私有协议进行通信，端口为102。西门子PLC协议有3个版本，S7Comm协议，早期S7CommPlus协议和最新的S7CommPlus协议。S7-200、S7-300、S7-400系列的PLC采用早期的西门子私有协议S7comm进行通信，S7-1200系列v3.0版本之前的通信协议采用早期S7Comm-Plus协议，S7-1200系列v4.0版本、S7-1500系列采用了最新的S7Comm-Plus协议，最新的S7Comm-Plus协议引入了会话ID来防止重放攻击，S7Comm-Plus协议建立通讯过程大致如下：<br/>通信握手初始化(即CR/CC)--&gt;与PLC建立S7Comm-Plus连接并返回20个随机字节(Challenge)--&gt;根据随机数（Challenge）并结合公钥，生成认证数据(StructSecurityKey&amp;SessionKey)将StructSecurityKey发送到PLC--&gt;PLC端使用私钥对认证数据（StructSecurityKey）进行解密，认证成功后，回复TIA端OK,通信建立成功。</p><p>但S7Comm-Plus协议的V2与V3版本有所区别，在建立S7Comm-Plus连接之后，发送到PLC的每个数据包超过1024之后就会被拆分成两个分开发送，在V3版本中被拆分的每个数据包都会携带一个使用SessionKey生成的IntegrityPart(32字节)用于校验当前数据包是否合法，而在V2版本中却是共用一个，并且在V3版本中StructSecurityKey&amp;SessionKey是有生命周期的，如果超过一小时不更新SessionKey PLC就会主动断开当前的连接。</p><p>另外S7Comm-Plus协议的V2版本还可以跑在TLS安全层连接上，此时的验证过程则与非TLS安全层连接的V3版本的验证过程完全不一样，也不会再需要定时更新StructSecurityKey与SessionKey了，以下是我基于开源库实现的测试demo(https://github.com/lircy/S7CommPlusV3Driver.git),欢迎大家下载测试</p>
+                </div>
+                
+                <div class="login-hide">
+                    <img src="Content/newPattern/img/bbsdetail/content-hide.png" alt="" />
+                    <p>剩余80%未阅读， <a name="needlogin" onclick="show_thirdLoginBox()">请登录阅读</a></p>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="paginationbox">
+        
+        <nav aria-label="Page navigation" class="page-nav-outer" id="PageNavId"></nav>
+        
+    </div>
+    
+    <!-- 蒙版效果弹出层发帖  暂时没有用到 -->
+    <div id="divMaskingOutPostTip" style="display: none;">
+        <div class="beginnerGuideMark" style="display: block;">
+            &nbsp;
+        </div>
+        <div id="div_newPost" class="beginnerGuide mainPost">
+            <div class="mainOne">
+            </div>
+            <div class="mainTow" id="divMainTow"></div>
+            <div class="mainThree">
+                <div class="mainT01">
+                    <a href="/club/bbs/post_new.aspx?b_id=66&s_id=&postType=5">
+                        <div class="mainT02">
+                            <div class="mainO">
+                                <div class="mainOin1"></div>
+                                <div>发分享帖</div>
+                            </div>
+                            <div class="main1">
+                                爱工控，乐分享，<br>
+                                分享您的经验与案例
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mainT01">
+                    <a href="/club/bbs/post_new.aspx?b_id=66&s_id=&postType=3">
+                        <div class="mainT03">
+                            <div class="mainO">
+                                <div class="mainOin2"></div>
+                                <div>发故事</div>
+                            </div>
+                            <div class="main1">
+                                发表您的精彩故事，<br>
+                                参与征文活动
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mainT01">
+                    <a href="/club/bbs/post_new.aspx?b_id=66&s_id=&postType=4">
+                        <div class="mainT04">
+                            <div class="mainO">
+                                <div class="mainOin3"></div>
+                                <div>技术探讨帖</div>
+                            </div>
+                            <div class="main1">
+                                阐述您的观点，<br>
+                                表达我的看法
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mainT01">
+                    <a href="/club/bbs/post_new.aspx?b_id=66&s_id=&postType=7">
+                        <div class="mainT05">
+                            <div class="mainO">
+                                <div class="mainOin4"></div>
+                                <div>西家杂谈</div>
+                            </div>
+                            <div class="main1">
+                                海侃天南地北，<br>
+                                闲聊工控世界
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mainT01">
+                    <a href="/club/bbs/post_new.aspx?b_id=66&s_id=&postType=6">
+                        <div class="mainT06">
+                            <div class="mainO">
+                                <div class="mainOin5"></div>
+                                <div>发求助帖</div>
+                            </div>
+                            <div class="main1">
+                                求道解惑，“刨根问底”<br>
+                                解决问题
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="mainT01">
+                    <a href="/club/bbs/post_vote.aspx?b_id=66&s_id=">
+                        <div class="mainT07">
+                            <div class="mainO">
+                                <div class="mainOin6"></div>
+                                <div>发投票帖</div>
+                            </div>
+                            <div class="main1">
+                                邀投票，做调查，<br>
+                                网友帮您来作主
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="d_isShare" title="取消“分享帖”属性及奖励" style="display: none">
+        <div>取消原因：<textarea id="NoShare_Reason" style="width: 260px; height: 80px"></textarea></div>
+        <div style="margin-top: 15px; text-align: center">
+            <input type="button" value="确定并发送站内信给作者" id="NoShare" />
+        </div>
+    </div>
+    
+    <div class="fixed-botom">
+        <div style="width: 68%;">
+            <span class="singleLine" style="font-weight: bolder; font-size: 14px; max-width: 90%; display: inline-block;">使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim</span>
+            
+            <img src="/club/bbs/Content/newPattern/img/bbsdetail/icoLocktopic.png" style="width: 43px; margin-top: -12px;" alt="已锁定" />
+            
+        </div>
+        <div>
+            <button class="share-button">
+                <i class="icon-new-Share"></i>分享
+        <div class="share-box">
+            <div class="qrcode"></div>
+            <p onclick="copyText('https://wap.siemens.com.cn/club/bbs/post/1974605.html')">点击复制链接</p>
+        </div>
+            </button>
+            
+            <button onclick="javascript:addFlowerNew('0','1974605','0',true,'0','0','1295834','False','5','66','0')"><i id="imgFlowerbtn" class="icon-new-Like" style="font-family: 'Siemens_UI_Icons_Webfont-v391' !important"></i>有帮助</button>
+
+            
+        </div>
+    </div>
+    
+    <!-- 编辑推广对话框 -->
+    <!-- JS遮罩层 -->
+    <div id="fullbg">
+    </div>
+    <!-- end JS遮罩层 -->
+    <div id="dialog">
+        <div id="div_ArticleRecommend" style="line-height: 24px;">
+            <div style="margin: 3px; border: 1px solid #000000; width: 400px; background: #cccccc; display: inline-block">
+                <span style="font-weight: bold; margin-left: 3px; float: left;">编辑推荐：</span> <a href="#"
+                    onclick="closeBg();" style="float: right; margin-right: 3px;">关闭</a>
+            </div>
+            <div>
+                <p style="margin-left: 10px;">
+                    请填写推广理由：
+                </p>
+                <textarea id="area_rcmdContent" rows="1" cols="1" style="width: 375px; height: 85px; margin-left: 10px;"></textarea>
+                <p style="padding-left: 190px; padding-top: 5px;">
+                    <input id="rcmdSubmit" type="button" value="推广" onclick="storyAddRecommend()" />
+                </p>
+            </div>
+        </div>
+    </div>
+
+        </div>
+        <div class="right-main">
+            
+    
+<!-- 浮窗 -->
+    
+
+    <div class="bbs-right-ad" >
+        <div class="bbs-right-ad-top">
+        <h3>活动公告 <span><a  target="_blank" href="/MySupport/AnnouncementList.aspx">查看全部公告></a></span></h3>  
+            
+        <p style="float:left"><a style="color:inherit" target="_blank" href="https://www.ad.siemens.com.cn/campaign?utm_term=AutomationCampaign%E7%B2%BE%E9%80%89%E4%B8%BB%E9%A2%98%E6%8E%A8%E5%B9%BF&utm_campaign=%E6%B4%BB%E5%8A%A8%E5%85%AC%E5%91%8A&utm_medium=%E9%A1%B5%E9%9D%A2&_channel_track_key=2ZUEZlPW&utm_source=CKM-%E5%85%A8%E7%AB%99&utm_content=%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE">
+            【机械制造/项目型工程】最新软硬件产品与解决方案请您查收！</a></p>
+        
+        </div>
+
+    
+        <!-- 未登录 -->
+        <div class="bbs-right-ad-btm bbs-no-login">
+        <h3><span>1,877,702</span> 条 <a target="_blank" href="/club/bbs/bbs_help.aspx"><i class="icon-new-Information"></i></a><br/>海量精彩技术内容</h3>
+        <h4><span>100,000+</span> 网友与你交流</h4>
+        <p>助你技有所长，论有所获</p>
+        </div>
+        
+
+    </div>
+
+
+    <button class="publish">
+        <a style="color: #fff" target="_blank" href="/club/bbs/post_new.aspx?b_id=0&s_id=&postType=6">
+            
+            <i class="icon-new-Edit"></i>
+            
+            
+            发表新帖</a>
+        <div class="R-tips" id="showisfirstpost" style="display: none">
+            <p>首次发帖探讨工控技术话题<br>
+                <span>立获新人礼包，100中奖哦!</span><br>
+                (包含周边、书籍、兑奖西币)</p>
+            <i class="icon-new-Close"></i>
+        </div>
+    </button>
+
+    
+
+<link href="/club/bbs/Content/newPattern/css/swiper-bundle.min.css" rel="stylesheet" />
+<style type="text/css">
+    .swiper {
+        width: 100%;
+        height: 100%;
+        padding: 0 0 30px 0;
+    }
+    .swiper-box {
+        padding: 0px 8px 10px 8px;
+    }
+    .swiper .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+        .swiper .swiper-slide>a::before {
+            content: "";
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: url(/club/bbs/Content/newPattern/img/PlayButton.png);
+            background-size: 100% 100%;
+            left: 50%;
+            top: 50%;
+            margin-left: -16px;
+            margin-top: -16px;
+        }
+
+        .swiper .swiper-slide a>p {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 40, 0.8);
+            color: #fff;
+            font-size: 14px;
+            padding: 4px 8px;
+            text-align: left;
+        }
+        .swiper .swiper-slide a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper .swiper-slide a > img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .swiper .swiper-pagination .swiper-pagination-bullet {
+        background: #bcc3c3;
+    }
+
+    .swiper .swiper-pagination .swiper-pagination-bullet-active {
+        background: #009999;
+    }
+</style>
+<div class="right-list">
+     <div class="list-title">
+        <h4 class="singleLine">
+            <img style="width:20px;height:25px;" src="/club/bbs/Content/newPattern/img/iconvideo.png" /><a target="_blank" href="https://1847.siemens.com.cn/?channel_link_type=web&utm_campaign=%E6%8A%80%E6%9C%AF%E8%AE%BA%E5%9D%9B%E5%86%85%E5%AE%B9%E9%A1%B5%E6%8E%A8%E8%8D%90%E4%BD%8D&sat_cf=1&_channel_track_key=vTgrUp0z&utm_content=1847%E9%A6%96%E9%A1%B5%E9%A2%86%E5%8D%A1" ><span style="font-size:15px;margin-left:3px;color:#EC6602">热门视频，猜你喜欢</span></a></h4>
+    </div>
+    <div>
+        <div class="right-list">
+            <div class="swiper-box">
+              <div class="swiper mySwiper">
+                <div class="swiper-wrapper" id="recommendVideoItem">
+                  
+                </div>
+                <div class="swiper-pagination"></div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/club/bbs/js/VuePageJs/swiper-bundle.min.js"></script>
+<script>
+    $(function () {
+        $('.right-list .tab div').click(function () {
+            $(this).addClass("choose");
+            $(this).siblings().removeClass("choose");
+        });
+        getRecommendVideo();
+    });
+    function getRecommendVideo() {
+        var boardId =66;
+        var articleid =1974605;
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/GetRecommendVideo.ashx",
+            data: { boardId: boardId, articleid: articleid },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var videolist = $.map(data.ResultSet, function (n, i) {
+                        if (n.Platform == 16)
+                            return n;
+                    });
+                    var htmlvideo = "";
+                    $.each(videolist, function (index, value) {
+                        htmlvideo += '<div class="swiper-slide">';
+                        if (index == 0) {
+                            htmlvideo += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag ? value.UserTag : '') + '" href="https://1847.siemens.com.cn/course/detail/1/' + value.Content_ID + (value.materialId ? '/' + value.materialId : '') +'?channel_link_type=web&utm_campaign=1847MaintennerPromotion&sat_cf=1&utm_medium=FromOSTuiJian&_channel_track_key=rpqXDAB5&utm_source=OS" target="_blank">';
+                        } else {
+                            if (value.RecommendType === "ad") {
+                                htmlvideo += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag ? value.UserTag : '') + '" href="' + value.Link + '" target="_blank">';
+                            } else {
+                                htmlvideo += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag ? value.UserTag : '') + '" href="https://1847.siemens.com.cn/course/detail/1/' + value.Content_ID + (value.materialId ? '/' + value.materialId : '') + '" target="_blank">';
+                            }
+                        }
+                        htmlvideo += '<p>' + value.Title +'</p>';
+                        htmlvideo += '<img src="' + value.ImageUrl +'" />';
+                        htmlvideo += '</a>';
+                        htmlvideo += '</div>';
+                    });
+                    $('#recommendVideoItem').html(htmlvideo);
+                    setTimeout(function () { swiperInit(); }, 500);
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+    //初始化swiper滚动
+    function swiperInit() {
+        var mySwiper = new Swiper(".mySwiper", {
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false,
+            },
+            loop: true,
+            //observer: true,
+            //observeParents: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            }
+        })
+        //鼠标滑过pagination控制swiper切换
+        for (i = 0; i < mySwiper.pagination.bullets.length; i++) {
+            mySwiper.pagination.bullets[i].onmouseover = function () {
+                this.click();
+            };
+        };
+    }
+</script>
+
+    
+<div class="right-list">
+    <div class="list-title">
+        <h4 class="singleLine">
+            <img src="/club/bbs/Content/newPattern/img/Vector.png" alt="" />本版热门话题</h4>
+        
+    </div>
+    <div class="Edition">
+        <img src="/club/bbs/upload/image/board/20231127161012244.png" alt="" />
+        <div class="Edition-infor">
+            <h6>SIMATIC S7-1500系列</h6>
+            <p>共有<span>11180</span>条技术帖</p>
+        </div>
+    </div>
+    <div id="boardhotlistplace">
+        
+    </div>
+    <div class="more"><a target="_blank" href="/club/bbs/boardbbs_hot.aspx?b_id=66">更多<i class="icon-new-Arrowhead-right"></i></a></div>
+</div>
+<script>
+    $(function () {
+        getboardhotlist();
+    });
+    function getboardhotlist() {
+        var boardId =66;
+        $.ajax({
+            type: "Get",
+            url: "AjaxApi/GetBoardHotList.ashx",
+            data: { boardId: boardId},
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var html = "";
+                    $.each(data.ResultSet, function (index, value) {
+                        html += '<div class="list-r">';
+                        html += '<a target="_blank" href="post_' + value.A_ID + '_' + value.B_ID + '_0_0.html"><h6 class="moreLine">' + value.A_Title +'</h6></a>';
+                        html += '<div class="list-bottom-box">';
+                        html += '<p><span>' + value.A_VisitSum+'</span>人已围观</p>';
+                        html += '<a target="_blank" href="post_' + value.A_ID + '_' + value.B_ID +'_0_0.html">去看看</a>';
+                        html += '</div>';
+                        html += '</div > ';
+                    });
+                    $('#boardhotlistplace').html(html)
+                }
+            },
+            error: function () {
+                
+            }
+        });
+    }
+</script>
+    
+<div class="right-list boardhonor">
+    <div class="list-title">
+        <img src="/club/bbs/Content/newPattern/img/Subtract.png" />
+        <h4 class="singleLine" title="SIMATIC S7-1500系列版区标兵" id="banqubiaobingnameplace">
+            </h4>
+        <p></p>
+    </div>
+    <div id="boardhonorlistplace">
+    </div>
+    <div class="more"><a target="_blank" href="https://www.ad.siemens.com.cn/club/bbs/post_1849592_25_0_0.html">评选标准<i class="icon-new-Arrowhead-right"></i></a></div>
+</div>
+<script>
+    $(function () {
+        getboardhonorlist();
+        var boardName = 'SIMATIC S7-1500系列';
+        if (boardName.length > 16) {
+            $('#banqubiaobingnameplace').html(boardName + '<br/>版区标兵');
+        }
+        else {
+            $('#banqubiaobingnameplace').html(boardName + '版区标兵');
+        }
+    });
+    function getboardhonorlist() {
+        var boardId =66;
+        $.ajax({
+            type: "Get",
+            url: "AjaxApi/GetBoardHonorList.ashx",
+            data: { boardId: boardId },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var html = "";
+                    $.each(data.ResultSet, function (index, value) {
+                        html += '<div class="list-r">';
+                        html += '<a target="_blank" title="' + value.U_Nickname + '" href="/club/bbs/user_disp.aspx?u_id=' + value.U_ID + '"> <h4><img src="' + value.U_FacePath + '" />' + value.U_Nickname + '</h4><a>';
+                        html += '<div class="list-bottom-box">';
+                        html += '<p>共创作精彩内容<span>' + value.HotArticleNum + '</span>条</p>';
+                        html += '<a target="_blank" href="/club/bbs/user_disp.aspx?u_id=' + value.U_ID + '">关注他<i class="icon-new-Arrowhead-right"></i></a>';
+                        html += '</div>';
+                        html += '</div > ';
+                    });
+                    $('#boardhonorlistplace').html(html)
+                }
+                else {
+                    $('.boardhonor').hide();
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+</script>
+
+    
+<div class="right-list">
+   
+     <div class="list-title">
+            <h4 class="singleLine">
+                <img src="/club/bbs/Content/newPattern/img/xiangguan.png" />相关推荐</h4>
+            
+        </div>
+    <div id="recommendFA">
+        
+    </div>
+    <div id="recommendDoc">
+        
+    </div>
+    
+    <div class="more"><a onclick="getRecommendDAndV()">换一换<i class="icon-new-Reset"></i></a></div>
+</div>
+<script>
+    $(function () {
+        $('.right-list .tab div').click(function () {
+            $(this).addClass("choose");
+            $(this).siblings().removeClass("choose");
+            //var curp = $(this).attr('itemprop');
+            //if (curp == 'doc') {
+            //    $('#recommendDoc').show();
+            //    $('#recommendVideo').hide();
+            //}
+            //else {
+            //    $('#recommendVideo').show();
+            //    $('#recommendDoc').hide();
+            //}
+        });
+        getRecommendDAndV();
+    });
+    function getRecommendDAndV() {
+        var boardId =66;
+        var articleid =1974605;
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/GetRecommendDAndV.ashx",
+            data: { boardId: boardId, articleid: articleid },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var doclist = $.map(data.ResultSet, function (n, i) {
+                        if (n.Platform == 8)
+                            return n;
+                    });
+                    var videolist = $.map(data.ResultSet, function (n, i) {
+                        if (n.Platform == 16)
+                            return n;
+                    });
+                    var falist = $.map(data.ResultSet, function (n, i) {
+                        if (n.Platform == 4)
+                            return n;
+                    });
+                    var htmlfa = "";
+                    var htmldoc = "";
+                    var htmlvideo = "";
+                    $.each(falist, function (index, value) {
+                        htmlfa += '<div class="list-r">';
+                        if (value.RecommendType === 'ad') {
+                            htmlfa += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag == null ? '' : value.UserTag) + '" target="_blank" href="' + value.Link + '"><h6 class="title-xian"><p class="singleLine">' + value.Title + '</p><i class="icon-new-Help"></i></h6></a>';
+                        } else {
+                            htmlfa += '<a recommend="' + value.Channel + '"  recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag == null ? '' : value.UserTag) + '" target="_blank" href="https://www.ad.siemens.com.cn/service/answer/solve_' + value.Content_ID + '_' + value.Board_ID + '.html"><h6 class="title-xian"><p class="singleLine">' + value.Title + '</p><i class="icon-new-Help"></i></h6></a>';
+                        }
+                        htmlfa += '<div class="list-bottom-box">';
+                        htmlfa += '<p>' + value.CloseDate + '</p>';
+                        //htmlfa += '<a recommend="' + value.Channel + '" target="_blank" href="https://www.ad.siemens.com.cn/service/answer/solve_' + value.Content_ID + '_' + value.Board_ID + '.html">去查看</a>';
+                        htmlfa += '</div>';
+                        htmlfa += '</div> ';
+                    });
+                    $('#recommendFA').html(htmlfa);
+                    $.each(doclist, function (index, value) {
+                        htmldoc += '<div class="list-r">';
+                        if (value.RecommendType === 'ad') {
+                            htmldoc += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag == null ? '' : value.UserTag) + '" target="_blank" href="' + value.Link + '"><h6 class="title-xian"><p class="singleLine">' + value.Title + '</p><i class="icon-new-Document"></i></h6></a>';
+                        } else {
+                            htmldoc += '<a recommend="' + value.Channel + '" recommendType="' + value.RecommendType + '" userTag="' + (value.UserTag == null ? '' : value.UserTag) + '" target="_blank" href="https://www.ad.siemens.com.cn/download/documentdetail_' + value.Content_ID + '.html"><h6 class="title-xian"><p class="singleLine">' + value.Title + '</p><i class="icon-new-Document"></i></h6></a>';
+                        }
+                        htmldoc += '<div class="list-bottom-box">';
+                        htmldoc += '<p>' + value.CloseDate +'</p>';
+                        //htmldoc += '<a recommend="' + value.Channel + '" target="_blank" href="https://www.ad.siemens.com.cn/download/documentdetail_' + value.Content_ID +  '">去下载</a>';
+                        htmldoc += '</div>';
+                        htmldoc += '</div> ';
+                    });
+                    $('#recommendDoc').html(htmldoc);
+                    //$.each(videolist, function (index, value) {
+                    //    htmlvideo += '<div class="Edition">';
+                    //    htmlvideo += '<img src="' + value.ImageUrl + '"/>';
+                    //    htmlvideo += '<div class="Edition-infor singleLine">';
+                    //    htmlvideo += '<a recommend="' + value.Channel + '" target="_blank" href="https://1847.siemens.com.cn/course/detail/1/' + value.Content_ID + '">'
+                    //    htmlvideo += '<h6 class="singleLine">' + value.Title + '</h6>';
+                    //    htmlvideo += '</a>';
+                    //    if (value.CloseDate == null) {
+                    //        htmlvideo += '<p>&nbsp;</p>';
+                    //    }
+                    //    else {
+                    //        htmlvideo += '<p>' + value.CloseDate + '</p>';
+                    //    }
+                    //    htmlvideo += '</div> ';
+                    //    //htmlvideo += '<div class="list-bottom-box">';
+                        
+                    //    //htmlvideo += '<a recommend="' + value.Channel + '" target="_blank" href="https://1847.siemens.com.cn/course/detail/1/' + value.Content_ID+ '">去看看</a>';
+                    //    //htmlvideo += '</div>';
+                    //    htmlvideo += '</div> ';
+                    //});
+                    //$('#recommendVideo').html(htmlvideo);
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function getmaplist(list) {
+
+    }
+</script>
+
+    
+<div class="right-list" id="hotkeyword">
+    <div class="list-title">
+        <h4 class="singleLine">
+            <img src="/club/bbs/Content/newPattern/img/Vector.png" alt="" />热门标签</h4>
+        
+    </div>
+    <div id="hotkeywordlistplace">
+        
+    </div>
+    <div class="more"><a onclick="gethotkeywordlist()">换一换<i class="icon-new-Reset"></i></a></div>
+</div>
+<script>
+    $(function () {
+        gethotkeywordlist();
+    });
+    function gethotkeywordlist() {
+        var boardId =66;
+        $.ajax({
+            type: "Get",
+            url: "AjaxApi/GetHotRandomKeywordsAjax.ashx",
+            data: { boardId: boardId, platform :2},
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var html = "";
+                    $.each(data.ResultSet, function (index, value) {
+                        html += '<div class="list-r">';
+                        html += '<a target="_blank" href="/service/search/default.aspx?kw=' + encodeURIComponent(value.ProductLineName + ' ' + value.ArticleKeyword) + '&searchType=2"><h6 class="moreLine">' + value.ArticleKeyword + '</h6></a>';
+                        html += '</div > ';
+                    });
+                    $('#hotkeywordlistplace').html(html)
+                }
+                else {
+                    $('#hotkeyword').hide();
+                }
+            },
+            error: function () {
+                
+            }
+        });
+    }
+</script>
+    <i class="weiz"></i>
+    
+<div class="right-list xiangguan" style="position: static;">
+        <div class="list-title">
+            <h4 class="singleLine">
+                <img src="/club/bbs/Content/newPattern/img/Frame.png" />相关帖子推荐</h4>
+            
+        </div>
+        <div id="recommendArticle">
+
+        </div>
+    <div class="more"><a onclick="getRecommendArticle()">换一换<i class="icon-new-Reset"></i></a></div>
+    </div>
+<script>
+    $(function () {
+        getRecommendArticle();
+    });
+    function getRecommendArticle() {
+        var boardId =66;
+        var articleid =1974605;
+        var title = '使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim';
+        var content = '';
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/GetRecommendArticle.ashx",
+            data: { boardId: boardId, articleid: articleid, title: title, content: content },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    var html = "";
+                    $.each(data.ResultSet, function (index, value) {
+                        html += '<div class="list-r">';
+                        if (value.RecommendType == "ad") {
+                            html += '<a recommend="' + value.Channel + '" target="_blank" href="' + value.Link + '"><h6 class="moreLine">' + value.Title + '</h6></a>';
+                        } else {
+                            html += '<a recommend="' + value.Channel + '" target="_blank" href="post_' + value.Content_ID + '_' + value.Board_ID + '_0_0.html"><h6 class="moreLine">' + value.Title + '</h6></a>';
+                        }
+                        html += '<div class="list-bottom-box">';
+                        if (value.RecommendType != "ad") {
+                            html += '<p>共<span style="color:#00ACC7">' + value.VisitNum + '</span>次浏览</p>';
+                        }
+                        html += '<p>' + value.CloseDate +'</p>';
+                        html += '</div>';
+                        html += '</div> ';
+                    });
+                    $('#recommendArticle').html(html)
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+</script>
+    <div id="g_loading" class="modal-backdrop" style="display: none;">
+        <div class="loading-container">
+            <div class="loading-content">
+                <progress>
+                    <i></i>
+                </progress>
+                <span>正在加载...</span>
+            </div>
+        </div>
+    </div>
+    
+<div class="jinhuaPop">
+    <button class="icon-new-Close"></button>
+    <div class="main">
+        <img class="clap-hands" alt="guzhang" src="/club/bbs/Content/newPattern/img/guzhang.png" />
+        <div class="text">
+            <p>恭喜，你发布的帖子</p>
+            <a class="singleLine" id="articletitleplace"></a>
+            <h4><span>被</span>评为精华帖！</h4>
+        </div>
+        <div class="Q-code">
+            <p>快扫描右侧二维码晒一晒吧！</p>
+            <div id="qrcodeElite" class="qrcodeimg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="level-up">
+    <button class="icon-new-Close"></button>
+    <div class="main">
+        <div class="vip">
+            <img alt="" src="" />
+            <p></p>
+        </div>
+        <img alt="" src="/club/bbs/Content/newPattern/img/right.png" />
+        <div class="vip">
+            <img alt="" src="" />
+            <p></p>
+        </div>
+    </div>
+    <p>再发帖或跟帖<span class="yellow">交流2条</span>，就能晋升VIP啦！开启更多<a class="blue" target="_blank" href="https://www.ad.siemens.com.cn/mysupport/VIPPrivilege.aspx">专属权限！</a></p>
+</div>
+<div class="mask" id="jinhuaPopMask"></div>
+<script>
+    $(function () {
+        $('.jinhuaPop .icon-new-Close').click(function () {
+            $(".jinhuaPop").hide();
+            $("#jinhuaPopMask").hide();
+        });
+        $('.level-up .icon-new-Close').click(function () {
+            $(".level-up").hide();
+            $("#jinhuaPopMask").hide();
+            var vipType = 1;
+            if (vipType == 1) {
+                jQuery.cookie('BBSVIPLevelOrdinary_20230923', 'hide', { expires: 365 * 100, path: '/' });
+            } else if (vipType == 2) {
+                //当前是黄金等级
+                jQuery.cookie('BBSVIPLevelGoldy_20230923', 'hide', { expires: 365 * 100, path: '/' });
+            } else if (vipType == 3) {
+                //当前是白金等级，钻石不显示弹框了
+                jQuery.cookie('BBSVIPLevelPlatinum_20230923', 'hide', { expires: 365 * 100, path: '/' });
+            }
+        });
+        GetNotShowBoxArticle();
+        ShowVipLevelBox();
+    });
+    function GetNotShowBoxArticle() {
+        var userId = '0';
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/ArticleEliteNotificationHander.ashx",
+            data: { action: 'GetNotShowBoxArticle', userId: userId },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    $('#articletitleplace').html(data.ResultSet[0].Title);
+                    $('#articletitleplace').attr('href', 'https://www.ad.siemens.com.cn/club/bbs/post_ab_' + data.ResultSet[0].ArticleId + '_' + data.ResultSet[0].BoardId + '.html');
+                    var wapurl = 'https://wap.siemens.com.cn/club/bbs/post/' + data.ResultSet[0].ArticleId + '.html';
+                    var qrcodeel = new QRCode(document.getElementById("qrcodeElite"), {
+                        width: 98, //设置宽高
+                        height: 98
+                    });
+                    qrcodeel.makeCode(wapurl);
+                    $(".jinhuaPop").show();
+                    $("#jinhuaPopMask").show();
+                    UpdateArticleEliteNotification(data.ResultSet[0].ArticleId);
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function UpdateArticleEliteNotification(articleId) {
+        var userId = '0';
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/ArticleEliteNotificationHander.ashx",
+            data: { action: 'UpdateArticleEliteNotification', articleID: articleId, userId: userId },
+            async: true,
+            success: function (data) {
+               
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function ShowVipLevelBox() {
+        var cookieOrdinaryVal = $.cookie("BBSVIPLevelOrdinary_20230923");
+        var cookieGoldVal = $.cookie("BBSVIPLevelGoldy_20230923");
+        var cookiePlatinumVal = $.cookie("BBSVIPLevelPlatinum_20230923");
+        if (cookieOrdinaryVal && cookieGoldVal && cookiePlatinumVal) {
+            //如果三个弹框都已经显示过，则不在判断
+            return;
+        } else {
+            var userId = '0';
+            var vipType = 1;
+            if (vipType == 1) {
+                //当前是普通等级
+                if (!cookieOrdinaryVal) {
+                    GetVipLevelBox(userId, vipType);
+                } else {
+                    return
+                }
+
+            } else if (vipType == 2) {
+                //当前是黄金等级
+                if (!cookieGoldVal) {
+                    GetVipLevelBox(userId, vipType);
+                } else {
+                    return
+                }
+
+            } else if (vipType == 3) {
+                //当前是白金等级，钻石不显示弹框了
+                if (!cookiePlatinumVal) {
+                    GetVipLevelBox(userId, vipType);
+                } else {
+                    return
+                }
+            }
+        }
+    }
+    function GetVipLevelBox(userId, vipType) {
+        $.ajax({
+            type: "Post",
+            url: "AjaxApi/GetIsShowVipLevelBox.ashx",
+            data: { vipType: vipType, userId: userId },
+            async: true,
+            success: function (data) {
+                if (data != null && data.TotalRecs > 0) {
+                    if (data.ResultSet[0] == 1) {
+                        $(".level-up").show();
+                        $("#jinhuaPopMask").show();
+                    }
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+</script>
+
+
+        </div>
+    </div>
+    
+    <div class="fixed-right">
+        <div class="fixed-right-btn">
+            <ul class="fixed-right-btn-top">
+                <li onclick="showsharebox()">
+                    <img alt="" src="Content/newPattern/img/sher.svg" />
+                    <p>
+                        分享
+                         <div id="rightsharebox" class="share-box qrcode">
+                         </div>
+                    </p>
+                </li>
+                <li>
+                    <p onclick="gototypepage('poster')">
+                        只看<br>
+                        楼主
+                    </p>
+                </li>
+                
+            </ul>
+            <div id="kzzxDiv" style="width:116px;height:116px;/*padding:8px;*/background:#fff;margin-bottom:10px;text-align:center;display:none;">
+                
+                <a href="https://www.ad.siemens.com.cn/aixiaoxi/home" target="_blank">
+                    <img alt="" src="/club/bbs/images/rightad.png" style="width:116px;height:116px;"/>
+                </a>
+                
+            </div>
+              
+
+            <div class="fixed-right-btn-btm scrollTop">
+                <img src="Content/newPattern/img/f-to-top.png" alt="top" />
+            </div>
+        </div>
+    </div>
+
+
+        </div>
+
+
+
+
+    <!-- 蒙版效果弹出层 -->
+    <div id="divMaskingOutWelcomeTip" class="divMaskingOut_Welcome" style="display: none;">
+    </div>
+    
+    
+    <div id="leftfloatad" class="leftfloatad">
+        <a href="javascript:CloseFloatDiv();" style="float: right; margin-top: -15px; margin-right: -15px; font-size: 16px;">X</a>
+        <a target="_blank" href="https://www.ad.siemens.com.cn/club/bbs/bbshot.html">
+            <img style="width: 320px; height: 140px;" alt="图片" src="/MySupport/img/AdAndAnnouncement/upload/20250710095608568.gif" /></a>
+    </div>
+    <input name="ctl00$ctl00$hidIEVersion" type="hidden" id="ctl00_ctl00_hidIEVersion" value="IE-7" />
+    
+
+
+    <div id="footer-zone" style="padding-top: 36px; clear: both; margin-left: auto; position: static; margin-right: auto;">
+
+        <span id="ctl00_ctl00_PageFoot" platform="FA"></span><div class="container" style="position:static">
+    <div class="ft-menu-box">
+        <div class="ft-menu">
+            <h4>下载中心</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/download/" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/download/filter" title="查找文档">
+                            <span class="icon-arrow-right-small icon-left"></span>查找文档
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/download/materiallist?id=2" title="常见问题大全">
+                            <span class="icon-arrow-right-small icon-left"></span>常见问题大全
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/download/recommendtopiclist" title="精选主题">
+                            <span class="icon-arrow-right-small icon-left"></span>精选主题
+                        </a>
+                    </li>
+                    <h4>全球技术资源</h4>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://support.industry.siemens.com/cs/productsearch?lc=zh-CN" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://sieportal.siemens.com/zh-cn/search?scope=knowledgebase&Type=siePortal" title="知识库">
+                            <span class="icon-arrow-right-small icon-left"></span>知识库
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/download/documentdetail_18001.html" title="订阅文档">
+                            <span class="icon-arrow-right-small icon-left"></span>订阅文档
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="ft-menu">
+            <h4>1847工业学习平台</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://1847.siemens.com.cn/" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://1847.siemens.com.cn/vip/buydetail/" title="了解会员权益">
+                            <span class="icon-arrow-right-small icon-left"></span>了解会员权益
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://1847.siemens.com.cn/vip/buydetail/" title="立即开通1847会员">
+                            <span class="icon-arrow-right-small icon-left"></span>立即开通1847会员
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://1847.siemens.com.cn/category/courselist" title="课程中心">
+                            <span class="icon-arrow-right-small icon-left"></span>课程中心
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://1847.siemens.com.cn/pagearea/courselist?id=37" title="学习路线">
+                            <span class="icon-arrow-right-small icon-left"></span>学习路线
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/topicportal/index_4.html" title="初级工程师认证">
+                            <span class="icon-arrow-right-small icon-left"></span>初级工程师认证
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/topicportal/index_8.html" title="高级工程师认证">
+                            <span class="icon-arrow-right-small icon-left"></span>高级工程师认证
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="ft-menu">
+            <h4>培训与认证</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/training" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/training/classification?id=1&trainingMode=0" title="教室培训课">
+                            <span class="icon-arrow-right-small icon-left"></span>教室培训课
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/study/product/Default.aspx" title="取证训练营">
+                            <span class="icon-arrow-right-small icon-left"></span>取证训练营
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/training/classification?id=1&trainingMode=1" title="在线自学课">
+                            <span class="icon-arrow-right-small icon-left"></span>在线自学课
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/study/certificate/" title="认证证书查询">
+                            <span class="icon-arrow-right-small icon-left"></span>认证证书查询
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/training/partners" title="培训伙伴验证">
+                            <span class="icon-arrow-right-small icon-left"></span>培训伙伴验证
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="ft-menu">
+            <h4>技术论坛</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/welcome.aspx" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/post_new.aspx?b_id=0" title="发帖">
+                            <span class="icon-arrow-right-small icon-left"></span>发帖
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/bbs_latest.aspx" title="最新发帖">
+                            <span class="icon-arrow-right-small icon-left"></span>最新发帖
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/elites.aspx" title="精华帖">
+                            <span class="icon-arrow-right-small icon-left"></span>精华帖
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/likes.html" title="高赞贴">
+                            <span class="icon-arrow-right-small icon-left"></span>高赞贴
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/bbs_hot.aspx" title="当前热门帖">
+                            <span class="icon-arrow-right-small icon-left"></span>当前热门帖
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/recommend.html" title="高端推荐帖">
+                            <span class="icon-arrow-right-small icon-left"></span>高端推荐帖
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/club/bbs/top.aspx" title="用户荣誉榜">
+                            <span class="icon-arrow-right-small icon-left"></span>用户荣誉榜
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="ft-menu">
+            <h4>找答案</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/default.html" title="首页">
+                            <span class="icon-arrow-right-small icon-left"></span>首页
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/questionIn.aspx" title="提问">
+                            <span class="icon-arrow-right-small icon-left"></span>提问
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/question_more_4.html" title="精华问答">
+                            <span class="icon-arrow-right-small icon-left"></span>精华问答
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/question_more_8.html" title="高赞问答">
+                            <span class="icon-arrow-right-small icon-left"></span>高赞问答
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/question_more_3.html" title="新解决问题">
+                            <span class="icon-arrow-right-small icon-left"></span>新解决问题
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/question_more_0.html" title="待解决问题">
+                            <span class="icon-arrow-right-small icon-left"></span>待解决问题
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/answer/allP_list.aspx" title="总积分排行榜">
+                            <span class="icon-arrow-right-small icon-left"></span>总积分排行榜
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="ft-menu">
+            <h4>售后服务</h4>
+            <div class="ft-menulist">
+                <ul>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/home" title="我要报修">
+                            <span class="icon-arrow-right-small icon-left"></span>我要报修
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/progress" title="服务进度查询">
+                            <span class="icon-arrow-right-small icon-left"></span>服务进度查询
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/t/ssauto/mp/wss/index.html#/new/quality-assurance" title="质保及权益查询">
+                            <span class="icon-arrow-right-small icon-left"></span>质保及权益查询
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://mall.siemens.com.cn/pcweb/listSearch?frontCategoryUuid=dd5b3a2c278e4730a211cb5cc422f2a6&keyword=" title="备件商城">
+                            <span class="icon-arrow-right-small icon-left"></span>备件商城
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/myservice/page/czgcs/gongchengshi.html" title="ASP工程师验证">
+                            <span class="icon-arrow-right-small icon-left"></span>ASP工程师验证
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" rel="nofollow" href="https://ptm.siemens.com.cn/dpp/web/#/certificate/detail" title="ASP公司证书验证">
+                            <span class="icon-arrow-right-small icon-left"></span>ASP公司证书验证
+                        </a>
+                    </li>
+                    <!--<li>
+        <a target="_blank" rel="nofollow" href="https://www.ad.siemens.com.cn/service/myservice/page/FAQ.aspx" title="售后服务常见问题">
+            <span class="icon-arrow-right-small icon-left"></span>售后服务常见问题
+        </a>
+    </li>-->
+                    <h4><a href="https://www.ad.siemens.com.cn/mysupport/AdAndAnnouncementDetail.aspx?id=303" target="_blank">支持中心网站重要声明</a></h4>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-links">
+        <a target="_blank" rel="nofollow" href="https://new.siemens.com/cn/zh.html">西门子中国</a>&nbsp;&nbsp;
+        <span>© 西门子（中国）有限公司 1996 – 2026</span>
+        &nbsp;&nbsp;<a target="_blank" rel="nofollow" href="https://new.siemens.com/cn/zh/general/legal.html">企业信息</a>
+        &nbsp;&nbsp;<a target="_blank" rel="nofollow" href="https://new.siemens.com/cn/zh/general/privacy-notice.html"> 隐私政策</a>
+        &nbsp;&nbsp;<a target="_blank" rel="nofollow noopener noreferrer" href="https://new.siemens.com/cn/zh/general/terms-of-use.html">使用条款</a>
+        &nbsp;&nbsp;<a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn/">京ICP备06054295号</a>
+        &nbsp;&nbsp;<a target="_blank" rel="nofollow" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502040638">京公网安备 11010502040638号</a>
+    </div>
+</div>
+
+    </div>
+    <div id="surveyDialog" style="display: none;">
+        <div class="inviteDialogMark">
+            &nbsp;
+        </div>
+        <div id="LoginBox" style="display: none;">
+            <div class="row1">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn"></a>
+            </div>
+            <div class="row2">
+                <div>支持中心新发布“关注”功能了！实时查看彼此动态，更方便地进行技术交流。</div>
+                <div>不管是“关注”与“被关注”，相信都是一个美好的开始！</div>
+                <div>还有多重奖励派送，快快行动起来吧！</div>
+                <div class="pic">
+                    <a href="/club/bbs/FocusLandingPage/index.aspx" target="_blank">
+                        <img src="/MySupport/img/mengban/email_focus_button.png" alt="" /></a>
+                </div>
+                <div class="pic02">
+                    <img alt="" src="/MySupport/img/mengban/float_gift.png" />
+                </div>
+            </div>
+        </div>
+        <div class="inviteDialog ">
+            <img alt="" src="/MySupport/img/invite-logo.gif" width="394" height="58" />
+            <h3>20秒帮我们优化支持中心！</h3>
+            <p>
+                欢迎您访问支持中心！
+            </p>
+            <p>
+                丰富的视频，全方位的文档，大量的网友交流精华……
+            </p>
+            <p>
+                为了更好的完善这些内容，我们诚邀您在浏览结束后，花20秒左右的时间，完成一个用户在线调查！
+            </p>
+            <p>
+                感谢您的支持！
+            </p>
+            <div class="btn">
+                <img id="imgYesSurvey" style="margin-right: 10px; cursor: pointer;" alt="" src="/MySupport/img/invite-btn-yes.gif"
+                    width="187" height="26" />
+                <img id="imgNoSurvey" style="cursor: pointer;" alt="" src="/MySupport/img/invite-btn-no.gif"
+                    width="187" height="26" />
+            </div>
+        </div>
+    </div>
+
+    <div id="cookieMask"></div>
+    
+    
+
+<style type="text/css">
+#StationTipsDiv{border:1px solid #ddd;box-shadow:3px 5px 7px #ddd; position:fixed;left:767px;bottom:5px;width:267px; height:84px;z-index:9999;  background-color:#fff; padding-left:10px;display:none;}
+.stationTipsfooter-box div{height:40px;padding-left:30px;font-size:12px; color:#333; }
+.stationTipsfooter-boxRow1{ background:url(images/icon_news.png)0px center no-repeat; background-size:19px 12px;line-height:40px;}
+.stationTipsfooter-box .stationTipsfooter-boxRow2{height:48px;line-height:20px;}
+.stationTipsfooter-box .stationTipsfooter-close{ font-size:25px;padding-left:0px;position:absolute;right:10px; top:0px;}
+</style>
+<script type="text/javascript">
+    $(function () {
+        var uid = '0';
+        var count = '0';
+        var isshow = '0';
+        //区分新旧站内信
+        var newsId = '0';
+        //是否显示
+        $(function () {
+            //var todayIsDisplayed = $.cookie("todayIsDisplayed_" + uid + "_StationTips");
+            //if ((todayIsDisplayed < newsId || !todayIsDisplayed ) && newsId > 0 && count > 0 && isshow == 1) {
+            //    $("#StationTipsDiv").show();
+            //} else {
+            //    $("#StationTipsDiv").fadeOut("fast");
+            //}
+        });
+        //关闭
+        $("#stationTipscloseBtn").hover(function () { $(this).css({ color: 'black', cursor: 'pointer' }) }, function () { $(this).css({ color: '#999' }) }).click(function () {
+            $("#StationTipsDiv").fadeOut("fast");
+            setTodayCookie("todayIsDisplayed_" + uid + "_StationTips", newsId);
+        });
+        //跳转到站内信
+        $("#stationTipsShow").hover(function () { $(this).css({ cursor: 'pointer' }) }).click(function () {
+            setTodayCookie("todayIsDisplayed_" + uid + "_StationTips", newsId);
+            if (count == 1) {
+                //一封站内信跳转到详情页，多封跳转到列表页
+                window.open('/MySupport/MyMsgDetail.aspx?noticeId=' + newsId);
+            } else {
+                window.open('/MySupport/MyMsgmain.aspx');
+            }
+        });
+    });
+    //设置cookie为当天24点过期
+    function setTodayCookie(name, value) {
+        // 获取当前日期对象
+        var curDate = new Date();
+        // 改变当前时间的时分秒
+        curDate.setHours(23, 59, 59);
+        $.cookie(name, value, { path: '/', expires: curDate });
+    }
+</script>	
+<div id="StationTipsDiv">
+	<div class="stationTipsfooter-box">
+		<div class="stationTipsfooter-boxRow1">您收到<span style="color:Red;">0</span>封站内信：</div>
+		<div class="stationTipsfooter-boxRow2"><a id="stationTipsShow" href="javascript:void(0);"></a></div>
+		<div class="stationTipsfooter-close" id="stationTipscloseBtn">&times;</div>
+	</div>
+</div>
+    
+<style type="text/css">
+    .realTimeTips
+    {
+        border: 1px solid #ddd;
+        box-shadow: 3px 5px 7px #ddd;
+        position: fixed;
+        left: 330px;
+        top: 50%;
+        margin-top: -56px;
+        width: 330px;
+        height: 112px;
+        z-index: 10000;
+        background: url(images/pic_news.png) 25px 10px no-repeat;
+        background-size: 75px 90px;
+        background-color: #fff;
+        display: none;
+    }
+    .realTimeTipsClose
+    {
+        height: 34px;
+        color: #fff;
+        line-height: 34px;
+        font-size: 14px;
+        position: absolute;
+        right: 0px;
+    }
+    .realTimeTipsClose .closeBtn
+    {
+        width: 25px;
+        height: 25px;
+        float: right;
+        padding-top: 4px;
+        font-size: 25px;
+        color: #999;
+        text-decoration: none;
+    }
+    .realTimeTipsMsg
+    {
+        padding: 15px 20px 0 115px;
+        font-size: 12px;
+    }
+</style>
+<script type="text/javascript">
+    var ct;
+    $(function () {
+        //2、发普通帖
+        if ($.cookie('Post_RealTimeTip') > 0) {
+            //清除cookie.
+            $.cookie('Post_RealTimeTip', null, { path: "/club/bbs" });
+            var isShow = "1";
+            var ny2018IsShow = $("#LoginBox18").css("display") == "block" ? "1" : "0";
+            if (isShow == "1" && ny2018IsShow != "1") {
+                var coinValue = "25";
+                var pointValue = "25";
+                showRealTimeTips("本次发普通帖可获得：", pointValue, coinValue);
+            }
+        }
+        //4、回帖
+        if ($.cookie('BBSReply_RealTimeTip') > 0) {
+            //清除cookie.
+            $.cookie('BBSReply_RealTimeTip', null, { path: "/club/bbs" });
+            var isShow = "1";
+            var ny2018IsShow = $("#LoginBox18").css("display") == "block" ? "1" : "0";
+            if (isShow == "1" && ny2018IsShow != "1") {
+                var coinValue = "0";
+                var pointValue = "1";
+                showRealTimeTips("本次回帖可获得：", pointValue, coinValue);
+            }
+        }
+        //5、BBS登录
+        if ($.cookie('EverydayLoginByBBS_RealTimeTip') == "1") {
+            //清除cookie.
+            $.cookie('EverydayLoginByBBS_RealTimeTip', null, { path: "/club/bbs" });
+            var isShow = "1";
+            if (isShow == "1") {
+                var coinValue = "1";
+                var pointValue = "1";
+                showRealTimeTips("本次登录可获得：", pointValue, coinValue);
+            }
+        }
+        //6、推荐帖子
+        if ($.cookie('RecommendPost_RealTimeTip') > 0) {
+            //清除cookie.
+            $.cookie('RecommendPost_RealTimeTip', null, { path: "/club/bbs" });
+            var isShow = "1";
+            if (isShow == "1") {
+                var coinValue = "0";
+                var pointValue = "2";
+                showRealTimeTips("本次推荐帖子可获得：", pointValue, coinValue);
+            }
+        }
+        //7、首次关注后刷新页面时调用
+        firstFocusUserTips();
+        //关闭按钮
+        $("#closeBtn").click(function () {
+            closeRealTimeTips();
+        });
+    });
+    //显示即时消息内容
+    function showRealTimeTips(msg, point, coin) {
+        clearTimeout(ct);
+        $("#realTimeTipsMsg").html("");
+        $("#realTimeTipsMsg").append("<div><span style='line-height:22px;'>恭喜您，</span><br /><span style='line-height:22px;'>" + msg + "</span></div><div>");
+        if (point > 0) {
+            $("#realTimeTipsMsg").append('<span style="color:#990000;font-weight:bold;line-height:22px;">' + point + '</span><span style="line-height:22px;">经验值</span>&nbsp;');
+        } if (coin > 0) {
+            $("#realTimeTipsMsg").append('<span style="color:#990000;font-weight:bold;line-height:22px;">' + coin + '</span><span style="line-height:22px;">西币</span>');
+        }
+        $("#realTimeTipsMsg").append("</div>");
+        $("#realTimeTips").show();
+        //5秒后自动关闭或者手动点击关闭
+        ct = setTimeout(function () {
+            closeRealTimeTips();
+        }, 3000)
+    }
+    //不刷新页面的消息显示
+    //用户首次关注用户
+    function firstFocusUserTips() {
+        if ($.cookie('FirstFocusUser_RealTimeTip') > 0) {
+            //清除cookie.
+            $.cookie('FirstFocusUser_RealTimeTip', null, { path: "/" });
+            clearTimeout(ct);
+            $("#realTimeTipsMsg").html("");
+            $("#realTimeTipsMsg").append("<div><span style='line-height:22px;'>恭喜您，</span><br /><span style='line-height:22px;'>首次关注用户可获得：</span></div><div>");
+            $("#realTimeTipsMsg").append('<span style="color:#990000;font-weight:bold;line-height:22px;">5</span><span style="line-height:22px;">积分</span>&nbsp;');
+            $("#realTimeTipsMsg").append('<span style="color:#990000;font-weight:bold;line-height:22px;">5</span><span style="line-height:22px;">西币</span>&nbsp;');
+            $("#realTimeTipsMsg").append('<span style="color:#990000;font-weight:bold;line-height:22px;">5</span><span style="line-height:22px;">经验值</span>&nbsp;');
+            $("#realTimeTipsMsg").append("</div>");
+            $("#realTimeTips").show();
+            //5秒后自动关闭或者手动点击关闭
+            ct = setTimeout(function () {
+                closeRealTimeTips();
+            }, 3000)
+        }
+    }
+    //评论帖子
+    function evaluateArticleTips() {
+        var isShow = "1";
+        if (isShow == "1") {
+            var coinValue = "0";
+            var pointValue = "1";
+            showRealTimeTips("本次评论可获得：", pointValue, coinValue);
+        }
+    }
+    //仅显示信息
+    function showRealTimeMsg(msg) {
+        clearTimeout(ct);
+        $("#realTimeTipsMsg").html("");
+        $("#realTimeTipsMsg").append("<div><span style='line-height:22px;'>" + msg + "</span></div>");
+        $("#realTimeTips").show();
+        //5秒后自动关闭或者手动点击关闭
+        ct = setTimeout(function () {
+            closeRealTimeTips();
+        }, 3000)
+    }
+    //点赞提示框
+    function zanRealTimeTips(msg) {
+        clearTimeout(ct);
+        $("#realTimeTipsMsg").html("");
+        $("#realTimeTipsMsg").append("<div><span style='line-height:22px;'>" + msg + "</span></div>");
+        if ($.cookie('Flower_RealTimeTip') >0) {
+            //清除cookie.
+            $.cookie('Flower_RealTimeTip', null, { path: "/club/bbs" });
+        }
+        $("#realTimeTips").show();
+        //5秒后自动关闭或者手动点击关闭
+        ct = setTimeout(function () {
+            closeRealTimeTips();
+        }, 3000)
+    }
+    //关闭即时消息
+    function closeRealTimeTips() {
+        $("#realTimeTips").hide();
+    }
+</script>
+<div class="realTimeTips" id="realTimeTips">
+    <div class="realTimeTipsClose">
+        <a href="javascript:closeRealTimeTips()" title="关闭窗口" class="closeBtn" id="closeBtn">&times;</a>
+    </div>
+    <div id="realTimeTipsMsg" class="realTimeTipsMsg">
+    </div>
+</div>
+    
+
+<!-- BBS活动蒙版效果弹出层 -->
+<div id="divMaskingActivityTip">
+
+</div>
+
+<script type="text/javascript">
+    var postNum = "0";
+    if (postNum <= 0) {
+        if (typeof ($("#showisfirstpost")) != "undefined") {
+            var cookieVal = $.cookie("BBSisfirstpost_20230921");//BBSMaskingActivityTip
+            if (!cookieVal) {
+                $("#showisfirstpost").show();
+            } else {
+                $("#showisfirstpost").hide();
+            }
+        }
+    }
+    else {
+        $('#showisfirstpost').hide()
+    }
+   
+
+    function ShowMaskingActivity(type) {
+        //if (type != "1") return;//弹窗2和3下线处理，仅保留弹窗1
+        var goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_1836208_25_0_1.html?channel_link_type=web&utm_campaign=Forum_ShowUGC&sat_cf=1&utm_medium=pop%20up&_channel_track_key=FjsG6vYv#anch';
+        var imgUrl = 'Mask_BBS_20230719_01.png'
+        //var goUrl = 'https://www.ad.siemens.com.cn/1847/Activity/ExpertMeeting?channel_link_type=web&utm_campaign=%E4%B8%93%E5%AE%B6%E4%BC%9A%E8%AE%AE&sat_cf=1&utm_medium=bbspopup&_channel_track_key=vOiVcjuU&utm_source=bbs';
+        //var imgUrl = 'Mask_BBS_20220815_2.png'
+
+        switch (type) {
+            case '1':
+                goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_1836208_25_0_1.html?channel_link_type=web&utm_campaign=Forum_ShowUGC&sat_cf=1&utm_medium=pop%20up&_channel_track_key=FjsG6vYv#anch';
+                imgUrl = 'Mask_BBS_20230719_01.png'
+                break;
+            case '2':
+                goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_1836208_25_0_1.html?channel_link_type=web&utm_campaign=Forum_ShowUGC&sat_cf=1&utm_medium=pop%20up&_channel_track_key=FjsG6vYv#anch';
+                imgUrl = 'Mask_BBS_20230719_01.png'
+                //if (postNum > 0) {
+                   
+                //}
+                //else {
+                //    goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_new.aspx?b_id=0&s_id=&postType=4&utm_term=user_nopost&channel_link_type=web&utm_campaign=%E6%8A%80%E6%9C%AF%E8%AE%BA%E5%9D%9B%E7%AC%AC%E5%85%AD%E5%B1%8A%E5%B8%96%E4%BA%BA%E4%BA%89%E9%9C%B8%E8%B5%9B&sat_cf=1&utm_medium=PopUp&_channel_track_key=lH3Tx8Z1&utm_source=BBS';
+                //    imgUrl = 'Mask_BBS_20230403_03.png'
+                //}
+                break;
+            case '3':
+                goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_1836208_25_0_1.html?channel_link_type=web&utm_campaign=Forum_ShowUGC&sat_cf=1&utm_medium=pop%20up&_channel_track_key=QPF1iNmm#anch';
+                imgUrl = 'Mask_BBS_20230719_02.png'
+                break;
+            case '4':
+                goUrl = 'https://www.ad.siemens.com.cn/club/bbs/post_1836208_25_0_1.html?channel_link_type=web&utm_campaign=Forum_ShowUGC&sat_cf=1&utm_medium=pop%20up&_channel_track_key=FjsG6vYv#anch';
+                imgUrl = 'Mask_BBS_20230719_01.png'
+                break;
+        }
+        $("#divMaskingActivityTip").html("");
+        var strHtml = '<div class="divMaskingActivity" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0; overflow: auto; margin: 0; background: rgba(0, 0, 0, .7); z-index: 1000; ">'
+            + '<div class="mask-bak-content" style = "position: relative;margin: 200px auto 0;width: 380px;" >'
+            + '<img class="imgMaskingActivityClose" style="max-width: 27px;margin-top: 17px;position: absolute;right: 22px; cursor:pointer;" src="/club/bbs/img/Mask_BBS_20230407_Close.png">'
+            + '<a target="_blank" id="a_MaskingActivity" href="' + goUrl + '" onclick="return fn_MaskingActivityGo(' + type + ');"><img id="img_MaskingActivity" style="max-width:100%;" src="/club/bbs/img/' + imgUrl + '"></a>'
+            + '</div>'
+            + '</div>';
+        $("#divMaskingActivityTip").html(strHtml);
+
+        //var cookieVal = $.cookie("BBSMaskingActivityTip_" + type);
+        var cookieVal = $.cookie("BBSMaskingActivityTip_20230720");//BBSMaskingActivityTip
+        if (!cookieVal && type != '0') {
+            $(".divMaskingActivity").show();
+        } else {
+            $(".divMaskingActivity").hide();
+        }
+
+        /* 关闭 */
+        $(".imgMaskingActivityClose").click(function () {
+            $(".divMaskingActivity").hide();
+            //setTodayCookie("todayIsDisplayed_" + type + "_MaskingActivityTip", "close");
+            //jQuery.cookie('BBSMaskingActivityTip_' + type, 'close', { expires: 365 * 100, path: '/' });
+            jQuery.cookie('BBSMaskingActivityTip_20230720', 'hide', { expires: 2, path: '/' });
+        });
+
+    }
+    /* 点击跳转 */
+    function fn_MaskingActivityGo(type) {
+
+        $(".divMaskingActivity").hide();
+        // 获取当前日期对象
+        var curDate = new Date();
+        // 改变当前时间的时分秒
+        curDate.setHours(23, 59, 59);
+        //jQuery.cookie('BBSMaskingActivityTip', 'hide', { expires: 5, path: '/' });
+        jQuery.cookie('BBSMaskingActivityTip_20230720', 'hide', { expires: curDate, path: '/' });
+        
+        //jQuery.cookie('BBSMaskingActivityTip_' + type, 'hide', { expires: curDate, path: '/' });
+
+        return true;
+    }
+</script>
+
+    
+    
+<script src="/MySupport/Scripts/datastatistics.js?v=20260708" type="text/javascript"></script>
+    <script>
+        customSensorsAnalyticsLib.autoTrack(0,2,{
+        'User_VIPLevel':'',
+        'User_FACredit':0,
+        'User_FALevel':'',
+        'User_BBSLevel':'',
+        'User_BBSCredit':0,
+        'User_VirtualCoin':0
+        });        
+    </script>
+<style type="text/css">
+    #fluid-zone .support
+    {
+        padding-left: 18px;
+        background: url(/club/bbs/img/icon_support.gif) no-repeat 0px 1px;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="/Mysupport/styles/thirdLogin.css?v=20260708" />
+<script type="text/javascript">
+    var dm = document.documentMode, isIE5, isIE6, isIE7, isIE8, isIE9, isIE10, isIE11;
+    if (dm > 8) {
+        document.write(unescape("%3Cscript src='/MySupport/Scripts/Baidu-Frontia-JS-1.0.0.js' type='text/javascript'%3E%3C/script%3E"));
+    }
+</script>
+<script src="/MySupport/Scripts/cookie.js?v=20260708" type="text/javascript"></script>
+<script src="/MySupport/Scripts/jquery.tinywatermark.js?v=20260708" type="text/javascript"></script>
+<!-- 蒙版效果弹出层登陆 -->
+<span id="ctl00_ctl00_NewLogin_loginBox"></span><link rel="stylesheet" type="text/css" href="https://oso.siemens.com.cn/sso/lib/sweetalert/sweetalert.css" /><link rel="stylesheet" type="text/css" href="https://oso.siemens.com.cn/sso/css/dropDown.css" /><div id="divMask" class="mask" style="z-index:1001;height:100%;background-color:black;width:100%;opacity: 0.3;position: fixed;top: 0px;left: 0px;display: none;"></div>
+                <div id="divLoginPage" class="login-page" style="z-index:1002;height:auto;width:100%;position: fixed;top: 0px;left: 0px;display: none;">
+                    <div class="login-box" style="margin: 70px auto 0 auto; position:static; padding-top: 0; height:auto; width:590px;padding-left:0px;padding-bottom: 0px"><div class="loginDialogBanner">
+                                    <a href="https://www.ad.siemens.com.cn/topicportal/index_110.html?utm_source=CKM-%E5%85%A8%E7%AB%99&utm_medium=%E9%A1%B5%E9%9D%A2&utm_term=%E6%89%BE%E7%AD%94%E6%A1%88%E6%AF%8F%E5%91%A8%E9%97%AE%E7%AD%94%E7%A6%8F%E5%88%A9&utm_content=%E7%99%BB%E5%BD%95%E6%A1%86%E6%8E%A8%E6%AF%8F%E5%91%A8%E9%97%AE%E7%AD%94%E7%A6%8F%E5%88%A9&utm_campaign=%E7%99%BB%E5%BD%95%E5%BC%B9%E7%AA%97%E5%B7%A6%E4%BE%A7&_channel_track_key=ITjXEmqL" target="_blank" ><img title="参与「找答案」每周问答福利，提问或回答即可全民瓜分3000西币奖池，发1条也能分西币！用心解答更有机会单篇直发66西币，上不封顶。每周还有快答侠、夺魁答侠等专属称号与丰厚奖励等你来拿！西币可兑换实物奖品，随手互动免费领福利。" alt="参与「找答案」每周问答福利，提问或回答即可全民瓜分3000西币奖池，发1条也能分西币！用心解答更有机会单篇直发66西币，上不封顶。每周还有快答侠、夺魁答侠等专属称号与丰厚奖励等你来拿！西币可兑换实物奖品，随手互动免费领福利。" src="/MySupport/img/AdAndAnnouncement/upload/20260707014307437.png" /></a>
+                                    </div><div style="float:right; width:390px;background-color: #fff;">
+                            <div style="text-align:right;height:24px;">
+                                <a class="close" style="display:block; margin-right: 6px; padding-top:6px;opacity:1;"><img id="imgClose" src="https://oso.siemens.com.cn/sso/img/close.png" style="cursor: pointer;"></a>
+                            </div>
+                            <div id="iframe"></div>
+                        </div>
+                    </div>
+                </div><script type="text/javascript" src="https://oso.siemens.com.cn/sso/js/dropDown.js"></script><script type="text/javascript" src="https://oso.siemens.com.cn/sso/lib/sweetalert/sweetalert.min.js"></script><script type="text/javascript" src="//g.alicdn.com/sd/ncpc/nc.js" charset="utf-8"></script><script type="text/javascript" src="https://oso.siemens.com.cn/sso/js/commonTipsWord.js"></script><script type="text/javascript" src="https://oso.siemens.com.cn/sso/js/ncpc.js"></script>
+<script src="/MySupport/Scripts/mysupport-droplist.js?v=20260708" type="text/javascript"></script>
+
+    
+<link rel="stylesheet" type="text/css" href="/MySupport/Styles/signIn/main.css?v=20260708" />
+<link rel="stylesheet" type="text/css" href="/MySupport/Styles/signIn/style.css?v=20260708" />
+<script type="text/javascript" src="/MySupport/Scripts/jquery.rotate.min.js?v=20260708" ></script>
+<script type="text/javascript" src="/MySupport/Scripts/calendar.js?v=20260708"></script>
+<script type="text/javascript" src="/MySupport/Scripts/signIn.js?v=20260708"></script>
+<style>
+    /*7tian活动增加，获取取消后去掉即可*/
+    #signln_LoginBox   
+    {
+        height:660px;
+        background:url("/MySupport/img/pic2.png") no-repeat;
+      /*  background-size: 547px 660px;*/
+
+    }
+</style>
+<!-- 签到弹层页-->
+<div id="signln_LoginBox" style="display:none;">
+    <div class="signln_row1">
+        <a href="javascript:void(0)" title="关闭窗口" class="signln_close_btn" id="signln_closeBtn"><img src="/MySupport/img/shup.png" alt=""/></a>
+    </div>
+    <div>
+        <div class="signln_qianTitle">
+            <!--<div class="TitleNameTitle">已经签到5天</div>-->
+            <div class="signln_TitleNameBtn"><div id="signInBtn" class="signln_btn-qiandao"><div class="signln_qiandao01">立即<br />签到</div><div class="signln_qiandao02"><div class="signln_qiandao02Top">已签到</div><div class="signln_qiandao02Btom">已签到0天</div> </div></div></div>
+            <div class="signln_xiBiTitle">累计可抽西币次数：<span id="getCoinCount">0</span>次抽奖机会<button class="nohover" id="signln_example02" type="button">抽西币奖</button>
+            </div>
+            <div class="signln_xiBiTitle">累计可抽惊喜实物奖次数：<span id="getBigAwardCount">0</span>次抽奖机会<button class="nohover" id="signln_example03" type="button">抽惊喜实物奖</button></div>
+        </div>
+        <div class="DayQianRI">
+            <div class="col-xs-12 clearPadding">
+                <div class="calendar">
+                    <div class="calenbox">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+    <div id="7dayimg" style="width:420px;margin: 10px auto;"><a href="https://www.ad.siemens.com.cn/Event/7DaysChallenge/Index.aspx?channel_link_type=web&utm_campaign=OS%E7%AD%BE%E5%88%B0%E5%BC%B9%E7%AA%97&sat_cf=1&utm_medium=banner&_channel_track_key=KiTAgRhN&utm_content=7dayschallenge"><img src="/MySupport/Content/img/login20Days.png" style="width: 420px;" /></a></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 终极大奖转盘页面-->
+<div id="signln_LoginBox03">
+    <div>
+        <div class="g-content">
+            <div class="g-lottery-case">
+                <div class="g-left">
+                    <div class="g-lottery-boxIn">
+                        <div class="g-lottery-box">
+                            <div class="g-lottery-img">
+                                <a id="coinPlaybtn" class="playbtn" href="javascript:;" title="开始抽奖"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div id='dialogMask' class="signln_dialog_Mask">
+    </div>
+    <div id="dialogBox">
+    <div class="signln_dialog_row1">
+        信息提示 <a href="javascript:void(0)" title="关闭窗口" class="signln_dialog_close_dialogbtn" id="closeDialogBtn">
+            <img src="/MySupport/img/dialog_close.png" alt="" /></a>
+    </div>
+    <div class="signln_dialog_row2">
+        <div id="content">
+            很抱歉！您所访问的页面不存在，或网址发生了变化，请稍后再试。</div>
+        <div class="signln_dialog_row02Btn">
+            <button id="ny19DialogSureBtn" class="nohover" onclick="CloseDialog()" type="button">
+                确定</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div id='signln_mask' class='signln_mask'></div>
+    
+    
+    <script type="text/javascript" src='/mysupport/Scripts/ad.js'></script>
+    <input id="hidTargetLocation" value="17" type="hidden" />
+    <script type="text/javascript">
+        //init-ueditor.js 使用变量
+        var loginsession =0;
+        var registerpath = "https://www.ad.siemens.com.cn/club/usr/welcome.aspx";
+        //post-new-article.js 使用变量
+        var boradhmi_id = "59";
+        var currentPostType = '5';
+        var currentArticleId = '1974605';
+        var currentBoardId = '66';
+        var currentSortId = '0';
+        var userId =0;
+        //用于储存分页对象
+        var pageNavObj = null;
+        var postTypeString = '西门子分享帖,';
+        var is_Rating = false;
+        var is_Hot = false;
+        var is_Concise = false;
+        var is_HotLiked = false;
+        var is_Recommended = false;
+        try {
+            if ('False' == "True") {
+                is_Rating = true;
+            }
+            if ('False' == "True") {
+                is_Recommended = true;
+            }
+            if ('False' == "True") {
+                is_Concise = true;
+            }
+            if ('False' == "True") {
+                is_HotLiked = true;
+            }
+            if ('False' == "True") {
+                is_Hot = true;
+            }
+            var topic_Title = '使用C#实现西门子S7CommPlus协议通讯并与S71200/S71500型PLC以及PLCSim';
+        } catch { }
+    </script>
+    <script src="/club/bbs/Scripts/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8" src="/club/bbs/js/init-ueditor.js?v=20260708"></script>
+    <script type="text/javascript" charset="utf-8" src="/club/bbs/js/newbbsdetail/inittopueditor.js?v=20260708"></script>
+    <script type="text/javascript" src="/club/bbs/Scripts/jquery.cookie.js?v=20260708"></script>
+    <script type="text/javascript" src="/MySupport/NewResources/js/Paganition/pageNav.js"></script>
+    <script type="text/javascript" src="js/post-new-article.js?v=20260708"></script>
+    <script type="text/javascript" src="js/bbs-detail-evaluate.js?v=20260708"></script>
+    <script type="text/javascript" src="js/VuePageJs/post.js?v=20260708"></script>
+    <script type="text/javascript">
+        $(function () {
+           if (jQuery.cookie("agreementalert") == "agree") {
+                //未登录用户浏览帖子数量限制
+                var isE = 'False';
+                if (userId <= 0) {
+                    if (isE.toLowerCase() == "true") {
+                        show_thirdLoginBox(false);//精华帖未登录，提示登录且可以关闭
+                    }
+                }
+            }
+            var eval_element = $(".reply-part");
+            //兼容
+            $('.icon-new-Arrow-down').text('');
+            $('.icon-new-Arrow-up').text('');
+            for (var i = 0; i < eval_element.length; i++) {
+                var node = eval_element[i];
+                var id = node.getAttribute("id");
+                var boardId = 66;
+                var isLock1 = 1
+                    EvaluateNextNew(id.substring(id.lastIndexOf('_') + 1, id.length), boardId, isLock1, 1);
+            }
+            var dialogOpts = {
+                open: function () {
+                    $('.d_isShare').css('height', 132);
+                    $('.ui-dialog-titlebar').show();
+                    $('.ui-widget-content').css('background', '#fff');
+                    $('.ui-widget-overlay').css('opacity', '0.6');
+                },
+                close: function () {
+
+                },
+                beforeclose: function () {
+                    $('.ui-widget-overlay').css('opacity', '0.3');
+                },
+                bgiframe: true,
+                modal: true,
+                autoOpen: false,
+                width: 360,
+                height: 140
+            };
+            $('.d_isShare').dialog(dialogOpts);
+            //生成wap二维码
+            var list = document.getElementsByClassName("qrcode");
+            var meta2 = 'https://wap.siemens.com.cn/club/bbs/post/1974605.html';
+            var wapUrl = meta2.substring(0, meta2.length);
+            $.each(list, function (ele) {
+                var qrcode2 = new QRCode(list[ele], {
+                    width: 100, //设置宽高
+                    height: 100
+                });
+                qrcode2.makeCode(wapUrl);
+            });
+            var articleID =1974605;
+            getArticleInterest(articleID, userId);
+            fillMainArticleTag(articleID);
+            $('#guanzhugaitie').click(function (e) {
+                if (userId <= 0) {
+                    show_thirdLoginBox();
+                    return;
+                }
+                if ($("#guanzhugaitie").html() == "取消关注") {
+                    cancelArticleInterest(articleID, userId);
+                }
+                else {
+                    saveArticleInterest(articleID, userId);
+                }
+            });
+            $("#guanzhugaitie").hover(
+                function () {
+                    $(".guanzhugaitietips").show();
+                },
+                function () {
+                    $(".guanzhugaitietips").hide();
+                }
+            );
+            var pageIndex =1;
+            var pageCount =1;
+            initPage(pageIndex, pageCount);
+            GetArticleAd();
+            var articleIdList ='1974605,1974645,1974652,1995687,1995776,2007718,2007836,2007894,2007967';
+            initflower(userId, articleIdList);
+            initflowerlist(articleIdList);
+            var authorIdList = '1295834,364795,131720,330725,357957,82330,500524,314437,107798';
+            inituserfocus(userId, authorIdList);
+            if (loginsession != "0") {
+                iSSLoading(jQuery).show({
+                    text: "请稍候...", callback: function () {
+                        try {
+                            inittempdate();
+                            return;
+                        } catch (ex) {
+                            iSSLoading(jQuery).hide();
+                            return;
+                        }
+                    }
+                });
+            }
+            limitD();
+            if (currentPostType == 3) {
+                GetStoryAuthorRecommend(1295834);
+            }
+        });
+        $(window).scroll(function () {
+            //当window的scrolltop距离大于1时，go to 
+            var obj = null;
+            if ($('.floor-title') != null && $('.floor-title').length > 0) {
+                if ($(this).scrollTop() > $('.floor-title').offset().top) {
+                    $('.fixed-botom').css("display", "flex");
+                } else {
+                    $('.fixed-botom').css("display", "none");
+                }
+            }
+            else {
+
+                $('.fixed-botom').css("display", "flex");
+            }
+            if ($(this).scrollTop() > $('.weiz').offset().top) {
+                $('.fixed-botom').css("display", "flex");
+            }
+            if ($(this).scrollTop() > $('.paginationbox').offset().top) {
+                $('.fixed-botom').hide();
+            } if ($(this).scrollTop() < $('.weiz').offset().top) {
+                $('.fixed-botom').css("display", "flex");
+            }
+            if ($('.paginationbox').offset().top > $('.weiz').offset().top) {
+                if ($(this).scrollTop() > $('.weiz').offset().top) {
+                    $('.xiangguan').css({ "position": "fixed" }).removeClass("scoll-bot");
+                }
+                if ($(this).scrollTop() < $('.weiz').offset().top) {
+                    $('.xiangguan').css("position", "static").removeClass("scoll-bot");
+                }
+                var xiangguanbotton = $('.xiangguan').offset().top + $('.xiangguan').outerHeight(); 
+                if (xiangguanbotton > $('.paginationbox').offset().top) {
+                    $('.xiangguan').css({ "position": "absolute" }).addClass("scoll-bot");
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function closeDivFloor() {
+            $("#ctl00_ctl00_MidContentPlaceHolder_LeftContentPlaceHolder_divFloor").hide();
+            //$("#ctl00_MidContentPlaceHolder_hidContent").val("");
+            $("#txtQuote").val("");
+
+        }
+        function inittempdate() {
+            //登陆后提交
+            var article = eval(null);
+            if (article != null && article != '') {
+                $("input[name='FaceID']").val(article.FaceId);
+                if (article.Sort > 0) {
+                    $("#sortSel").val(article.Sort);
+                }
+                $('#txtQuote').val(article.Quote);
+                $('#txtQuoteA_ID').val(article.QuoteAId);
+                ue.ready(function () {
+                    var textareaval = article.Content;
+                    ue.setContent(textareaval, false);
+                });
+                $("#AtUsers").val(article.AtUsers);
+            }
+            if (article != null && article != '') {
+                var aj = $.ajax({
+                    url: '/club/bbs/AjaxApi/PostCommitAjax.ashx',// 跳转到 action    
+                    data: { request: "questPost" },
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.Head.Ret) {
+                            location.href = data.Body.Remark;
+                        } else {
+                            iSSLoading(jQuery).hide();
+                            //initopt();
+                            alert(data.Head.Message);
+                        }
+                    },
+                    error: function (ex, handler) {
+                        iSSLoading(jQuery).hide();
+                        //initopt();
+                        alert("发帖失败，请稍后再试");
+                    }
+                });
+            }
+            else {
+                iSSLoading(jQuery).hide();
+            }
+        }
+        function limitD() {
+            var uid = 0;
+            if (uid <= 0) {
+                $("a").each(function () {
+                    var textValue = $(this).text();
+                    if (textValue.indexOf(".xls") >= 0 || textValue.indexOf(".xlsx") >= 0 || textValue.indexOf(".pdf") >= 0 || textValue.indexOf(".jpg") >= 0 || textValue.indexOf(".png") >= 0 || textValue.indexOf(".gif") >= 0 || textValue.indexOf(".doc") >= 0 || textValue.indexOf(".docx") >= 0 || textValue.indexOf(".rar") >= 0 || textValue.indexOf(".zip") >= 0 || textValue.indexOf(".7z") >= 0 || textValue.indexOf(".txt") >= 0) {
+                        $(this).click(function (event) {
+                            show_thirdLoginBox();
+                            event.preventDefault();
+                        });
+                    }
+                });
+            }
+        }
+        function EvaluateNext(aid, pageIndex) {
+            var boardId = 66;
+            var isLock1 = 1;
+            $("#div_Evaluate_" + aid).html("");
+            EvaluateNextNew(aid, boardId, isLock1, pageIndex);
+        }
+        function initPage(pageIndex, pageCount) {
+            if ($('#PageNavId').length <= 0) {
+                return;
+            }
+            pageNavObj = new PageNavCreate("PageNavId", {
+                pageCount: pageCount,
+                currentPage: pageIndex,
+                perPageNum: 6,
+            });
+            pageNavObj.afterClick(pageNavCallBack);
+            if (userId <= 0) {
+                //底部页码部位更改
+                $('#PageNavId .btn-green').html('查看更多帖子');
+                $('#PageNavId .btn-green').click(function () {
+                    show_thirdLoginBox();
+                });
+            }
+        }
+        function pageNavCallBack(clickPage) {
+            pageIndex = clickPage;
+            console.log(clickPage);
+            if (userId <= 0) {
+                show_thirdLoginBox();
+                return;
+            }
+            var pageurl = '/club/bbs/Post_1974605_66_0_6_0_pageplace_0__0.html';
+            pageurl = pageurl.replace('pageplace', pageIndex);
+            window.location.href = pageurl;
+        }
+        //只看楼主等
+        function gototypepage(type) {
+            var locationhref = '/club/bbs/Post_1974605_66_0_6_0_pageplace_0__0.html';
+            locationhref = locationhref.replace('pageplace', 1);
+            var index = window.location.href.indexOf('type');
+            if (index > -1) {
+                if (type == 'all') {
+                    window.location.href = locationhref;
+                }
+                else if (GetUrlParam('type') != type) {
+                    window.location.href = locationhref + "?type=" + type;
+                }
+            }
+            else {
+                if (type == 'all') {
+                    window.location.href = locationhref;
+                }
+                else {
+                    window.location.href = locationhref + "?type=" + type;
+                }
+            }
+        }
+        function Vote() {
+            var articleId = currentArticleId;
+            var userId = "0";
+            var bid = "66";
+            var chkIDStr = '';
+            $("input[name='rbtnVote']:checked").each(function () {
+                chkIDStr += $(this).val() + ",";
+            });
+            chkIDStr = chkIDStr.substring(0, chkIDStr.lastIndexOf(','));
+            $.ajax({
+                url: "bbsGeneric.ashx?action=CheckedVote&checkedId=" + chkIDStr + "&articleId= " + articleId + "&userId=" + userId + "&bordId=" + bid + "",
+                type: "POST",
+                async: false,
+                cache: false,
+                success: function (data) {
+                    if (data == "true") {
+                        alert("投票成功！感谢您的参与。");
+                        window.location.reload();
+                    } else if (data == "none") {
+                        alert("请选择投票项进行投票！");
+                    }
+                    else {
+                        alert("网络环境不佳，稍后再试！");
+                    }
+
+                },
+                error: function () {
+                    alert("网络环境不佳，稍后再试！");
+                }
+            });
+        }
+        function AddUrlLog(q_id, c_id) {
+            $.ajax({
+                url: "bbsGeneric.ashx?action=AddUrlLog&F=1&c_id=" + c_id + "&q_id=" + q_id,
+                type: "POST",
+                async: false,
+                dataType: "text",
+                data: "",
+                success: function (data) {
+                    location.href = "/service/answer/solution.aspx?Q_ID=" + q_id + "&cid=" + c_id + "&F=1";
+                }
+            });
+        }
+    </script>
+    
+    <script type="text/javascript">
+        try {
+            if (currentArticleId > 0) {
+                sa.track('BBS_TopicPage', {
+                    BBS_Topic_ID: currentArticleId,
+                    BBS_Topic_Title: topic_Title,
+                    BBS_Topic_Type: postTypeString,
+                    ProductID: "1100",
+                    ProdutName: "SIMATIC S7-1500系列",
+                    Is_LandingPage: false,
+                    BBS_Topic_Is_Rating: is_Rating,
+                    BBS_Topic_Is_Hot: is_Hot,
+                    BBS_Topic_Is_Concise: is_Concise,
+                    BBS_Topic_Is_HotLiked: is_HotLiked,
+                    BBS_Topic_Is_Recommended: is_Recommended
+                });
+            }
+        } catch { }
+    </script>
+    <!-- 追踪用户行为js脚本 请勿删除 -->
+    <script type="text/javascript" src="https://www.ts.siemens.com.cn/behavior/util_forum.js?v=20260708"></script>    
+
+
+    <!-- Response time: 610.3684ms at 7/9/2026 10:11:23 AM -->
+    <script type="text/javascript" src="/MySupport/Scripts/cookie-mask.js?v=20260708"></script>
+    <script src="/MySupport/Scripts/localStoreHelper.js?v=20260708" type="text/javascript"></script>
+    <script src="/MySupport/UserControls/HtmlTemplate/navigationGuide.js?v=20260708" data-userid="0"  type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            //手机点击“在电脑查看”
+            var GoWeb = GetUrlParam('GoWeb');
+            if (GoWeb) {
+                $('a').each(function () {
+                    var href = $(this).attr('href');
+                    if (href && href.indexOf('javascript') == -1 && href != '#') {
+                        if (href.indexOf('?') != -1) {
+                            if (href.indexOf('#') != -1) {
+                                var endIndex = href.indexOf('#');
+                                var href1 = href.substring(0, endIndex);
+                                var href2 = href.substring(endIndex);
+                                href = href1 + '&GoWeb=1' + href2;
+                            }
+                            else {
+                                href += '&GoWeb=1';
+                            }
+                        }
+                        else {
+                            if (href.indexOf('#') != -1) {
+                                var endIndex = href.indexOf('#');
+                                var href1 = href.substring(0, endIndex);
+                                var href2 = href.substring(endIndex, href.length - 1);
+                                href = href1 + '?GoWeb=1' + href2;
+                            }
+                            else {
+                                href += '?GoWeb=1';
+                            }
+                        }
+
+                        $(this).attr('href', href);
+                    }
+                });
+            }
+            //左侧浮动广告位展示
+            if ($.cookie("leftfloatad") != "1") {
+                $("#leftfloatad").show();
+            }
+            // 考证咨询弹窗显示控制
+            const kzzxSsShow = getLSWithExpiry("kzzx_bbs");
+            if (!!!kzzxSsShow) {
+                $("#kzzxDiv").show();
+            }
+            // 加载导航引导banner
+            fetch('/MySupport/UserControls/HtmlTemplate/navigationGuide.html')
+                .then(res => res.text())
+                .then(html => {
+                    var htmlStr = html.replace('$fileversion$', '20260708')
+                    document.getElementById('navigationGuide').innerHTML = htmlStr;
+                });
+        });
+
+
+        function DestroyMessage(id, pid, action) { $.ajax({ type: "post", url: "/club/bbs/AjaxApi/DestroyMessage.ashx", dataType: "json", data: { "id": id, "pid": pid, "action": action }, cache: false, success: function (data) { }, error: function (jqXHR) { } }); }
+
+        function CloseFloatDiv() {
+            $.cookie("leftfloatad", "1", { expires: 1 });
+            $("#leftfloatad").hide();
+        }
+        // 设置值到localStorage，并设置一个过期时间（单位：毫秒）
+        function setLSWithExpiry(key, value, ttl) {
+            const now = new Date();
+            // 设置当前时间加上过期时间（ttl）作为过期时间戳
+            const item = {
+                value: value,
+                expiry: now.getTime() + ttl,
+            };
+            localStorage.setItem(key, JSON.stringify(item));
+        }
+        // 从localStorage获取带过期时间的值
+        function getLSWithExpiry(key) {
+            const itemStr = localStorage.getItem(key);
+            if (!itemStr) {
+                return null;
+            }
+            const item = JSON.parse(itemStr);
+            const now = new Date();
+            if (now.getTime() > item.expiry) {
+                localStorage.removeItem(key);
+                return null;
+            }
+            return item.value;
+        }
+        //考证咨询窗关闭
+        function closeKzzx() {
+            const key = "kzzx_bbs";
+            const value = "1";
+            const ttlKzzx = 3 * 24 * 60 * 60 * 1000; // 3天
+            //const ttlKzzx = 1 * 60 * 1000; // 1分钟
+
+            // 设置值到localStorage，并设置过期时间
+            setLSWithExpiry(key, value, ttlKzzx);
+            $('#kzzxDiv').hide();
+        }
+    </script>
+    <script type="text/javascript" src="/mysupport/Scripts/BaseNavgationBar.js"></script>
+
+
+
+    <!--newVersion-->
+    <script type="text/javascript" src="/MySupport/navVersion/js/nav.js?v=20260708" id="navigationjs" useridattr="0" navigationplatformattr="6"></script>
+
+    <div id="agreementalert" style="display: none;"></div>
+    <div id="ImproveUserInfoBox" style="display: none;"></div>
+    <script type="text/javascript">
+        agreementalert("bbs");
+        ImproveUserInfoBox("bbs");
+    </script>
+
+    <script type="text/javascript" src="/MySupport/Scripts/loadMAPopup.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //调用MA获取POPup弹框,用户id，
+            window.addEventListener("load", loadPopup);
+        });
+        function loadPopup() {
+
+            var userid =0;
+            var platform =2;
+            var domain = 'https://oso.siemens.com.cn/service/umhost';
+            var styleHref = 'https://oso.siemens.com.cn/service/umhost/resource/popup/css/popup.css';
+            var scriptHref = "https://oso.siemens.com.cn/service/umhost/resource/popup/js/GetPopUp.js?v=20260708";
+            loadPopupScriptAndCss(userid, platform, domain, styleHref, scriptHref)
+        }
+    </script>
+    
+</body>
+
+</html>
