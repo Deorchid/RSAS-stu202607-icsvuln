@@ -1,0 +1,1417 @@
+<pre>Network Working Group                                       J. Rosenberg
+Request for Comments: 3261                                   dynamicsoft
+Obsoletes: <a href="./rfc2543">2543</a>                                           H. Schulzrinne
+Category: Standards Track                                    Columbia U.
+                                                            G. Camarillo
+                                                                Ericsson
+                                                             A. Johnston
+                                                                WorldCom
+                                                             J. Peterson
+                                                                 Neustar
+                                                               R. Sparks
+                                                             dynamicsoft
+                                                              M. Handley
+                                                                    ICIR
+                                                             E. Schooler
+                                                                    AT&amp;T
+                                                               June 2002
+
+                    <span class="h1">SIP: Session Initiation Protocol</span>
+
+Status of this Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2002).  All Rights Reserved.
+
+Abstract
+
+   This document describes Session Initiation Protocol (SIP), an
+   application-layer control (signaling) protocol for creating,
+   modifying, and terminating sessions with one or more participants.
+   These sessions include Internet telephone calls, multimedia
+   distribution, and multimedia conferences.
+
+   SIP invitations used to create sessions carry session descriptions
+   that allow participants to agree on a set of compatible media types.
+   SIP makes use of elements called proxy servers to help route requests
+   to the user's current location, authenticate and authorize users for
+   services, implement provider call-routing policies, and provide
+   features to users.  SIP also provides a registration function that
+   allows users to upload their current locations for use by proxy
+   servers.  SIP runs on top of several different transport protocols.
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 1]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-2" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+Table of Contents
+
+   <a href="#section-1">1</a>          Introduction ........................................    <a href="#page-8">8</a>
+   <a href="#section-2">2</a>          Overview of SIP Functionality .......................    <a href="#page-9">9</a>
+   <a href="#section-3">3</a>          Terminology .........................................   <a href="#page-10">10</a>
+   <a href="#section-4">4</a>          Overview of Operation ...............................   <a href="#page-10">10</a>
+   <a href="#section-5">5</a>          Structure of the Protocol ...........................   <a href="#page-18">18</a>
+   <a href="#section-6">6</a>          Definitions .........................................   <a href="#page-20">20</a>
+   <a href="#section-7">7</a>          SIP Messages ........................................   <a href="#page-26">26</a>
+   <a href="#section-7.1">7.1</a>        Requests ............................................   <a href="#page-27">27</a>
+   <a href="#section-7.2">7.2</a>        Responses ...........................................   <a href="#page-28">28</a>
+   <a href="#section-7.3">7.3</a>        Header Fields .......................................   <a href="#page-29">29</a>
+   <a href="#section-7.3.1">7.3.1</a>      Header Field Format .................................   <a href="#page-30">30</a>
+   <a href="#section-7.3.2">7.3.2</a>      Header Field Classification .........................   <a href="#page-32">32</a>
+   <a href="#section-7.3.3">7.3.3</a>      Compact Form ........................................   <a href="#page-32">32</a>
+   <a href="#section-7.4">7.4</a>        Bodies ..............................................   <a href="#page-33">33</a>
+   <a href="#section-7.4.1">7.4.1</a>      Message Body Type ...................................   <a href="#page-33">33</a>
+   <a href="#section-7.4.2">7.4.2</a>      Message Body Length .................................   <a href="#page-33">33</a>
+   <a href="#section-7.5">7.5</a>        Framing SIP Messages ................................   <a href="#page-34">34</a>
+   <a href="#section-8">8</a>          General User Agent Behavior .........................   <a href="#page-34">34</a>
+   <a href="#section-8.1">8.1</a>        UAC Behavior ........................................   <a href="#page-35">35</a>
+   <a href="#section-8.1.1">8.1.1</a>      Generating the Request ..............................   <a href="#page-35">35</a>
+   <a href="#section-8.1.1.1">8.1.1.1</a>    Request-URI .........................................   <a href="#page-35">35</a>
+   <a href="#section-8.1.1.2">8.1.1.2</a>    To ..................................................   <a href="#page-36">36</a>
+   <a href="#section-8.1.1.3">8.1.1.3</a>    From ................................................   <a href="#page-37">37</a>
+   <a href="#section-8.1.1.4">8.1.1.4</a>    Call-ID .............................................   <a href="#page-37">37</a>
+   <a href="#section-8.1.1.5">8.1.1.5</a>    CSeq ................................................   <a href="#page-38">38</a>
+   <a href="#section-8.1.1.6">8.1.1.6</a>    Max-Forwards ........................................   <a href="#page-38">38</a>
+   <a href="#section-8.1.1.7">8.1.1.7</a>    Via .................................................   <a href="#page-39">39</a>
+   <a href="#section-8.1.1.8">8.1.1.8</a>    Contact .............................................   <a href="#page-40">40</a>
+   <a href="#section-8.1.1.9">8.1.1.9</a>    Supported and Require ...............................   <a href="#page-40">40</a>
+   <a href="#section-8.1.1.10">8.1.1.10</a>   Additional Message Components .......................   <a href="#page-41">41</a>
+   <a href="#section-8.1.2">8.1.2</a>      Sending the Request .................................   <a href="#page-41">41</a>
+   <a href="#section-8.1.3">8.1.3</a>      Processing Responses ................................   <a href="#page-42">42</a>
+   <a href="#section-8.1.3.1">8.1.3.1</a>    Transaction Layer Errors ............................   <a href="#page-42">42</a>
+   <a href="#section-8.1.3.2">8.1.3.2</a>    Unrecognized Responses ..............................   <a href="#page-42">42</a>
+   <a href="#section-8.1.3.3">8.1.3.3</a>    Vias ................................................   <a href="#page-43">43</a>
+   <a href="#section-8.1.3.4">8.1.3.4</a>    Processing 3xx Responses ............................   <a href="#page-43">43</a>
+   <a href="#section-8.1.3.5">8.1.3.5</a>    Processing 4xx Responses ............................   <a href="#page-45">45</a>
+   <a href="#section-8.2">8.2</a>        UAS Behavior ........................................   <a href="#page-46">46</a>
+   <a href="#section-8.2.1">8.2.1</a>      Method Inspection ...................................   <a href="#page-46">46</a>
+   <a href="#section-8.2.2">8.2.2</a>      Header Inspection ...................................   <a href="#page-46">46</a>
+   <a href="#section-8.2.2.1">8.2.2.1</a>    To and Request-URI ..................................   <a href="#page-46">46</a>
+   <a href="#section-8.2.2.2">8.2.2.2</a>    Merged Requests .....................................   <a href="#page-47">47</a>
+   <a href="#section-8.2.2.3">8.2.2.3</a>    Require .............................................   <a href="#page-47">47</a>
+   <a href="#section-8.2.3">8.2.3</a>      Content Processing ..................................   <a href="#page-48">48</a>
+   <a href="#section-8.2.4">8.2.4</a>      Applying Extensions .................................   <a href="#page-49">49</a>
+   <a href="#section-8.2.5">8.2.5</a>      Processing the Request ..............................   <a href="#page-49">49</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 2]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-3" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-8.2.6">8.2.6</a>      Generating the Response .............................   <a href="#page-49">49</a>
+   <a href="#section-8.2.6.1">8.2.6.1</a>    Sending a Provisional Response ......................   <a href="#page-49">49</a>
+   <a href="#section-8.2.6.2">8.2.6.2</a>    Headers and Tags ....................................   <a href="#page-50">50</a>
+   <a href="#section-8.2.7">8.2.7</a>      Stateless UAS Behavior ..............................   <a href="#page-50">50</a>
+   <a href="#section-8.3">8.3</a>        Redirect Servers ....................................   <a href="#page-51">51</a>
+   <a href="#section-9">9</a>          Canceling a Request .................................   <a href="#page-53">53</a>
+   <a href="#section-9.1">9.1</a>        Client Behavior .....................................   <a href="#page-53">53</a>
+   <a href="#section-9.2">9.2</a>        Server Behavior .....................................   <a href="#page-55">55</a>
+   <a href="#section-10">10</a>         Registrations .......................................   <a href="#page-56">56</a>
+   <a href="#section-10.1">10.1</a>       Overview ............................................   <a href="#page-56">56</a>
+   <a href="#section-10.2">10.2</a>       Constructing the REGISTER Request ...................   <a href="#page-57">57</a>
+   <a href="#section-10.2.1">10.2.1</a>     Adding Bindings .....................................   <a href="#page-59">59</a>
+   10.2.1.1   Setting the Expiration Interval of Contact Addresses    60
+   <a href="#section-10.2.1.2">10.2.1.2</a>   Preferences among Contact Addresses .................   <a href="#page-61">61</a>
+   <a href="#section-10.2.2">10.2.2</a>     Removing Bindings ...................................   <a href="#page-61">61</a>
+   <a href="#section-10.2.3">10.2.3</a>     Fetching Bindings ...................................   <a href="#page-61">61</a>
+   <a href="#section-10.2.4">10.2.4</a>     Refreshing Bindings .................................   <a href="#page-61">61</a>
+   <a href="#section-10.2.5">10.2.5</a>     Setting the Internal Clock ..........................   <a href="#page-62">62</a>
+   <a href="#section-10.2.6">10.2.6</a>     Discovering a Registrar .............................   <a href="#page-62">62</a>
+   <a href="#section-10.2.7">10.2.7</a>     Transmitting a Request ..............................   <a href="#page-62">62</a>
+   <a href="#section-10.2.8">10.2.8</a>     Error Responses .....................................   <a href="#page-63">63</a>
+   <a href="#section-10.3">10.3</a>       Processing REGISTER Requests ........................   <a href="#page-63">63</a>
+   <a href="#section-11">11</a>         Querying for Capabilities ...........................   <a href="#page-66">66</a>
+   <a href="#section-11.1">11.1</a>       Construction of OPTIONS Request .....................   <a href="#page-67">67</a>
+   <a href="#section-11.2">11.2</a>       Processing of OPTIONS Request .......................   <a href="#page-68">68</a>
+   <a href="#section-12">12</a>         Dialogs .............................................   <a href="#page-69">69</a>
+   <a href="#section-12.1">12.1</a>       Creation of a Dialog ................................   <a href="#page-70">70</a>
+   <a href="#section-12.1.1">12.1.1</a>     UAS behavior ........................................   <a href="#page-70">70</a>
+   <a href="#section-12.1.2">12.1.2</a>     UAC Behavior ........................................   <a href="#page-71">71</a>
+   <a href="#section-12.2">12.2</a>       Requests within a Dialog ............................   <a href="#page-72">72</a>
+   <a href="#section-12.2.1">12.2.1</a>     UAC Behavior ........................................   <a href="#page-73">73</a>
+   <a href="#section-12.2.1.1">12.2.1.1</a>   Generating the Request ..............................   <a href="#page-73">73</a>
+   <a href="#section-12.2.1.2">12.2.1.2</a>   Processing the Responses ............................   <a href="#page-75">75</a>
+   <a href="#section-12.2.2">12.2.2</a>     UAS Behavior ........................................   <a href="#page-76">76</a>
+   <a href="#section-12.3">12.3</a>       Termination of a Dialog .............................   <a href="#page-77">77</a>
+   <a href="#section-13">13</a>         Initiating a Session ................................   <a href="#page-77">77</a>
+   <a href="#section-13.1">13.1</a>       Overview ............................................   <a href="#page-77">77</a>
+   <a href="#section-13.2">13.2</a>       UAC Processing ......................................   <a href="#page-78">78</a>
+   <a href="#section-13.2.1">13.2.1</a>     Creating the Initial INVITE .........................   <a href="#page-78">78</a>
+   <a href="#section-13.2.2">13.2.2</a>     Processing INVITE Responses .........................   <a href="#page-81">81</a>
+   <a href="#section-13.2.2.1">13.2.2.1</a>   1xx Responses .......................................   <a href="#page-81">81</a>
+   <a href="#section-13.2.2.2">13.2.2.2</a>   3xx Responses .......................................   <a href="#page-81">81</a>
+   <a href="#section-13.2.2.3">13.2.2.3</a>   4xx, 5xx and 6xx Responses ..........................   <a href="#page-81">81</a>
+   <a href="#section-13.2.2.4">13.2.2.4</a>   2xx Responses .......................................   <a href="#page-82">82</a>
+   <a href="#section-13.3">13.3</a>       UAS Processing ......................................   <a href="#page-83">83</a>
+   <a href="#section-13.3.1">13.3.1</a>     Processing of the INVITE ............................   <a href="#page-83">83</a>
+   <a href="#section-13.3.1.1">13.3.1.1</a>   Progress ............................................   <a href="#page-84">84</a>
+   <a href="#section-13.3.1.2">13.3.1.2</a>   The INVITE is Redirected ............................   <a href="#page-84">84</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 3]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-4" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-13.3.1.3">13.3.1.3</a>   The INVITE is Rejected ..............................   <a href="#page-85">85</a>
+   <a href="#section-13.3.1.4">13.3.1.4</a>   The INVITE is Accepted ..............................   <a href="#page-85">85</a>
+   <a href="#section-14">14</a>         Modifying an Existing Session .......................   <a href="#page-86">86</a>
+   <a href="#section-14.1">14.1</a>       UAC Behavior ........................................   <a href="#page-86">86</a>
+   <a href="#section-14.2">14.2</a>       UAS Behavior ........................................   <a href="#page-88">88</a>
+   <a href="#section-15">15</a>         Terminating a Session ...............................   <a href="#page-89">89</a>
+   <a href="#section-15.1">15.1</a>       Terminating a Session with a BYE Request ............   <a href="#page-90">90</a>
+   <a href="#section-15.1.1">15.1.1</a>     UAC Behavior ........................................   <a href="#page-90">90</a>
+   <a href="#section-15.1.2">15.1.2</a>     UAS Behavior ........................................   <a href="#page-91">91</a>
+   <a href="#section-16">16</a>         Proxy Behavior ......................................   <a href="#page-91">91</a>
+   <a href="#section-16.1">16.1</a>       Overview ............................................   <a href="#page-91">91</a>
+   <a href="#section-16.2">16.2</a>       Stateful Proxy ......................................   <a href="#page-92">92</a>
+   <a href="#section-16.3">16.3</a>       Request Validation ..................................   <a href="#page-94">94</a>
+   <a href="#section-16.4">16.4</a>       Route Information Preprocessing .....................   <a href="#page-96">96</a>
+   <a href="#section-16.5">16.5</a>       Determining Request Targets .........................   <a href="#page-97">97</a>
+   <a href="#section-16.6">16.6</a>       Request Forwarding ..................................   <a href="#page-99">99</a>
+   <a href="#section-16.7">16.7</a>       Response Processing .................................  <a href="#page-107">107</a>
+   <a href="#section-16.8">16.8</a>       Processing Timer C ..................................  <a href="#page-114">114</a>
+   <a href="#section-16.9">16.9</a>       Handling Transport Errors ...........................  <a href="#page-115">115</a>
+   <a href="#section-16.10">16.10</a>      CANCEL Processing ...................................  <a href="#page-115">115</a>
+   <a href="#section-16.11">16.11</a>      Stateless Proxy .....................................  <a href="#page-116">116</a>
+   <a href="#section-16.12">16.12</a>      Summary of Proxy Route Processing ...................  <a href="#page-118">118</a>
+   <a href="#section-16.12.1">16.12.1</a>    Examples ............................................  <a href="#page-118">118</a>
+   <a href="#section-16.12.1.1">16.12.1.1</a>  Basic SIP Trapezoid .................................  <a href="#page-118">118</a>
+   <a href="#section-16.12.1.2">16.12.1.2</a>  Traversing a Strict-Routing Proxy ...................  <a href="#page-120">120</a>
+   <a href="#section-16.12.1.3">16.12.1.3</a>  Rewriting Record-Route Header Field Values ..........  <a href="#page-121">121</a>
+   <a href="#section-17">17</a>         Transactions ........................................  <a href="#page-122">122</a>
+   <a href="#section-17.1">17.1</a>       Client Transaction ..................................  <a href="#page-124">124</a>
+   <a href="#section-17.1.1">17.1.1</a>     INVITE Client Transaction ...........................  <a href="#page-125">125</a>
+   <a href="#section-17.1.1.1">17.1.1.1</a>   Overview of INVITE Transaction ......................  <a href="#page-125">125</a>
+   <a href="#section-17.1.1.2">17.1.1.2</a>   Formal Description ..................................  <a href="#page-125">125</a>
+   <a href="#section-17.1.1.3">17.1.1.3</a>   Construction of the ACK Request .....................  <a href="#page-129">129</a>
+   <a href="#section-17.1.2">17.1.2</a>     Non-INVITE Client Transaction .......................  <a href="#page-130">130</a>
+   <a href="#section-17.1.2.1">17.1.2.1</a>   Overview of the non-INVITE Transaction ..............  <a href="#page-130">130</a>
+   <a href="#section-17.1.2.2">17.1.2.2</a>   Formal Description ..................................  <a href="#page-131">131</a>
+   <a href="#section-17.1.3">17.1.3</a>     Matching Responses to Client Transactions ...........  <a href="#page-132">132</a>
+   <a href="#section-17.1.4">17.1.4</a>     Handling Transport Errors ...........................  <a href="#page-133">133</a>
+   <a href="#section-17.2">17.2</a>       Server Transaction ..................................  <a href="#page-134">134</a>
+   <a href="#section-17.2.1">17.2.1</a>     INVITE Server Transaction ...........................  <a href="#page-134">134</a>
+   <a href="#section-17.2.2">17.2.2</a>     Non-INVITE Server Transaction .......................  <a href="#page-137">137</a>
+   <a href="#section-17.2.3">17.2.3</a>     Matching Requests to Server Transactions ............  <a href="#page-138">138</a>
+   <a href="#section-17.2.4">17.2.4</a>     Handling Transport Errors ...........................  <a href="#page-141">141</a>
+   <a href="#section-18">18</a>         Transport ...........................................  <a href="#page-141">141</a>
+   <a href="#section-18.1">18.1</a>       Clients .............................................  <a href="#page-142">142</a>
+   <a href="#section-18.1.1">18.1.1</a>     Sending Requests ....................................  <a href="#page-142">142</a>
+   <a href="#section-18.1.2">18.1.2</a>     Receiving Responses .................................  <a href="#page-144">144</a>
+   <a href="#section-18.2">18.2</a>       Servers .............................................  <a href="#page-145">145</a>
+   <a href="#section-18.2.1">18.2.1</a>     Receiving Requests ..................................  <a href="#page-145">145</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 4]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-5" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-18.2.2">18.2.2</a>     Sending Responses ...................................  <a href="#page-146">146</a>
+   <a href="#section-18.3">18.3</a>       Framing .............................................  <a href="#page-147">147</a>
+   <a href="#section-18.4">18.4</a>       Error Handling ......................................  <a href="#page-147">147</a>
+   <a href="#section-19">19</a>         Common Message Components ...........................  <a href="#page-147">147</a>
+   <a href="#section-19.1">19.1</a>       SIP and SIPS Uniform Resource Indicators ............  <a href="#page-148">148</a>
+   <a href="#section-19.1.1">19.1.1</a>     SIP and SIPS URI Components .........................  <a href="#page-148">148</a>
+   <a href="#section-19.1.2">19.1.2</a>     Character Escaping Requirements .....................  <a href="#page-152">152</a>
+   <a href="#section-19.1.3">19.1.3</a>     Example SIP and SIPS URIs ...........................  <a href="#page-153">153</a>
+   <a href="#section-19.1.4">19.1.4</a>     URI Comparison ......................................  <a href="#page-153">153</a>
+   <a href="#section-19.1.5">19.1.5</a>     Forming Requests from a URI .........................  <a href="#page-156">156</a>
+   <a href="#section-19.1.6">19.1.6</a>     Relating SIP URIs and tel URLs ......................  <a href="#page-157">157</a>
+   <a href="#section-19.2">19.2</a>       Option Tags .........................................  <a href="#page-158">158</a>
+   <a href="#section-19.3">19.3</a>       Tags ................................................  <a href="#page-159">159</a>
+   <a href="#section-20">20</a>         Header Fields .......................................  <a href="#page-159">159</a>
+   <a href="#section-20.1">20.1</a>       Accept ..............................................  <a href="#page-161">161</a>
+   <a href="#section-20.2">20.2</a>       Accept-Encoding .....................................  <a href="#page-163">163</a>
+   <a href="#section-20.3">20.3</a>       Accept-Language .....................................  <a href="#page-164">164</a>
+   <a href="#section-20.4">20.4</a>       Alert-Info ..........................................  <a href="#page-164">164</a>
+   <a href="#section-20.5">20.5</a>       Allow ...............................................  <a href="#page-165">165</a>
+   <a href="#section-20.6">20.6</a>       Authentication-Info .................................  <a href="#page-165">165</a>
+   <a href="#section-20.7">20.7</a>       Authorization .......................................  <a href="#page-165">165</a>
+   <a href="#section-20.8">20.8</a>       Call-ID .............................................  <a href="#page-166">166</a>
+   <a href="#section-20.9">20.9</a>       Call-Info ...........................................  <a href="#page-166">166</a>
+   <a href="#section-20.10">20.10</a>      Contact .............................................  <a href="#page-167">167</a>
+   <a href="#section-20.11">20.11</a>      Content-Disposition .................................  <a href="#page-168">168</a>
+   <a href="#section-20.12">20.12</a>      Content-Encoding ....................................  <a href="#page-169">169</a>
+   <a href="#section-20.13">20.13</a>      Content-Language ....................................  <a href="#page-169">169</a>
+   <a href="#section-20.14">20.14</a>      Content-Length ......................................  <a href="#page-169">169</a>
+   <a href="#section-20.15">20.15</a>      Content-Type ........................................  <a href="#page-170">170</a>
+   <a href="#section-20.16">20.16</a>      CSeq ................................................  <a href="#page-170">170</a>
+   <a href="#section-20.17">20.17</a>      Date ................................................  <a href="#page-170">170</a>
+   <a href="#section-20.18">20.18</a>      Error-Info ..........................................  <a href="#page-171">171</a>
+   <a href="#section-20.19">20.19</a>      Expires .............................................  <a href="#page-171">171</a>
+   <a href="#section-20.20">20.20</a>      From ................................................  <a href="#page-172">172</a>
+   <a href="#section-20.21">20.21</a>      In-Reply-To .........................................  <a href="#page-172">172</a>
+   <a href="#section-20.22">20.22</a>      Max-Forwards ........................................  <a href="#page-173">173</a>
+   <a href="#section-20.23">20.23</a>      Min-Expires .........................................  <a href="#page-173">173</a>
+   <a href="#section-20.24">20.24</a>      MIME-Version ........................................  <a href="#page-173">173</a>
+   <a href="#section-20.25">20.25</a>      Organization ........................................  <a href="#page-174">174</a>
+   <a href="#section-20.26">20.26</a>      Priority ............................................  <a href="#page-174">174</a>
+   <a href="#section-20.27">20.27</a>      Proxy-Authenticate ..................................  <a href="#page-174">174</a>
+   <a href="#section-20.28">20.28</a>      Proxy-Authorization .................................  <a href="#page-175">175</a>
+   <a href="#section-20.29">20.29</a>      Proxy-Require .......................................  <a href="#page-175">175</a>
+   <a href="#section-20.30">20.30</a>      Record-Route ........................................  <a href="#page-175">175</a>
+   <a href="#section-20.31">20.31</a>      Reply-To ............................................  <a href="#page-176">176</a>
+   <a href="#section-20.32">20.32</a>      Require .............................................  <a href="#page-176">176</a>
+   <a href="#section-20.33">20.33</a>      Retry-After .........................................  <a href="#page-176">176</a>
+   <a href="#section-20.34">20.34</a>      Route ...............................................  <a href="#page-177">177</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 5]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-6" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-20.35">20.35</a>      Server ..............................................  <a href="#page-177">177</a>
+   <a href="#section-20.36">20.36</a>      Subject .............................................  <a href="#page-177">177</a>
+   <a href="#section-20.37">20.37</a>      Supported ...........................................  <a href="#page-178">178</a>
+   <a href="#section-20.38">20.38</a>      Timestamp ...........................................  <a href="#page-178">178</a>
+   <a href="#section-20.39">20.39</a>      To ..................................................  <a href="#page-178">178</a>
+   <a href="#section-20.40">20.40</a>      Unsupported .........................................  <a href="#page-179">179</a>
+   <a href="#section-20.41">20.41</a>      User-Agent ..........................................  <a href="#page-179">179</a>
+   <a href="#section-20.42">20.42</a>      Via .................................................  <a href="#page-179">179</a>
+   <a href="#section-20.43">20.43</a>      Warning .............................................  <a href="#page-180">180</a>
+   <a href="#section-20.44">20.44</a>      WWW-Authenticate ....................................  <a href="#page-182">182</a>
+   <a href="#section-21">21</a>         Response Codes ......................................  <a href="#page-182">182</a>
+   <a href="#section-21.1">21.1</a>       Provisional 1xx .....................................  <a href="#page-182">182</a>
+   <a href="#section-21.1.1">21.1.1</a>     100 Trying ..........................................  <a href="#page-183">183</a>
+   <a href="#section-21.1.2">21.1.2</a>     180 Ringing .........................................  <a href="#page-183">183</a>
+   <a href="#section-21.1.3">21.1.3</a>     181 Call Is Being Forwarded .........................  <a href="#page-183">183</a>
+   <a href="#section-21.1.4">21.1.4</a>     182 Queued ..........................................  <a href="#page-183">183</a>
+   <a href="#section-21.1.5">21.1.5</a>     183 Session Progress ................................  <a href="#page-183">183</a>
+   <a href="#section-21.2">21.2</a>       Successful 2xx ......................................  <a href="#page-183">183</a>
+   <a href="#section-21.2.1">21.2.1</a>     200 OK ..............................................  <a href="#page-183">183</a>
+   <a href="#section-21.3">21.3</a>       Redirection 3xx .....................................  <a href="#page-184">184</a>
+   <a href="#section-21.3.1">21.3.1</a>     300 Multiple Choices ................................  <a href="#page-184">184</a>
+   <a href="#section-21.3.2">21.3.2</a>     301 Moved Permanently ...............................  <a href="#page-184">184</a>
+   <a href="#section-21.3.3">21.3.3</a>     302 Moved Temporarily ...............................  <a href="#page-184">184</a>
+   <a href="#section-21.3.4">21.3.4</a>     305 Use Proxy .......................................  <a href="#page-185">185</a>
+   <a href="#section-21.3.5">21.3.5</a>     380 Alternative Service .............................  <a href="#page-185">185</a>
+   <a href="#section-21.4">21.4</a>       Request Failure 4xx .................................  <a href="#page-185">185</a>
+   <a href="#section-21.4.1">21.4.1</a>     400 Bad Request .....................................  <a href="#page-185">185</a>
+   <a href="#section-21.4.2">21.4.2</a>     401 Unauthorized ....................................  <a href="#page-185">185</a>
+   <a href="#section-21.4.3">21.4.3</a>     402 Payment Required ................................  <a href="#page-186">186</a>
+   <a href="#section-21.4.4">21.4.4</a>     403 Forbidden .......................................  <a href="#page-186">186</a>
+   <a href="#section-21.4.5">21.4.5</a>     404 Not Found .......................................  <a href="#page-186">186</a>
+   <a href="#section-21.4.6">21.4.6</a>     405 Method Not Allowed ..............................  <a href="#page-186">186</a>
+   <a href="#section-21.4.7">21.4.7</a>     406 Not Acceptable ..................................  <a href="#page-186">186</a>
+   <a href="#section-21.4.8">21.4.8</a>     407 Proxy Authentication Required ...................  <a href="#page-186">186</a>
+   <a href="#section-21.4.9">21.4.9</a>     408 Request Timeout .................................  <a href="#page-186">186</a>
+   <a href="#section-21.4.10">21.4.10</a>    410 Gone ............................................  <a href="#page-187">187</a>
+   <a href="#section-21.4.11">21.4.11</a>    413 Request Entity Too Large ........................  <a href="#page-187">187</a>
+   <a href="#section-21.4.12">21.4.12</a>    414 Request-URI Too Long ............................  <a href="#page-187">187</a>
+   <a href="#section-21.4.13">21.4.13</a>    415 Unsupported Media Type ..........................  <a href="#page-187">187</a>
+   <a href="#section-21.4.14">21.4.14</a>    416 Unsupported URI Scheme ..........................  <a href="#page-187">187</a>
+   <a href="#section-21.4.15">21.4.15</a>    420 Bad Extension ...................................  <a href="#page-187">187</a>
+   <a href="#section-21.4.16">21.4.16</a>    421 Extension Required ..............................  <a href="#page-188">188</a>
+   <a href="#section-21.4.17">21.4.17</a>    423 Interval Too Brief ..............................  <a href="#page-188">188</a>
+   <a href="#section-21.4.18">21.4.18</a>    480 Temporarily Unavailable .........................  <a href="#page-188">188</a>
+   <a href="#section-21.4.19">21.4.19</a>    481 Call/Transaction Does Not Exist .................  <a href="#page-188">188</a>
+   <a href="#section-21.4.20">21.4.20</a>    482 Loop Detected ...................................  <a href="#page-188">188</a>
+   <a href="#section-21.4.21">21.4.21</a>    483 Too Many Hops ...................................  <a href="#page-189">189</a>
+   <a href="#section-21.4.22">21.4.22</a>    484 Address Incomplete ..............................  <a href="#page-189">189</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 6]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-7" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-21.4.23">21.4.23</a>    485 Ambiguous .......................................  <a href="#page-189">189</a>
+   <a href="#section-21.4.24">21.4.24</a>    486 Busy Here .......................................  <a href="#page-189">189</a>
+   <a href="#section-21.4.25">21.4.25</a>    487 Request Terminated ..............................  <a href="#page-190">190</a>
+   <a href="#section-21.4.26">21.4.26</a>    488 Not Acceptable Here .............................  <a href="#page-190">190</a>
+   <a href="#section-21.4.27">21.4.27</a>    491 Request Pending .................................  <a href="#page-190">190</a>
+   <a href="#section-21.4.28">21.4.28</a>    493 Undecipherable ..................................  <a href="#page-190">190</a>
+   <a href="#section-21.5">21.5</a>       Server Failure 5xx ..................................  <a href="#page-190">190</a>
+   <a href="#section-21.5.1">21.5.1</a>     500 Server Internal Error ...........................  <a href="#page-190">190</a>
+   <a href="#section-21.5.2">21.5.2</a>     501 Not Implemented .................................  <a href="#page-191">191</a>
+   <a href="#section-21.5.3">21.5.3</a>     502 Bad Gateway .....................................  <a href="#page-191">191</a>
+   <a href="#section-21.5.4">21.5.4</a>     503 Service Unavailable .............................  <a href="#page-191">191</a>
+   <a href="#section-21.5.5">21.5.5</a>     504 Server Time-out .................................  <a href="#page-191">191</a>
+   <a href="#section-21.5.6">21.5.6</a>     505 Version Not Supported ...........................  <a href="#page-192">192</a>
+   <a href="#section-21.5.7">21.5.7</a>     513 Message Too Large ...............................  <a href="#page-192">192</a>
+   <a href="#section-21.6">21.6</a>       Global Failures 6xx .................................  <a href="#page-192">192</a>
+   <a href="#section-21.6.1">21.6.1</a>     600 Busy Everywhere .................................  <a href="#page-192">192</a>
+   <a href="#section-21.6.2">21.6.2</a>     603 Decline .........................................  <a href="#page-192">192</a>
+   <a href="#section-21.6.3">21.6.3</a>     604 Does Not Exist Anywhere .........................  <a href="#page-192">192</a>
+   <a href="#section-21.6.4">21.6.4</a>     606 Not Acceptable ..................................  <a href="#page-192">192</a>
+   <a href="#section-22">22</a>         Usage of HTTP Authentication ........................  <a href="#page-193">193</a>
+   <a href="#section-22.1">22.1</a>       Framework ...........................................  <a href="#page-193">193</a>
+   <a href="#section-22.2">22.2</a>       User-to-User Authentication .........................  <a href="#page-195">195</a>
+   <a href="#section-22.3">22.3</a>       Proxy-to-User Authentication ........................  <a href="#page-197">197</a>
+   <a href="#section-22.4">22.4</a>       The Digest Authentication Scheme ....................  <a href="#page-199">199</a>
+   <a href="#section-23">23</a>         S/MIME ..............................................  <a href="#page-201">201</a>
+   <a href="#section-23.1">23.1</a>       S/MIME Certificates .................................  <a href="#page-201">201</a>
+   <a href="#section-23.2">23.2</a>       S/MIME Key Exchange .................................  <a href="#page-202">202</a>
+   <a href="#section-23.3">23.3</a>       Securing MIME bodies ................................  <a href="#page-205">205</a>
+   23.4       SIP Header Privacy and Integrity using S/MIME:
+              Tunneling SIP .......................................  <a href="#page-207">207</a>
+   23.4.1     Integrity and Confidentiality Properties of SIP
+              Headers .............................................  <a href="#page-207">207</a>
+   <a href="#section-23.4.1.1">23.4.1.1</a>   Integrity ...........................................  <a href="#page-207">207</a>
+   <a href="#section-23.4.1.2">23.4.1.2</a>   Confidentiality .....................................  <a href="#page-208">208</a>
+   <a href="#section-23.4.2">23.4.2</a>     Tunneling Integrity and Authentication ..............  <a href="#page-209">209</a>
+   <a href="#section-23.4.3">23.4.3</a>     Tunneling Encryption ................................  <a href="#page-211">211</a>
+   <a href="#section-24">24</a>         Examples ............................................  <a href="#page-213">213</a>
+   <a href="#section-24.1">24.1</a>       Registration ........................................  <a href="#page-213">213</a>
+   <a href="#section-24.2">24.2</a>       Session Setup .......................................  <a href="#page-214">214</a>
+   <a href="#section-25">25</a>         Augmented BNF for the SIP Protocol ..................  <a href="#page-219">219</a>
+   <a href="#section-25.1">25.1</a>       Basic Rules .........................................  <a href="#page-219">219</a>
+   26         Security Considerations: Threat Model and Security
+              Usage Recommendations ...............................  <a href="#page-232">232</a>
+   <a href="#section-26.1">26.1</a>       Attacks and Threat Models ...........................  <a href="#page-233">233</a>
+   <a href="#section-26.1.1">26.1.1</a>     Registration Hijacking ..............................  <a href="#page-233">233</a>
+   <a href="#section-26.1.2">26.1.2</a>     Impersonating a Server ..............................  <a href="#page-234">234</a>
+   <a href="#section-26.1.3">26.1.3</a>     Tampering with Message Bodies .......................  <a href="#page-235">235</a>
+   <a href="#section-26.1.4">26.1.4</a>     Tearing Down Sessions ...............................  <a href="#page-235">235</a>
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 7]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-8" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   <a href="#section-26.1.5">26.1.5</a>     Denial of Service and Amplification .................  <a href="#page-236">236</a>
+   <a href="#section-26.2">26.2</a>       Security Mechanisms .................................  <a href="#page-237">237</a>
+   <a href="#section-26.2.1">26.2.1</a>     Transport and Network Layer Security ................  <a href="#page-238">238</a>
+   <a href="#section-26.2.2">26.2.2</a>     SIPS URI Scheme .....................................  <a href="#page-239">239</a>
+   <a href="#section-26.2.3">26.2.3</a>     HTTP Authentication .................................  <a href="#page-240">240</a>
+   <a href="#section-26.2.4">26.2.4</a>     S/MIME ..............................................  <a href="#page-240">240</a>
+   <a href="#section-26.3">26.3</a>       Implementing Security Mechanisms ....................  <a href="#page-241">241</a>
+   <a href="#section-26.3.1">26.3.1</a>     Requirements for Implementers of SIP ................  <a href="#page-241">241</a>
+   <a href="#section-26.3.2">26.3.2</a>     Security Solutions ..................................  <a href="#page-242">242</a>
+   <a href="#section-26.3.2.1">26.3.2.1</a>   Registration ........................................  <a href="#page-242">242</a>
+   <a href="#section-26.3.2.2">26.3.2.2</a>   Interdomain Requests ................................  <a href="#page-243">243</a>
+   <a href="#section-26.3.2.3">26.3.2.3</a>   Peer-to-Peer Requests ...............................  <a href="#page-245">245</a>
+   <a href="#section-26.3.2.4">26.3.2.4</a>   DoS Protection ......................................  <a href="#page-246">246</a>
+   <a href="#section-26.4">26.4</a>       Limitations .........................................  <a href="#page-247">247</a>
+   <a href="#section-26.4.1">26.4.1</a>     HTTP Digest .........................................  <a href="#page-247">247</a>
+   <a href="#section-26.4.2">26.4.2</a>     S/MIME ..............................................  <a href="#page-248">248</a>
+   <a href="#section-26.4.3">26.4.3</a>     TLS .................................................  <a href="#page-249">249</a>
+   <a href="#section-26.4.4">26.4.4</a>     SIPS URIs ...........................................  <a href="#page-249">249</a>
+   <a href="#section-26.5">26.5</a>       Privacy .............................................  <a href="#page-251">251</a>
+   <a href="#section-27">27</a>         IANA Considerations .................................  <a href="#page-252">252</a>
+   <a href="#section-27.1">27.1</a>       Option Tags .........................................  <a href="#page-252">252</a>
+   <a href="#section-27.2">27.2</a>       Warn-Codes ..........................................  <a href="#page-252">252</a>
+   <a href="#section-27.3">27.3</a>       Header Field Names ..................................  <a href="#page-253">253</a>
+   <a href="#section-27.4">27.4</a>       Method and Response Codes ...........................  <a href="#page-253">253</a>
+   27.5       The "message/sip" MIME type.  .......................  <a href="#page-254">254</a>
+   <a href="#section-27.6">27.6</a>       New Content-Disposition Parameter Registrations .....  <a href="#page-255">255</a>
+   <a href="#section-28">28</a>         Changes From <a href="./rfc2543">RFC 2543</a> ...............................  <a href="#page-255">255</a>
+   <a href="#section-28.1">28.1</a>       Major Functional Changes ............................  <a href="#page-255">255</a>
+   <a href="#section-28.2">28.2</a>       Minor Functional Changes ............................  <a href="#page-260">260</a>
+   <a href="#section-29">29</a>         Normative References ................................  <a href="#page-261">261</a>
+   <a href="#section-30">30</a>         Informative References ..............................  <a href="#page-262">262</a>
+   <a href="#appendix-A">A</a>          Table of Timer Values ...............................  <a href="#page-265">265</a>
+   Acknowledgments ................................................  <a href="#page-266">266</a>
+   Authors' Addresses .............................................  <a href="#page-267">267</a>
+   Full Copyright Statement .......................................  <a href="#page-269">269</a>
+
+<span class="h2"><a class="selflink" id="section-1" href="#section-1">1</a> Introduction</span>
+
+   There are many applications of the Internet that require the creation
+   and management of a session, where a session is considered an
+   exchange of data between an association of participants.  The
+   implementation of these applications is complicated by the practices
+   of participants: users may move between endpoints, they may be
+   addressable by multiple names, and they may communicate in several
+   different media - sometimes simultaneously.  Numerous protocols have
+   been authored that carry various forms of real-time multimedia
+   session data such as voice, video, or text messages.  The Session
+   Initiation Protocol (SIP) works in concert with these protocols by
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 8]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-9" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   enabling Internet endpoints (called user agents) to discover one
+   another and to agree on a characterization of a session they would
+   like to share.  For locating prospective session participants, and
+   for other functions, SIP enables the creation of an infrastructure of
+   network hosts (called proxy servers) to which user agents can send
+   registrations, invitations to sessions, and other requests.  SIP is
+   an agile, general-purpose tool for creating, modifying, and
+   terminating sessions that works independently of underlying transport
+   protocols and without dependency on the type of session that is being
+   established.
+
+<span class="h2"><a class="selflink" id="section-2" href="#section-2">2</a> Overview of SIP Functionality</span>
+
+   SIP is an application-layer control protocol that can establish,
+   modify, and terminate multimedia sessions (conferences) such as
+   Internet telephony calls.  SIP can also invite participants to
+   already existing sessions, such as multicast conferences.  Media can
+   be added to (and removed from) an existing session.  SIP
+   transparently supports name mapping and redirection services, which
+   supports personal mobility [<a href="#ref-27" title="&quot;Emerging mobile and personal communication systems,&quot;">27</a>] - users can maintain a single
+   externally visible identifier regardless of their network location.
+
+   SIP supports five facets of establishing and terminating multimedia
+   communications:
+
+      User location: determination of the end system to be used for
+           communication;
+
+      User availability: determination of the willingness of the called
+           party to engage in communications;
+
+      User capabilities: determination of the media and media parameters
+           to be used;
+
+      Session setup: "ringing", establishment of session parameters at
+           both called and calling party;
+
+      Session management: including transfer and termination of
+           sessions, modifying session parameters, and invoking
+           services.
+
+   SIP is not a vertically integrated communications system.  SIP is
+   rather a component that can be used with other IETF protocols to
+   build a complete multimedia architecture.  Typically, these
+   architectures will include protocols such as the Real-time Transport
+   Protocol (RTP) (<a href="./rfc1889">RFC 1889</a> [<a href="#ref-28" title="&quot;RTP: A Transport Protocol for Real-Time Applications&quot;">28</a>]) for transporting real-time data and
+   providing QoS feedback, the Real-Time streaming protocol (RTSP) (<a href="./rfc2326">RFC</a>
+   <a href="./rfc2326">2326</a> [<a href="#ref-29" title="&quot;Real Time Streaming Protocol (RTSP)&quot;">29</a>]) for controlling delivery of streaming media, the Media
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                     [Page 9]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-10" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   Gateway Control Protocol (MEGACO) (<a href="./rfc3015">RFC 3015</a> [<a href="#ref-30" title="&quot;Megaco Protocol Version 1.0&quot;">30</a>]) for controlling
+   gateways to the Public Switched Telephone Network (PSTN), and the
+   Session Description Protocol (SDP) (<a href="./rfc2327">RFC 2327</a> [<a href="#ref-1" title="&quot;SDP: Session Description Protocol&quot;">1</a>]) for describing
+   multimedia sessions.  Therefore, SIP should be used in conjunction
+   with other protocols in order to provide complete services to the
+   users.  However, the basic functionality and operation of SIP does
+   not depend on any of these protocols.
+
+   SIP does not provide services.  Rather, SIP provides primitives that
+   can be used to implement different services.  For example, SIP can
+   locate a user and deliver an opaque object to his current location.
+   If this primitive is used to deliver a session description written in
+   SDP, for instance, the endpoints can agree on the parameters of a
+   session.  If the same primitive is used to deliver a photo of the
+   caller as well as the session description, a "caller ID" service can
+   be easily implemented.  As this example shows, a single primitive is
+   typically used to provide several different services.
+
+   SIP does not offer conference control services such as floor control
+   or voting and does not prescribe how a conference is to be managed.
+   SIP can be used to initiate a session that uses some other conference
+   control protocol.  Since SIP messages and the sessions they establish
+   can pass through entirely different networks, SIP cannot, and does
+   not, provide any kind of network resource reservation capabilities.
+
+   The nature of the services provided make security particularly
+   important.  To that end, SIP provides a suite of security services,
+   which include denial-of-service prevention, authentication (both user
+   to user and proxy to user), integrity protection, and encryption and
+   privacy services.
+
+   SIP works with both IPv4 and IPv6.
+
+<span class="h2"><a class="selflink" id="section-3" href="#section-3">3</a> Terminology</span>
+
+   In this document, the key words "MUST", "MUST NOT", "REQUIRED",
+   "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+   RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
+   described in <a href="https://www.rfc-editor.org/bcp/bcp14">BCP 14</a>, <a href="./rfc2119">RFC 2119</a> [<a href="#ref-2" title="&quot;Key words for use in RFCs to Indicate Requirement Levels&quot;">2</a>] and indicate requirement levels for
+   compliant SIP implementations.
+
+<span class="h2"><a class="selflink" id="section-4" href="#section-4">4</a> Overview of Operation</span>
+
+   This section introduces the basic operations of SIP using simple
+   examples.  This section is tutorial in nature and does not contain
+   any normative statements.
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 10]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-11" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   The first example shows the basic functions of SIP: location of an
+   end point, signal of a desire to communicate, negotiation of session
+   parameters to establish the session, and teardown of the session once
+   established.
+
+   Figure 1 shows a typical example of a SIP message exchange between
+   two users, Alice and Bob.  (Each message is labeled with the letter
+   "F" and a number for reference by the text.)  In this example, Alice
+   uses a SIP application on her PC (referred to as a softphone) to call
+   Bob on his SIP phone over the Internet.  Also shown are two SIP proxy
+   servers that act on behalf of Alice and Bob to facilitate the session
+   establishment.  This typical arrangement is often referred to as the
+   "SIP trapezoid" as shown by the geometric shape of the dotted lines
+   in Figure 1.
+
+   Alice "calls" Bob using his SIP identity, a type of Uniform Resource
+   Identifier (URI) called a SIP URI. SIP URIs are defined in <a href="#section-19.1">Section</a>
+   <a href="#section-19.1">19.1</a>.  It has a similar form to an email address, typically
+   containing a username and a host name.  In this case, it is
+   sip:bob@biloxi.com, where biloxi.com is the domain of Bob's SIP
+   service provider.  Alice has a SIP URI of sip:alice@atlanta.com.
+   Alice might have typed in Bob's URI or perhaps clicked on a hyperlink
+   or an entry in an address book.  SIP also provides a secure URI,
+   called a SIPS URI.  An example would be sips:bob@biloxi.com.  A call
+   made to a SIPS URI guarantees that secure, encrypted transport
+   (namely TLS) is used to carry all SIP messages from the caller to the
+   domain of the callee.  From there, the request is sent securely to
+   the callee, but with security mechanisms that depend on the policy of
+   the domain of the callee.
+
+   SIP is based on an HTTP-like request/response transaction model.
+   Each transaction consists of a request that invokes a particular
+   method, or function, on the server and at least one response.  In
+   this example, the transaction begins with Alice's softphone sending
+   an INVITE request addressed to Bob's SIP URI.  INVITE is an example
+   of a SIP method that specifies the action that the requestor (Alice)
+   wants the server (Bob) to take.  The INVITE request contains a number
+   of header fields.  Header fields are named attributes that provide
+   additional information about a message.  The ones present in an
+   INVITE include a unique identifier for the call, the destination
+   address, Alice's address, and information about the type of session
+   that Alice wishes to establish with Bob.  The INVITE (message F1 in
+   Figure 1) might look like this:
+
+
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 11]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-12" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+                     atlanta.com  . . . biloxi.com
+                 .      proxy              proxy     .
+               .                                       .
+       Alice's  . . . . . . . . . . . . . . . . . . . .  Bob's
+      softphone                                        SIP Phone
+         |                |                |                |
+         |    INVITE F1   |                |                |
+         |---------------&gt;|    INVITE F2   |                |
+         |  100 Trying F3 |---------------&gt;|    INVITE F4   |
+         |&lt;---------------|  100 Trying F5 |---------------&gt;|
+         |                |&lt;-------------- | 180 Ringing F6 |
+         |                | 180 Ringing F7 |&lt;---------------|
+         | 180 Ringing F8 |&lt;---------------|     200 OK F9  |
+         |&lt;---------------|    200 OK F10  |&lt;---------------|
+         |    200 OK F11  |&lt;---------------|                |
+         |&lt;---------------|                |                |
+         |                       ACK F12                    |
+         |-------------------------------------------------&gt;|
+         |                   Media Session                  |
+         |&lt;================================================&gt;|
+         |                       BYE F13                    |
+         |&lt;-------------------------------------------------|
+         |                     200 OK F14                   |
+         |-------------------------------------------------&gt;|
+         |                                                  |
+
+         Figure 1: SIP session setup example with SIP trapezoid
+
+      INVITE sip:bob@biloxi.com SIP/2.0
+      Via: SIP/2.0/UDP pc33.atlanta.com;branch=z9hG4bK776asdhds
+      Max-Forwards: 70
+      To: Bob &lt;sip:bob@biloxi.com&gt;
+      From: Alice &lt;sip:alice@atlanta.com&gt;;tag=1928301774
+      Call-ID: a84b4c76e66710@pc33.atlanta.com
+      CSeq: 314159 INVITE
+      Contact: &lt;sip:alice@pc33.atlanta.com&gt;
+      Content-Type: application/sdp
+      Content-Length: 142
+
+      (Alice's SDP not shown)
+
+   The first line of the text-encoded message contains the method name
+   (INVITE).  The lines that follow are a list of header fields.  This
+   example contains a minimum required set.  The header fields are
+   briefly described below:
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 12]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-13" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   Via contains the address (pc33.atlanta.com) at which Alice is
+   expecting to receive responses to this request.  It also contains a
+   branch parameter that identifies this transaction.
+
+   To contains a display name (Bob) and a SIP or SIPS URI
+   (sip:bob@biloxi.com) towards which the request was originally
+   directed.  Display names are described in <a href="./rfc2822">RFC 2822</a> [<a href="#ref-3" title="&quot;Internet Message Format&quot;">3</a>].
+
+   From also contains a display name (Alice) and a SIP or SIPS URI
+   (sip:alice@atlanta.com) that indicate the originator of the request.
+   This header field also has a tag parameter containing a random string
+   (1928301774) that was added to the URI by the softphone.  It is used
+   for identification purposes.
+
+   Call-ID contains a globally unique identifier for this call,
+   generated by the combination of a random string and the softphone's
+   host name or IP address.  The combination of the To tag, From tag,
+   and Call-ID completely defines a peer-to-peer SIP relationship
+   between Alice and Bob and is referred to as a dialog.
+
+   CSeq or Command Sequence contains an integer and a method name.  The
+   CSeq number is incremented for each new request within a dialog and
+   is a traditional sequence number.
+
+   Contact contains a SIP or SIPS URI that represents a direct route to
+   contact Alice, usually composed of a username at a fully qualified
+   domain name (FQDN).  While an FQDN is preferred, many end systems do
+   not have registered domain names, so IP addresses are permitted.
+   While the Via header field tells other elements where to send the
+   response, the Contact header field tells other elements where to send
+   future requests.
+
+   Max-Forwards serves to limit the number of hops a request can make on
+   the way to its destination.  It consists of an integer that is
+   decremented by one at each hop.
+
+   Content-Type contains a description of the message body (not shown).
+
+   Content-Length contains an octet (byte) count of the message body.
+
+   The complete set of SIP header fields is defined in <a href="#section-20">Section 20</a>.
+
+   The details of the session, such as the type of media, codec, or
+   sampling rate, are not described using SIP.  Rather, the body of a
+   SIP message contains a description of the session, encoded in some
+   other protocol format.  One such format is the Session Description
+   Protocol (SDP) (<a href="./rfc2327">RFC 2327</a> [<a href="#ref-1" title="&quot;SDP: Session Description Protocol&quot;">1</a>]).  This SDP message (not shown in the
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 13]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-14" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   example) is carried by the SIP message in a way that is analogous to
+   a document attachment being carried by an email message, or a web
+   page being carried in an HTTP message.
+
+   Since the softphone does not know the location of Bob or the SIP
+   server in the biloxi.com domain, the softphone sends the INVITE to
+   the SIP server that serves Alice's domain, atlanta.com.  The address
+   of the atlanta.com SIP server could have been configured in Alice's
+   softphone, or it could have been discovered by DHCP, for example.
+
+   The atlanta.com SIP server is a type of SIP server known as a proxy
+   server.  A proxy server receives SIP requests and forwards them on
+   behalf of the requestor.  In this example, the proxy server receives
+   the INVITE request and sends a 100 (Trying) response back to Alice's
+   softphone.  The 100 (Trying) response indicates that the INVITE has
+   been received and that the proxy is working on her behalf to route
+   the INVITE to the destination.  Responses in SIP use a three-digit
+   code followed by a descriptive phrase.  This response contains the
+   same To, From, Call-ID, CSeq and branch parameter in the Via as the
+   INVITE, which allows Alice's softphone to correlate this response to
+   the sent INVITE.  The atlanta.com proxy server locates the proxy
+   server at biloxi.com, possibly by performing a particular type of DNS
+   (Domain Name Service) lookup to find the SIP server that serves the
+   biloxi.com domain.  This is described in [<a href="#ref-4" title="&quot;SIP: Locating SIP Servers&quot;">4</a>].  As a result, it
+   obtains the IP address of the biloxi.com proxy server and forwards,
+   or proxies, the INVITE request there.  Before forwarding the request,
+   the atlanta.com proxy server adds an additional Via header field
+   value that contains its own address (the INVITE already contains
+   Alice's address in the first Via).  The biloxi.com proxy server
+   receives the INVITE and responds with a 100 (Trying) response back to
+   the atlanta.com proxy server to indicate that it has received the
+   INVITE and is processing the request.  The proxy server consults a
+   database, generically called a location service, that contains the
+   current IP address of Bob.  (We shall see in the next section how
+   this database can be populated.)  The biloxi.com proxy server adds
+   another Via header field value with its own address to the INVITE and
+   proxies it to Bob's SIP phone.
+
+   Bob's SIP phone receives the INVITE and alerts Bob to the incoming
+   call from Alice so that Bob can decide whether to answer the call,
+   that is, Bob's phone rings.  Bob's SIP phone indicates this in a 180
+   (Ringing) response, which is routed back through the two proxies in
+   the reverse direction.  Each proxy uses the Via header field to
+   determine where to send the response and removes its own address from
+   the top.  As a result, although DNS and location service lookups were
+   required to route the initial INVITE, the 180 (Ringing) response can
+   be returned to the caller without lookups or without state being
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 14]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-15" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   maintained in the proxies.  This also has the desirable property that
+   each proxy that sees the INVITE will also see all responses to the
+   INVITE.
+
+   When Alice's softphone receives the 180 (Ringing) response, it passes
+   this information to Alice, perhaps using an audio ringback tone or by
+   displaying a message on Alice's screen.
+
+   In this example, Bob decides to answer the call.  When he picks up
+   the handset, his SIP phone sends a 200 (OK) response to indicate that
+   the call has been answered.  The 200 (OK) contains a message body
+   with the SDP media description of the type of session that Bob is
+   willing to establish with Alice.  As a result, there is a two-phase
+   exchange of SDP messages: Alice sent one to Bob, and Bob sent one
+   back to Alice.  This two-phase exchange provides basic negotiation
+   capabilities and is based on a simple offer/answer model of SDP
+   exchange.  If Bob did not wish to answer the call or was busy on
+   another call, an error response would have been sent instead of the
+   200 (OK), which would have resulted in no media session being
+   established.  The complete list of SIP response codes is in <a href="#section-21">Section</a>
+   <a href="#section-21">21</a>.  The 200 (OK) (message F9 in Figure 1) might look like this as
+   Bob sends it out:
+
+      SIP/2.0 200 OK
+      Via: SIP/2.0/UDP server10.biloxi.com
+         ;branch=z9hG4bKnashds8;received=192.0.2.3
+      Via: SIP/2.0/UDP bigbox3.site3.atlanta.com
+         ;branch=z9hG4bK77ef4c2312983.1;received=192.0.2.2
+      Via: SIP/2.0/UDP pc33.atlanta.com
+         ;branch=z9hG4bK776asdhds ;received=192.0.2.1
+      To: Bob &lt;sip:bob@biloxi.com&gt;;tag=a6c85cf
+      From: Alice &lt;sip:alice@atlanta.com&gt;;tag=1928301774
+      Call-ID: a84b4c76e66710@pc33.atlanta.com
+      CSeq: 314159 INVITE
+      Contact: &lt;sip:bob@192.0.2.4&gt;
+      Content-Type: application/sdp
+      Content-Length: 131
+
+      (Bob's SDP not shown)
+
+   The first line of the response contains the response code (200) and
+   the reason phrase (OK).  The remaining lines contain header fields.
+   The Via, To, From, Call-ID, and CSeq header fields are copied from
+   the INVITE request.  (There are three Via header field values - one
+   added by Alice's SIP phone, one added by the atlanta.com proxy, and
+   one added by the biloxi.com proxy.)  Bob's SIP phone has added a tag
+   parameter to the To header field.  This tag will be incorporated by
+   both endpoints into the dialog and will be included in all future
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 15]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-16" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   requests and responses in this call.  The Contact header field
+   contains a URI at which Bob can be directly reached at his SIP phone.
+   The Content-Type and Content-Length refer to the message body (not
+   shown) that contains Bob's SDP media information.
+
+   In addition to DNS and location service lookups shown in this
+   example, proxy servers can make flexible "routing decisions" to
+   decide where to send a request.  For example, if Bob's SIP phone
+   returned a 486 (Busy Here) response, the biloxi.com proxy server
+   could proxy the INVITE to Bob's voicemail server.  A proxy server can
+   also send an INVITE to a number of locations at the same time.  This
+   type of parallel search is known as forking.
+
+   In this case, the 200 (OK) is routed back through the two proxies and
+   is received by Alice's softphone, which then stops the ringback tone
+   and indicates that the call has been answered.  Finally, Alice's
+   softphone sends an acknowledgement message, ACK, to Bob's SIP phone
+   to confirm the reception of the final response (200 (OK)).  In this
+   example, the ACK is sent directly from Alice's softphone to Bob's SIP
+   phone, bypassing the two proxies.  This occurs because the endpoints
+   have learned each other's address from the Contact header fields
+   through the INVITE/200 (OK) exchange, which was not known when the
+   initial INVITE was sent.  The lookups performed by the two proxies
+   are no longer needed, so the proxies drop out of the call flow.  This
+   completes the INVITE/200/ACK three-way handshake used to establish
+   SIP sessions.  Full details on session setup are in <a href="#section-13">Section 13</a>.
+
+   Alice and Bob's media session has now begun, and they send media
+   packets using the format to which they agreed in the exchange of SDP.
+   In general, the end-to-end media packets take a different path from
+   the SIP signaling messages.
+
+   During the session, either Alice or Bob may decide to change the
+   characteristics of the media session.  This is accomplished by
+   sending a re-INVITE containing a new media description.  This re-
+   INVITE references the existing dialog so that the other party knows
+   that it is to modify an existing session instead of establishing a
+   new session.  The other party sends a 200 (OK) to accept the change.
+   The requestor responds to the 200 (OK) with an ACK.  If the other
+   party does not accept the change, he sends an error response such as
+   488 (Not Acceptable Here), which also receives an ACK.  However, the
+   failure of the re-INVITE does not cause the existing call to fail -
+   the session continues using the previously negotiated
+   characteristics.  Full details on session modification are in <a href="#section-14">Section</a>
+   <a href="#section-14">14</a>.
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 16]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-17" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   At the end of the call, Bob disconnects (hangs up) first and
+   generates a BYE message.  This BYE is routed directly to Alice's
+   softphone, again bypassing the proxies.  Alice confirms receipt of
+   the BYE with a 200 (OK) response, which terminates the session and
+   the BYE transaction.  No ACK is sent - an ACK is only sent in
+   response to a response to an INVITE request.  The reasons for this
+   special handling for INVITE will be discussed later, but relate to
+   the reliability mechanisms in SIP, the length of time it can take for
+   a ringing phone to be answered, and forking.  For this reason,
+   request handling in SIP is often classified as either INVITE or non-
+   INVITE, referring to all other methods besides INVITE.  Full details
+   on session termination are in <a href="#section-15">Section 15</a>.
+
+   <a href="#section-24.2">Section 24.2</a> describes the messages shown in Figure 1 in full.
+
+   In some cases, it may be useful for proxies in the SIP signaling path
+   to see all the messaging between the endpoints for the duration of
+   the session.  For example, if the biloxi.com proxy server wished to
+   remain in the SIP messaging path beyond the initial INVITE, it would
+   add to the INVITE a required routing header field known as Record-
+   Route that contained a URI resolving to the hostname or IP address of
+   the proxy.  This information would be received by both Bob's SIP
+   phone and (due to the Record-Route header field being passed back in
+   the 200 (OK)) Alice's softphone and stored for the duration of the
+   dialog.  The biloxi.com proxy server would then receive and proxy the
+   ACK, BYE, and 200 (OK) to the BYE.  Each proxy can independently
+   decide to receive subsequent messages, and those messages will pass
+   through all proxies that elect to receive it.  This capability is
+   frequently used for proxies that are providing mid-call features.
+
+   Registration is another common operation in SIP.  Registration is one
+   way that the biloxi.com server can learn the current location of Bob.
+   Upon initialization, and at periodic intervals, Bob's SIP phone sends
+   REGISTER messages to a server in the biloxi.com domain known as a SIP
+   registrar.  The REGISTER messages associate Bob's SIP or SIPS URI
+   (sip:bob@biloxi.com) with the machine into which he is currently
+   logged (conveyed as a SIP or SIPS URI in the Contact header field).
+   The registrar writes this association, also called a binding, to a
+   database, called the location service, where it can be used by the
+   proxy in the biloxi.com domain.  Often, a registrar server for a
+   domain is co-located with the proxy for that domain.  It is an
+   important concept that the distinction between types of SIP servers
+   is logical, not physical.
+
+   Bob is not limited to registering from a single device.  For example,
+   both his SIP phone at home and the one in the office could send
+   registrations.  This information is stored together in the location
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 17]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-18" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   service and allows a proxy to perform various types of searches to
+   locate Bob.  Similarly, more than one user can be registered on a
+   single device at the same time.
+
+   The location service is just an abstract concept.  It generally
+   contains information that allows a proxy to input a URI and receive a
+   set of zero or more URIs that tell the proxy where to send the
+   request.  Registrations are one way to create this information, but
+   not the only way.  Arbitrary mapping functions can be configured at
+   the discretion of the administrator.
+
+   Finally, it is important to note that in SIP, registration is used
+   for routing incoming SIP requests and has no role in authorizing
+   outgoing requests.  Authorization and authentication are handled in
+   SIP either on a request-by-request basis with a challenge/response
+   mechanism, or by using a lower layer scheme as discussed in <a href="#section-26">Section</a>
+   <a href="#section-26">26</a>.
+
+   The complete set of SIP message details for this registration example
+   is in <a href="#section-24.1">Section 24.1</a>.
+
+   Additional operations in SIP, such as querying for the capabilities
+   of a SIP server or client using OPTIONS, or canceling a pending
+   request using CANCEL, will be introduced in later sections.
+
+<span class="h2"><a class="selflink" id="section-5" href="#section-5">5</a> Structure of the Protocol</span>
+
+   SIP is structured as a layered protocol, which means that its
+   behavior is described in terms of a set of fairly independent
+   processing stages with only a loose coupling between each stage.  The
+   protocol behavior is described as layers for the purpose of
+   presentation, allowing the description of functions common across
+   elements in a single section.  It does not dictate an implementation
+   in any way.  When we say that an element "contains" a layer, we mean
+   it is compliant to the set of rules defined by that layer.
+
+   Not every element specified by the protocol contains every layer.
+   Furthermore, the elements specified by SIP are logical elements, not
+   physical ones.  A physical realization can choose to act as different
+   logical elements, perhaps even on a transaction-by-transaction basis.
+
+   The lowest layer of SIP is its syntax and encoding.  Its encoding is
+   specified using an augmented Backus-Naur Form grammar (BNF).  The
+   complete BNF is specified in <a href="#section-25">Section 25</a>; an overview of a SIP
+   message's structure can be found in <a href="#section-7">Section 7</a>.
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 18]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-19" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   The second layer is the transport layer.  It defines how a client
+   sends requests and receives responses and how a server receives
+   requests and sends responses over the network.  All SIP elements
+   contain a transport layer.  The transport layer is described in
+   <a href="#section-18">Section 18</a>.
+
+   The third layer is the transaction layer.  Transactions are a
+   fundamental component of SIP.  A transaction is a request sent by a
+   client transaction (using the transport layer) to a server
+   transaction, along with all responses to that request sent from the
+   server transaction back to the client.  The transaction layer handles
+   application-layer retransmissions, matching of responses to requests,
+   and application-layer timeouts.  Any task that a user agent client
+   (UAC) accomplishes takes place using a series of transactions.
+   Discussion of transactions can be found in <a href="#section-17">Section 17</a>.  User agents
+   contain a transaction layer, as do stateful proxies.  Stateless
+   proxies do not contain a transaction layer.  The transaction layer
+   has a client component (referred to as a client transaction) and a
+   server component (referred to as a server transaction), each of which
+   are represented by a finite state machine that is constructed to
+   process a particular request.
+
+   The layer above the transaction layer is called the transaction user
+   (TU).  Each of the SIP entities, except the stateless proxy, is a
+   transaction user.  When a TU wishes to send a request, it creates a
+   client transaction instance and passes it the request along with the
+   destination IP address, port, and transport to which to send the
+   request.  A TU that creates a client transaction can also cancel it.
+   When a client cancels a transaction, it requests that the server stop
+   further processing, revert to the state that existed before the
+   transaction was initiated, and generate a specific error response to
+   that transaction.  This is done with a CANCEL request, which
+   constitutes its own transaction, but references the transaction to be
+   cancelled (<a href="#section-9">Section 9</a>).
+
+   The SIP elements, that is, user agent clients and servers, stateless
+   and stateful proxies and registrars, contain a core that
+   distinguishes them from each other.  Cores, except for the stateless
+   proxy, are transaction users.  While the behavior of the UAC and UAS
+   cores depends on the method, there are some common rules for all
+   methods (<a href="#section-8">Section 8</a>).  For a UAC, these rules govern the construction
+   of a request; for a UAS, they govern the processing of a request and
+   generating a response.  Since registrations play an important role in
+   SIP, a UAS that handles a REGISTER is given the special name
+   registrar.  <a href="#section-10">Section 10</a> describes UAC and UAS core behavior for the
+   REGISTER method.  <a href="#section-11">Section 11</a> describes UAC and UAS core behavior for
+   the OPTIONS method, used for determining the capabilities of a UA.
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 19]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-20" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+   Certain other requests are sent within a dialog.  A dialog is a
+   peer-to-peer SIP relationship between two user agents that persists
+   for some time.  The dialog facilitates sequencing of messages and
+   proper routing of requests between the user agents.  The INVITE
+   method is the only way defined in this specification to establish a
+   dialog.  When a UAC sends a request that is within the context of a
+   dialog, it follows the common UAC rules as discussed in <a href="#section-8">Section 8</a> but
+   also the rules for mid-dialog requests.  <a href="#section-12">Section 12</a> discusses dialogs
+   and presents the procedures for their construction and maintenance,
+   in addition to construction of requests within a dialog.
+
+   The most important method in SIP is the INVITE method, which is used
+   to establish a session between participants.  A session is a
+   collection of participants, and streams of media between them, for
+   the purposes of communication.  <a href="#section-13">Section 13</a> discusses how sessions are
+   initiated, resulting in one or more SIP dialogs.  <a href="#section-14">Section 14</a>
+   discusses how characteristics of that session are modified through
+   the use of an INVITE request within a dialog.  Finally, <a href="#section-15">section 15</a>
+   discusses how a session is terminated.
+
+   The procedures of Sections <a href="#section-8">8</a>, <a href="#section-10">10</a>, <a href="#section-11">11</a>, <a href="#section-12">12</a>, <a href="#section-13">13</a>, <a href="#section-14">14</a>, and <a href="#section-15">15</a> deal
+   entirely with the UA core (<a href="#section-9">Section 9</a> describes cancellation, which
+   applies to both UA core and proxy core).  <a href="#section-16">Section 16</a> discusses the
+   proxy element, which facilitates routing of messages between user
+   agents.
+
+<span class="h2"><a class="selflink" id="section-6" href="#section-6">6</a> Definitions</span>
+
+   The following terms have special significance for SIP.
+
+      Address-of-Record: An address-of-record (AOR) is a SIP or SIPS URI
+         that points to a domain with a location service that can map
+         the URI to another URI where the user might be available.
+         Typically, the location service is populated through
+         registrations.  An AOR is frequently thought of as the "public
+         address" of the user.
+
+      Back-to-Back User Agent: A back-to-back user agent (B2BUA) is a
+         logical entity that receives a request and processes it as a
+         user agent server (UAS).  In order to determine how the request
+         should be answered, it acts as a user agent client (UAC) and
+         generates requests.  Unlike a proxy server, it maintains dialog
+         state and must participate in all requests sent on the dialogs
+         it has established.  Since it is a concatenation of a UAC and
+         UAS, no explicit definitions are needed for its behavior.
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 20]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-21" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+      Call: A call is an informal term that refers to some communication
+         between peers, generally set up for the purposes of a
+         multimedia conversation.
+
+      Call Leg: Another name for a dialog [<a href="#ref-31" title="&quot;SIP: Session Initiation Protocol&quot;">31</a>]; no longer used in this
+         specification.
+
+      Call Stateful: A proxy is call stateful if it retains state for a
+         dialog from the initiating INVITE to the terminating BYE
+         request.  A call stateful proxy is always transaction stateful,
+         but the converse is not necessarily true.
+
+      Client: A client is any network element that sends SIP requests
+         and receives SIP responses.  Clients may or may not interact
+         directly with a human user.  User agent clients and proxies are
+         clients.
+
+      Conference: A multimedia session (see below) that contains
+         multiple participants.
+
+      Core: Core designates the functions specific to a particular type
+         of SIP entity, i.e., specific to either a stateful or stateless
+         proxy, a user agent or registrar.  All cores, except those for
+         the stateless proxy, are transaction users.
+
+      Dialog: A dialog is a peer-to-peer SIP relationship between two
+         UAs that persists for some time.  A dialog is established by
+         SIP messages, such as a 2xx response to an INVITE request.  A
+         dialog is identified by a call identifier, local tag, and a
+         remote tag.  A dialog was formerly known as a call leg in <a href="./rfc2543">RFC</a>
+         <a href="./rfc2543">2543</a>.
+
+      Downstream: A direction of message forwarding within a transaction
+         that refers to the direction that requests flow from the user
+         agent client to user agent server.
+
+      Final Response: A response that terminates a SIP transaction, as
+         opposed to a provisional response that does not.  All 2xx, 3xx,
+         4xx, 5xx and 6xx responses are final.
+
+      Header: A header is a component of a SIP message that conveys
+         information about the message.  It is structured as a sequence
+         of header fields.
+
+      Header Field: A header field is a component of the SIP message
+         header.  A header field can appear as one or more header field
+         rows. Header field rows consist of a header field name and zero
+         or more header field values. Multiple header field values on a
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 21]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-22" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+         given header field row are separated by commas. Some header
+         fields can only have a single header field value, and as a
+         result, always appear as a single header field row.
+
+      Header Field Value: A header field value is a single value; a
+         header field consists of zero or more header field values.
+
+      Home Domain: The domain providing service to a SIP user.
+         Typically, this is the domain present in the URI in the
+         address-of-record of a registration.
+
+      Informational Response: Same as a provisional response.
+
+      Initiator, Calling Party, Caller: The party initiating a session
+         (and dialog) with an INVITE request.  A caller retains this
+         role from the time it sends the initial INVITE that established
+         a dialog until the termination of that dialog.
+
+      Invitation: An INVITE request.
+
+      Invitee, Invited User, Called Party, Callee: The party that
+         receives an INVITE request for the purpose of establishing a
+         new session.  A callee retains this role from the time it
+         receives the INVITE until the termination of the dialog
+         established by that INVITE.
+
+      Location Service: A location service is used by a SIP redirect or
+         proxy server to obtain information about a callee's possible
+         location(s).  It contains a list of bindings of address-of-
+         record keys to zero or more contact addresses.  The bindings
+         can be created and removed in many ways; this specification
+         defines a REGISTER method that updates the bindings.
+
+      Loop: A request that arrives at a proxy, is forwarded, and later
+         arrives back at the same proxy.  When it arrives the second
+         time, its Request-URI is identical to the first time, and other
+         header fields that affect proxy operation are unchanged, so
+         that the proxy would make the same processing decision on the
+         request it made the first time.  Looped requests are errors,
+         and the procedures for detecting them and handling them are
+         described by the protocol.
+
+      Loose Routing: A proxy is said to be loose routing if it follows
+         the procedures defined in this specification for processing of
+         the Route header field.  These procedures separate the
+         destination of the request (present in the Request-URI) from
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 22]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-23" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+         the set of proxies that need to be visited along the way
+         (present in the Route header field).  A proxy compliant to
+         these mechanisms is also known as a loose router.
+
+      Message: Data sent between SIP elements as part of the protocol.
+         SIP messages are either requests or responses.
+
+      Method: The method is the primary function that a request is meant
+         to invoke on a server.  The method is carried in the request
+         message itself.  Example methods are INVITE and BYE.
+
+      Outbound Proxy: A proxy that receives requests from a client, even
+         though it may not be the server resolved by the Request-URI.
+         Typically, a UA is manually configured with an outbound proxy,
+         or can learn about one through auto-configuration protocols.
+
+      Parallel Search: In a parallel search, a proxy issues several
+         requests to possible user locations upon receiving an incoming
+         request.  Rather than issuing one request and then waiting for
+         the final response before issuing the next request as in a
+         sequential search, a parallel search issues requests without
+         waiting for the result of previous requests.
+
+      Provisional Response: A response used by the server to indicate
+         progress, but that does not terminate a SIP transaction.  1xx
+         responses are provisional, other responses are considered
+         final.
+
+      Proxy, Proxy Server: An intermediary entity that acts as both a
+         server and a client for the purpose of making requests on
+         behalf of other clients.  A proxy server primarily plays the
+         role of routing, which means its job is to ensure that a
+         request is sent to another entity "closer" to the targeted
+         user.  Proxies are also useful for enforcing policy (for
+         example, making sure a user is allowed to make a call).  A
+         proxy interprets, and, if necessary, rewrites specific parts of
+         a request message before forwarding it.
+
+      Recursion: A client recurses on a 3xx response when it generates a
+         new request to one or more of the URIs in the Contact header
+         field in the response.
+
+      Redirect Server: A redirect server is a user agent server that
+         generates 3xx responses to requests it receives, directing the
+         client to contact an alternate set of URIs.
+
+
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 23]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-24" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+      Registrar: A registrar is a server that accepts REGISTER requests
+         and places the information it receives in those requests into
+         the location service for the domain it handles.
+
+      Regular Transaction: A regular transaction is any transaction with
+         a method other than INVITE, ACK, or CANCEL.
+
+      Request: A SIP message sent from a client to a server, for the
+         purpose of invoking a particular operation.
+
+      Response: A SIP message sent from a server to a client, for
+         indicating the status of a request sent from the client to the
+         server.
+
+      Ringback: Ringback is the signaling tone produced by the calling
+         party's application indicating that a called party is being
+         alerted (ringing).
+
+      Route Set: A route set is a collection of ordered SIP or SIPS URI
+         which represent a list of proxies that must be traversed when
+         sending a particular request.  A route set can be learned,
+         through headers like Record-Route, or it can be configured.
+
+      Server: A server is a network element that receives requests in
+         order to service them and sends back responses to those
+         requests.  Examples of servers are proxies, user agent servers,
+         redirect servers, and registrars.
+
+      Sequential Search: In a sequential search, a proxy server attempts
+         each contact address in sequence, proceeding to the next one
+         only after the previous has generated a final response.  A 2xx
+         or 6xx class final response always terminates a sequential
+         search.
+
+      Session: From the SDP specification: "A multimedia session is a
+         set of multimedia senders and receivers and the data streams
+         flowing from senders to receivers.  A multimedia conference is
+         an example of a multimedia session." (<a href="./rfc2327">RFC 2327</a> [<a href="#ref-1" title="&quot;SDP: Session Description Protocol&quot;">1</a>]) (A session
+         as defined for SDP can comprise one or more RTP sessions.)  As
+         defined, a callee can be invited several times, by different
+         calls, to the same session.  If SDP is used, a session is
+         defined by the concatenation of the SDP user name, session id,
+         network type, address type, and address elements in the origin
+         field.
+
+      SIP Transaction: A SIP transaction occurs between a client and a
+         server and comprises all messages from the first request sent
+         from the client to the server up to a final (non-1xx) response
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 24]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-25" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+         sent from the server to the client.  If the request is INVITE
+         and the final response is a non-2xx, the transaction also
+         includes an ACK to the response.  The ACK for a 2xx response to
+         an INVITE request is a separate transaction.
+
+      Spiral: A spiral is a SIP request that is routed to a proxy,
+         forwarded onwards, and arrives once again at that proxy, but
+         this time differs in a way that will result in a different
+         processing decision than the original request.  Typically, this
+         means that the request's Request-URI differs from its previous
+         arrival.  A spiral is not an error condition, unlike a loop.  A
+         typical cause for this is call forwarding.  A user calls
+         joe@example.com.  The example.com proxy forwards it to Joe's
+         PC, which in turn, forwards it to bob@example.com.  This
+         request is proxied back to the example.com proxy.  However,
+         this is not a loop.  Since the request is targeted at a
+         different user, it is considered a spiral, and is a valid
+         condition.
+
+      Stateful Proxy: A logical entity that maintains the client and
+         server transaction state machines defined by this specification
+         during the processing of a request, also known as a transaction
+         stateful proxy.  The behavior of a stateful proxy is further
+         defined in <a href="#section-16">Section 16</a>.  A (transaction) stateful proxy is not
+         the same as a call stateful proxy.
+
+      Stateless Proxy: A logical entity that does not maintain the
+         client or server transaction state machines defined in this
+         specification when it processes requests.  A stateless proxy
+         forwards every request it receives downstream and every
+         response it receives upstream.
+
+      Strict Routing: A proxy is said to be strict routing if it follows
+         the Route processing rules of <a href="./rfc2543">RFC 2543</a> and many prior work in
+         progress versions of this RFC.  That rule caused proxies to
+         destroy the contents of the Request-URI when a Route header
+         field was present.  Strict routing behavior is not used in this
+         specification, in favor of a loose routing behavior.  Proxies
+         that perform strict routing are also known as strict routers.
+
+      Target Refresh Request: A target refresh request sent within a
+         dialog is defined as a request that can modify the remote
+         target of the dialog.
+
+      Transaction User (TU): The layer of protocol processing that
+         resides above the transaction layer.  Transaction users include
+         the UAC core, UAS core, and proxy core.
+
+
+
+
+<span class="grey">Rosenberg, et. al.          Standards Track                    [Page 25]</span></pre>
+<hr class='noprint'/><!--NewPage--><pre class='newpage'><span id="page-26" ></span>
+<span class="grey"><a href="./rfc3261">RFC 3261</a>            SIP: Session Initiation Protocol           June 2002</span>
+
+
+      Upstream: A direction of message forwarding within a transaction
+         that refers to the direction that responses flow from the user
+         agent server back to the user agent client.
+
+      URL-encoded: A character string encoded according to <a href="./rfc2396#section-2.4">RFC 2396,
+         Section&nbsp;2.4</a> [<a href="#ref-5" title="&quot;Uniform Resource Identifiers (URI): Generic Syntax&quot;">5</a>].
+
+      User Agent Client (UAC): A user agent client is a logical entity
+         that creates a new request, and then uses the client
+         transaction state machinery to send it.  The role of UAC lasts
+         only for the duration of that transaction.  In other words, if
+         a piece of software initiates a request, it acts as a UAC for
+         the duration of that transaction.  If it receives a request
+         later, it assumes the role of a user agent server for the
+         processing of that transaction.
+
+      UAC Core: The set of pro
