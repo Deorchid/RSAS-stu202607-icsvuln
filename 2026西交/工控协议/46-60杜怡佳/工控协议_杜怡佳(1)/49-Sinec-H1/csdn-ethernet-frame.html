@@ -1,0 +1,1824 @@
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <link rel="canonical" href="https://blog.csdn.net/weixin_39690958/article/details/111702637"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <meta name="report" content='{"pid": "blog", "spm":"1001.2101"}'>
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <meta name="applicable-device" content="pc">
+    <link  href="https://g.csdnimg.cn/static/logo/favicon32.ico"  rel="shortcut icon" type="image/x-icon" />
+    <title>分析以太网帧结构_Sinec H1通信协议分析及模糊测试-CSDN博客</title>
+    <script>
+      (function(){ 
+        var el = document.createElement("script"); 
+        el.src = "https://s3a.pstatp.com/toutiao/push.js?1abfa13dfe74d72d41d83c86d240de427e7cac50c51ead53b2e79d40c7952a23ed7716d05b4a0f683a653eab3e214672511de2457e74e99286eb2c33f4428830"; 
+        el.id = "ttzz"; 
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(el, s);
+      })(window)
+    </script>
+        <meta name="keywords" content="分析以太网帧结构">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"sinec h1"}'>
+    <meta name="description" content="文章浏览阅读707次。本文深入探讨了以太网帧的结构，详细解析了Sinec H1通信协议的工作原理，并介绍了如何进行模糊测试来确保网络通信的安全性和稳定性。">
+              <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/css/detail_enter-c146dfa3ec.min.css">
+    <style>
+        #content_views pre{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+        #content_views pre code{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+    </style>
+    <script type="application/ld+json">{"@context":"https://ziyuan.baidu.com/contexts/cambrian.jsonld","@id":"https://blog.csdn.net/weixin_39690958/article/details/111702637","appid":"1638831770136827","pubDate":"2020-12-24T06:59:26","title":"分析以太网帧结构_Sinec H1通信协议分析及模糊测试-CSDN博客","upDate":"2020-12-24T06:59:26"}</script>
+        <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/themesSkin/skin-sea/skin-sea-d3a08c2048.min.css">
+    <script src="https://g.csdnimg.cn/lib/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://g.csdnimg.cn/lib/jquery-migrate/1.4.1/jquery-migrate.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var isCorporate = false;
+        var username =  "weixin_39690958";
+        var skinImg = "white";
+
+        var blog_address = "https://blog.csdn.net/weixin_39690958";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/weixin_39690958/article/details/111702637";
+        var blogUrl = "https://blog.csdn.net/";
+        var starMapUrl = "https://ai.csdn.net";
+        var inscodeHost = "https://inscode.csdn.net";
+        var paymentBalanceUrl = "https://csdnimg.cn/release/vip-business-components/vipPaymentBalance.js?v=2025122501";
+        var appBlogDomain = "https://app-blog.csdn.net";
+        var avatar = "https://profile-avatar.csdnimg.cn/default.jpg!1";
+        var isCJBlog = false;
+        var isStarMap = false;
+        var articleTitle = "分析以太网帧结构_Sinec H1通信协议分析及模糊测试";
+        var articleDesc = "文章浏览阅读707次。本文深入探讨了以太网帧的结构，详细解析了Sinec H1通信协议的工作原理，并介绍了如何进行模糊测试来确保网络通信的安全性和稳定性。\r";
+        var articleTitles = "分析以太网帧结构_Sinec H1通信协议分析及模糊测试-CSDN博客";
+        var nickName = "weixin_39690958";
+        var articleDetailUrl = "https://blog.csdn.net/weixin_39690958/article/details/111702637";
+        var vipUrlV = "https://mall.csdn.net/vip?vipSource=learningVip";
+        if(window.location.host.split('.').length == 3) {
+            blog_address = blogUrl + username;
+        }
+        var skinStatus = "White";
+        var blogStaticHost = "https://csdnimg.cn/release/blogv2/"
+          var payColumn = false
+    </script>
+        <meta name="toolbar" content='{"type":"0","fixModel":"1"}'>
+      <script ript src="https://g.csdnimg.cn/??fixed-sidebar/1.1.7/fixed-sidebar.js" type="text/javascript"></script>
+    <script src='//g.csdnimg.cn/common/csdn-report/report.js' type='text/javascript'></script>
+    <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax_Message, .MathJax_Preview{
+            display: none !important;
+        }
+    </style>
+    <script src="https://dup.baidustatic.com/js/ds.js"></script>
+      <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "lgtpix6r85");
+      </script>
+    <script src="/cdn_cgi_bs_bot/static/crypto.min.js"></script>
+    <script src="/cdn_cgi_bs_bot/static/bot-score-v1.js"></script>
+    <script src="/cdn_cgi_bs_captcha/static/js/waf_captcha_embedded_bs.js"></script>
+</head>
+  <body class="nodata  " style="">
+    <div id="toolbarBox" style="min-height: 48px;"></div>
+        <script>
+            var toolbarSearchExt = '{\"id\":111702637,\"landingWord\":[\"sinec h1\"],\"queryWord\":\"\",\"tag\":[\"分析以太网帧结构\"],\"title\":\"分析以太网帧结构_Sinec H1通信协议分析及模糊测试\"}';
+        </script>
+    <script src="https://g.csdnimg.cn/common/csdn-toolbar/csdn-toolbar.js" type="text/javascript"></script>
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+    <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/pc/css/blog_code-01256533b5.min.css">
+    <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/chart-3456820cac.css" />
+    <link rel="stylesheet" href="https://g.csdnimg.cn/lib/swiper/6.0.4/css/swiper.css" />
+    <script src="https://g.csdnimg.cn/lib/swiper/6.0.4/js/swiper.js" async></script>
+    <script>
+      var articleId = 111702637;
+      var annotationModuleBootstrapData = {
+        hasAnnotation: false,
+        totalCount: 0,
+        list: [],
+        categories: []
+      };
+      var annotationFeatureEnabled = false;
+
+
+        var privateEduData = [];
+        var privateData = [];
+      var crytojs = "https://csdnimg.cn/release/blogv2/dist/components/js/crytojs-ca5b8bf6ae.min.js";
+      var commentscount = 0;
+      var commentAuth = 1;
+      var curentUrl = "https://blog.csdn.net/weixin_39690958/article/details/111702637";
+      var myUrl = "https://my.csdn.net/";
+      var isGitCodeBlog = false;
+      var vipActivityIcon = "";
+      var isOpenSourceBlog = false;
+      var isVipArticle = false;
+        var highlight = ["sinec","通信协议","模煳测试","帧结构","以太网","分析","1"];//高亮数组
+        var isRecommendModule = true;
+          var isBaiduPre = true;
+          var baiduCount = 2;
+          var setBaiduJsCount = 10;
+        var viewCountFormat = 707;
+      var share_card_url = "https://app-blog.csdn.net/share?article_id=111702637&username=weixin_39690958"
+      var mallVipUrl = "https://mall.csdn.net/vip?vipSource=article"
+      var vipArticleAbStyle = "t_1"
+      var vipArticleCpStyle = "t_1"
+      var detailheaderAbCommunity = "control"
+      var codeAiAbStyle = "exp1"
+      var runProjectDeepBlogAB = "isRunProject is false"
+      var gitcodeHighlightWordAB = "exp1"
+
+      var asideCknowsEntryAB = "con1"
+      var deepblogUrl = ""
+        deepblogUrl = "https://deepblog.net?utm_source=blog_onekey_run";
+      var codeAiAbObjStyle = ""
+        codeAiAbObjStyle = "{\"control\":{\"title\":\"AI写代码\",\"destUrl\":\"https://trae.com.cn?utm_source=community&utm_medium=csdn&utm_campaign=daima\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/a5fff6f6c9f0464c9a46b130c972952b.png\"},\"exp1\":{\"title\":\"一键获取完整项目代码\",\"runClose\":true,\"destUrl\":\"https://inscode.net?utm_source=blog_code_block\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/4648c13ca82a446ea1bfb99876a27770.png\",\"blogUrl\":true},\"control_run_project\": {\"title\": \"运行项目并下载源码\",\"destUrl\": \"\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/46c457a2cf8b4b9b8f17a2ab71461d4a.png\"},\"control_deepblog\": {\"title\": \"AI生成项目\",\"destUrl\": \"https://inscode.net?utm_source=blog_code_block_fixed\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/9899ea0f099e4e4e8b1fcdb918a27fcd.png\",\"blogUrl\": false},\"exp2\":{\"title\":\"AI编程工具\",\"destUrl\":\"https://www.codebuddy.cn/work/?fromSource=gwzcw.13129862.13129862.13129862&utm_medium=cpc&utm_id=gwzcw.13129862.13129862.13129862\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/034b15f494eb444abc72cc544790ca5f.svg\"},\"exp3\":{\"title\":\"AI构建项目\",\"destUrl\":\"https://t.csdnimg.cn/9I17\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/bf18ebff2c3748d59ea0f95954bb4b4a.png\"}}";
+      var aiSideSegment = -1;
+        aiSideSegment = "16";
+      var articleType = 1;
+      var baiduKey = "sinec h1";
+      var copyPopSwitch = true;
+      var needInsertBaidu = true;
+      var recommendRegularDomainArr = ["blog.csdn.net/.+/article/details/","download.csdn.net/download/","edu.csdn.net/course/detail/","ask.csdn.net/questions/","bbs.csdn.net/topics/","www.csdn.net/gather_.+/"]
+      var codeStyle = "";
+      var baiduSearchType = "baidulandingword";
+      var sharData = "{\"hot\":[{\"id\":1,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a5f4260710904e538002a6ab337939b3.png\"},{\"id\":2,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/188b37199a2c4b74b1d9ffc39e0d52de.png\"},{\"id\":3,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/14ded358b631444581edd98a256bc5af.png\"},{\"id\":4,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1470f23a770444d986ad551b9c33c5be.png\"},{\"id\":5,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c329f5181dc74f6c9bd28c982bb9f91d.png\"},{\"id\":6,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ccd8a3305e81460f9c505c95b432a65f.png\"},{\"id\":7,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bc89d8283389440d97fc4d30e30f45e1.png\"},{\"id\":8,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/452d485b4a654f5592390550d2445edf.png\"},{\"id\":9,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f8b9939db2ed474a8f43a643015fc8b7.png\"},{\"id\":10,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6de8864187ab4ed3b1db0856369c36ff.png\"},{\"id\":11,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/673cc3470ff74072acba958dc0c46e2d.png\"},{\"id\":12,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/930c119760ac4491804db80f9c6d4e3f.png\"},{\"id\":13,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/15e6befb05a24233bc2b65e96aa8d972.png\"},{\"id\":14,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2075fd6822184b95a41e214de4daec13.png\"},{\"id\":15,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/859b1552db244eb6891a809263a5c657.png\"},{\"id\":16,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/0be2f920f1f74290a98921974a9613fd.png\"},{\"id\":17,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2e97e00b43f14afab494ea55ef3f4a6e.png\"},{\"id\":18,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ff4ab252f46e444686f5135d6ebbfec0.png\"},{\"id\":19,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ae029bbe99564e79911657912d36524f.png\"},{\"id\":20,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b3ece39963de440388728e9e7b9bf427.png\"},{\"id\":21,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6f14651a99ba486e926d63b6fa692997.png\"},{\"id\":22,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/83ceddf050084875a341e32dcceca721.png\"},{\"id\":23,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b90368b8fd5d4c6c8c79a707d877cf7c.png\"},{\"id\":24,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/aeffae14ecf14e079b2616528c9a393b.png\"},{\"id\":25,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c5a06b5a13d44d16bed868fc3384897a.png\"},{\"id\":26,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/08b697658b844b318cea3b119e9541ef.png\"},{\"id\":27,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/68ccb0b8d09346ac961d2b5c1a8c77bf.png\"},{\"id\":28,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a2227a247e37418cbe0ea972ba6a859b.png\"},{\"id\":29,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/3a42825fede748f9993e5bb844ad350d.png\"},{\"id\":30,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/8882abc1dd484224b636966ea38555c3.png\"},{\"id\":31,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/4f6a5f636a3e444d83cf8cc06d87a159.png\"},{\"id\":32,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1953ef79c56b4407b78d7181bdff11c3.png\"},{\"id\":33,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c04a2a4f772948ed85b5b0380ed36287.png\"},{\"id\":34,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5b4fecd05091405ea04d8c0f53e9f2c7.png\"},{\"id\":35,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b89f576d700344e280d6ceb2a66c2420.png\"},{\"id\":36,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1c65780e11804bbd9971ebadb3d78bcf.png\"},{\"id\":37,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d590db2055f345db9706eb68a7ec151a.png\"},{\"id\":38,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fe602f80700b4f6fb3c4a9e4c135510e.png\"},{\"id\":39,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/39ff2fcd31e04feba301a071976a0ba7.png\"},{\"id\":40,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f9b61b3d113f436b828631837f89fb39.png\"},{\"id\":41,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/df1aca5f610c4ad48cd16da88c9c8499.png\"},{\"id\":42,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d7acf73a1e6b41399a77a85040e10961.png\"},{\"id\":43,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b7f1b63542524b97962ff649ab4e7e23.png\"}],\"vip\":[{\"id\":1,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101150.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101154.png\"},{\"id\":2,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101204.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101208.png\"},{\"id\":3,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101211.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101215.png\"},{\"id\":4,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101218.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101220.png\"},{\"id\":5,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101223.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101226.png\"},{\"id\":6,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100635.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100639.png\"},{\"id\":7,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100642.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100644.png\"},{\"id\":8,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100647.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100649.png\"},{\"id\":9,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100652.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100655.png\"},{\"id\":10,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/55de67481fde4b04b97ad78f11fe369a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bb2418fb537e4d78b10d8765ccd810c5.png\"},{\"id\":11,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/579c713394584d128104ef1044023954.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f420d9fbcf5548079d31b5e809b6d6cd.png\"},{\"id\":12,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/75b7f3155ba642f5a4cc16b7baf44122.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a9030f5877be401f8b340b80b0d91e64.png\"},{\"id\":13,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0903d33cafa54934be3780aa54ae958d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2cd8c8929f5a42fca5da2a0aeb456203.png\"},{\"id\":14,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/949fd7c22884439fbfc3c0e9c3b8dee7.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/dafbea9bd9eb4f3b962b48dc41657f89.png\"},{\"id\":15,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4119cfddd71d4e6a8a27a18dbb74d90e.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c56310c8b6384d9e85388e4e342ce508.png\"},{\"id\":16,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/121575274da142bcbbbbc2e8243dd411.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5013993de06542f881018bb9abe2edf7.png\"},{\"id\":17,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4d97aa6dd4fe4f09a6bef5bdf8a6abcd.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/76f23877b6ad4066ad45ce8e31b4b977.png\"},{\"id\":18,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdb619daf21b4c829de63b9ebc78859d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a1abe5d27a5441f599adfe662f510243.png\"},{\"id\":19,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/676b7707bb11410f8f56bc0ed2b2345c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/7ac5b467fbf24e1d8c2de3f3332c4f54.png\"},{\"id\":20,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0becb8cc227e4723b765bdd69a20fd4a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdec85b26091486b9a89d0b8d45c3749.png\"},{\"id\":21,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/1a6c06235ad44941b38c54cbc25a370c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/410a06cda2d44b0c84578f88275caf70.png\"}],\"map\":{\"hot\":\"热门\",\"vip\":\"VIP\"}}";
+        var commentListModule = ''
+      var canRead = true;
+      var blogMoveHomeArticle = true;
+      var showSearchText = "";
+      var articleSource = 4;
+      var articleReport = '{"pid": "blog", "spm":"1001.2101"}';
+        var baiduSearchChannel = 'pc_relevant'
+        var baiduSearchIdentification = '.235^v43^pc_blog_bottom_relevance_base2'
+        var distRequestId = '1783563347205_00114'
+        var initRewardObject = {
+          giver: currentUserName,
+          anchor: username,
+          articleId: articleId,
+          sign: ''
+        }
+        var isLikeStatus = false;
+        var isUnLikeStatus = false;
+        var studyLearnWord = "";
+        var unUseCount = 0;
+        var codeMaxSize = 0;
+        var overCost = true;
+        var isCurrentUserVip = false;
+        var contentViewsHeight = 0;
+        var contentViewsCount = 0;
+        var contentViewsCountLimit = 5;
+        var isShowConcision = false;
+        var lastTime = 0
+        var postTime = "2020-12-24 06:59:26"
+      var isCookieConcision = false
+      var isHasDirectoryModel = false
+      var isShowSideModel = false
+      var isShowDirectoryModel = true
+      function getCookieConcision(sName){
+        var allCookie = document.cookie.split("; ");
+        for (var i=0; i < allCookie.length; i++){
+          var aCrumb = allCookie[i].split("=");
+          if (sName == aCrumb[0])
+            return aCrumb[1];
+        }
+        return null;
+      }
+      if (getCookieConcision('blog_details_concision') && getCookieConcision('blog_details_concision') == 0){
+        isCookieConcision = true
+        isShowSideModel = true
+        isShowDirectoryModel = false
+      }
+    </script>
+        <div class="main_father clearfix d-flex justify-content-center " style="height:100%;">
+          <div class="container clearfix " id="mainBox">
+          <script>
+          if (!isCookieConcision) {
+            $('.main_father').removeClass('mainfather-concision')
+            $('.main_father .container').removeClass('container-concision')
+          } else {
+            $('#mainBox').css('margin-right', '0')
+          }
+          </script>
+          <main>
+<script type="text/javascript">
+    var resourceId =  "";
+    function getQueryString(name) {   
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象  
+      var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+      if( r != null ) return decodeURIComponent( r[2] ); return '';   
+    }
+    function stripscript(s){ 
+      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]") 
+      var rs = ""; 
+      for (var i = 0; i < s.length; i++) { 
+        rs = rs+s.substr(i, 1).replace(pattern, ''); 
+      } 
+      return rs;
+    }
+    var blogHotWords = stripscript(getQueryString('utm_term')).length > 1 ? stripscript(getQueryString('utm_term')) : ''
+</script>
+<div class="blog-content-box">
+  <div class="article-header-box" id="article-header-box">
+    <div class="article-header">
+      <div class="article-title-box">
+        <h1 class="title-article" id="articleContentId">分析以太网帧结构_Sinec H1通信协议分析及模糊测试</h1>
+      </div>
+      <div class="article-info-box">
+              <div class="up-time">最新推荐文章于&nbsp;2026-03-23 00:27:27&nbsp;发布</div>
+          <div class="article-bar-top">
+              <div class="bar-content active">
+              <span class="article-type-text original">原创</span>
+
+              
+                    <span class="time blog-postTime" data-time="2020-12-24 06:59:26">最新推荐文章于&nbsp;2026-03-23 00:27:27&nbsp;发布</span>
+                <span class="border-dian">·</span>
+                <span class="read-count">707 阅读</span>
+                <div class="read-count-box is-like like-ab-new" data-type="top">
+                  <span class="border-dian">·</span>
+                  <img class="article-read-img article-heard-img active" style="display:none" id="is-like-imgactive-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newHeart2023Active.png" alt="">
+                  <img class="article-read-img article-heard-img" style="display:block" id="is-like-img-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newHeart2023Black.png" alt="">
+                  <span class="read-count" id="blog-digg-num" style="color:;">
+                      0
+                  </span>
+                </div>
+                <span class="border-dian">·</span>
+                <a id="blog_detail_zk_collection" class="un-collection" data-report-click='{"mod":"popu_823","spm":"1001.2101.3001.4232","ab":"new"}'>
+                  <img class="article-collect-img article-heard-img un-collect-status isdefault" style="display:inline-block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollect2.png" alt="">
+                  <img class="article-collect-img article-heard-img collect-status isactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive2.png" alt="">
+                  <span class="get-collection">
+                     0
+                  </span>
+                </a>
+
+                    <span class="border-dian">·</span>
+                    <div class="href-article-edit-new">
+                      <span class="href-article-edit-click">本内容遵循CC 4.0 BY-SA版权协议</span>
+                      <div class="slide-content-box-new">
+                                  版权声明：本文为博主原创文章，遵循<a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener"> CC 4.0 BY-SA </a>版权协议，转载请附上原文出处链接和本声明。
+                      </div>
+                    </div>
+              </div>
+          </div>
+          <div class="blog-tags-box article-header-tags-v2">
+
+<div class="article-header-categories-wrap">
+  <div class="article-header-collect-row">
+    <div class="article-header-category-segment article-header-collect-segment" id="article-header-collect-group" data-column-count="0" style="display:none">
+      <span class="article-header-row-dot" style="display:none">·</span>
+      <div class="article-header-category-group article-header-collect-group">
+        <span class="article-header-label">收录于</span>
+        <div class="article-header-pill-list article-header-collect-list" id="article-header-collect-list">
+          <span class="article-header-community-slot community-name" id="community-name"></span>
+<div class="tag-more-btn collect-more-btn column-collect-more-btn" style="display:none" id="article-header-collect-more-btn" data-report-click='{"spm":"1001.2101.3001.4224"}'>
+  <svg class="more-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+    <circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/>
+  </svg>
+  <div class="column-more-dropdown">
+    <p class="dropdown-title">当前文章被以下社区和专栏收录：</p>
+    <div class="column-more-list" id="article-header-collect-more-list">
+      <div class="dropdown-divider column-more-item-divider"></div>
+    </div>
+  </div>
+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+          </div>
+      </div>
+    </div>
+  </div>
+    <div id="blogHuaweiyunAdvert"></div>
+      <div class="ai-abstract-box">
+         <div class="ai-abstract">
+          <div class="abstract-content">
+            <img class="lock-img" src="https://i-operation.csdnimg.cn/images/a7311a21245d4888a669ca3155f1f4e5.png" alt="">本文深入探讨了以太网帧的结构，详细解析了Sinec H1通信协议的工作原理，并介绍了如何进行模糊测试来确保网络通信的安全性和稳定性。
+          </div>
+        </div>
+      </div>
+    <article class="baidu_pl">
+        <div id="article_content" class="article_content clearfix">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/kdoc_html_views-1a98987dfd.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/ck_htmledit_views-a50b13a894.css">
+                <div id="content_views" class="htmledit_views atom-one-dark">
+                    <div class="._5ce-wx-style" style="font-size:16px;">
+	<div class="rich_media_content" id="js_content">
+0x00 概述Sinec H1是第一个基于以太网的工业协议&#xff0c;可提供传输层功能。该协议由西门子推出&#xff0c;目的是使用现有标准并丰富工业通信协议的相关细节&#xff0c;主要用于控制系统之间的数据传输。它具有大带宽特点&#xff0c;非常适合传输大量数据。基于ISO / IEC 8073标准&#xff0c;定义了不同的传输方法。当PLC之间进行通讯时&#xff0c;采用在OSI第4层上的对等数据传输模式&#xff0c;称为传输层连接&#xff1b;当上位机与PLC之间通讯时&#xff0c;在OSI的第7层上进行TF (Technology Function)通信。TF(Technology Function)通信服务通常在监控上位机和PLC之间使用&#xff0c;以进行数据采集和控制&#xff0c;在典型的H1网络中&#xff0c;可以使用具有该功能的上位机连接一个或多个PLC。上位机系统必须具有以下功能&#xff1a;可在PLC中读取和写入数据。虽然该协议推出时间较早&#xff0c;但是其用法简单传输数据量大&#xff0c;现在依然存在于大多数工业现场&#xff0c;尤其是和上位机SCADA进行数据交换时应用广泛。各个厂家在SCADA的通信驱动中集成了该协议&#xff0c;但有的命名为Siemens S7驱动而未提及Sinec H1相关内容。具有Sinec H1 传输通信接口板的Simatic S5和S7系列PLC&#xff0c;例如CP1430&#xff0c;CP143&#xff0c;CP535&#xff0c;CP443-1均支持Sinec H1协议&#xff0c;编址方式为TSAP节点、访问块、word形式、数据长度。0x01 协议分析分析Sinec H1协议的测试环境如下图&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/1e64ef50b6b6ae179b76b44109c1d4f4.png" alt="74138ff932962c0c578d914d45924144.png" /></p>关于该协议的信息在网上极少&#xff0c;无公开的报文设计类文档&#xff0c;因此无从知晓数据帧格式。面对这种情况。有如下突破的思路&#xff1a;A.获取到支持该协议的CP板卡的固件&#xff0c;逆向固件获取处理该协议的相关流程信息&#xff1b;B.获取支持该协议的上位机驱动文件&#xff0c;通过逆向驱动文件获取处理该协议的相关细节&#xff1b;A思路尝试。选取CP443-1通信扩展模块尝试下载其固件&#xff0c;访问西门子官网搜索CP443-1的firmware&#xff0c;如下页面&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/234510651feb8a13d2d057cf6dc1b3d2.jpeg" alt="469146a93490f15a530402994db71781.png" /></p>点击下载后&#xff0c;出现了不美妙的一幕。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e7e9bbfabdbb18fa04ed614bf4b6170a.jpeg" alt="436c01824135dd6937a38ea1bc8c296d.png" /></p>显示为限制出口的软件&#xff0c;需要再次注册&#xff0c;即使再次注册最终也是没能成功下载到该软件&#xff0c;因此此路不通&#xff0c;暂时放弃。转战B路线&#xff0c;在测试环境中找到了上位机SCADA与下位机CP443-1模块利用H1协议通信的驱动程序&#xff0c;命名为s7drv。遂将此文件拷贝出&#xff0c;利用IDA进行分析&#xff0c;如下图&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/868c86f84a99f38b880824fcb99d236f.jpeg" alt="04be5a41e3014e390ea108df833b2cef.png" /></p>逆向出的文件很清爽&#xff0c;有完整的文件命名&#xff0c;便于阅读理解。依照main函数找到main_loop&#xff0c;再次深入其中找到处理协议的相关函数Polling_Data,在其中看到轮询数据的处理BUF内存入的数据格式&#xff0c;构造出格式后通过send_to_lan发送至网内。<img src="https://i-blog.csdnimg.cn/blog_migrate/ffcce79d5c8ea429b0a5eb6aa8febe64.jpeg" alt="811d3594a23f29e8b149f5dfc58fdf7f.png" />追踪send_to_lan函数&#xff0c;查看是否还有其余处理程序调用该函数。得到如下图示&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/eaabdc11cef24ca815951866a0ef7344.jpeg" alt="03272716ddaf68b40b212302772acf0b.png" /></p>得知有6个函数块调用该发送函数&#xff0c;猜测功能分别为&#xff1a;<img src="https://i-blog.csdnimg.cn/blog_migrate/b913475037fe2ea5191a25b527ecad84.jpeg" alt="fa441bf586e432a2f6239628ed99abb0.png" />针对于6个不同功能的操作函数&#xff0c;梳理其对应的数据结构如下图&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/8fe755e1e21edf6c7e6577cb31b13203.jpeg" alt="f9aa2675d4e649795d4fba32cd9fda21.png" /></p>绿底色的数据结构为固定值&#xff0c;可以推测为标志符、长度之类&#xff0c;青底色的结构可以看作是对应函数操作的功能码&#xff0c;其余无填充色的部分均为随着应用场景变化的部分。在查找资料过程中发现了Wireshark中对于该协议可解析&#xff0c;且可以获取到对应插件的源码&#xff0c;因此对照源码再次梳理以上数据结构。在block_type_vals[]字段中定义了以下4中类型&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/fceb8c109fa652d7e073c67a4580f6d7.png" alt="e3518bc9fe3efa9c2e0c71e01e641390.png" /></p>在value_string opcode_vals[]中定义了4中类型&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/a79c20b58f198de5816deae926b113c8.png" alt="fe58ba890fd600b4f24d21b3e2107772.png" /></p>在value_string org_vals[]中定义了多种类型&#xff0c;对应访问PLC中的各种不同类型的数据块及其片区。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/0dd7b2b9a75405a8bdfc060b38507352.png" alt="d02a73397b3f649ab250c6b68bab548a.png" /></p>根据以上较为明显的定义&#xff0c;阅读解析协议的插件代码并对照以上逆向分析出的数据结构&#xff0c;得到如下数据帧结构&#xff0c;不同底色的数据内容可划分为一个类别&#xff0c;按照类别理解每个块的功能结构。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/12be2650858aa0041b6530ea23334aa4.jpeg" alt="dd4b30f9c0a5dd2d988824efaa2fde00.png" /></p>至此推测分析该协议的数据帧格式步骤已完成&#xff0c;接下来通过抓取现场数据报文验证分析过程是否准确&#xff0c;抓取一段时间过滤后的报文如下图所示。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/b379ef946729993d0d874ed094ee16fd.jpeg" alt="45c4d489b44e1fe9cd30b64d34685883.png" /></p>可看到Wireshark解析报文info标记为S5&#xff0c;解析内容均为读操作(包含响应与请求)&#xff0c;选取几个报文精细分解。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/4b7f3ed6b8821d091c19889ea9597225.jpeg" alt="3c2cbe2d2b1cfa0ecca2769ebbc9fde9.png" /></p>该报文中访问DB38号块&#xff0c;访问地址为0000&#xff0c;长度为0001&#xff0c;结合逆向结果可知该报文在实际的应用场景中为轮询WRFlag状态&#xff0c;响应帧见下&#xff1a;<p><img src="https://i-blog.csdnimg.cn/blog_migrate/99a4e5b0c10957db7ec8114749bd768e.jpeg" alt="9ab5c3469503aac03ae20c7e2c42a885.png" /></p>整个帧结构为响应帧&#xff0c;在操作类型和第2个子块类型中均为读操作的响应帧结构。附带的响应数据为0。以下该数据帧结构为读取DB36号块&#xff0c;偏移为0&#xff0c;长度为751的请求帧结构。对照逆向的代码&#xff0c;在该应用场景下为轮询PLC内部数据的操作。<p><img src="https://i-blog.csdnimg.cn/blog_migrate/3899f9bafbd8a31448ba30b04da4c163.jpeg" alt="3f3ed49cc0c3cdbb84b863400c2f59cf.png" /></p>到此我们通过逆向SCADA内部的西门子H1驱动结合Wireshark插件源码&#xff0c;给出了报文格式&#xff0c;再根据现场抓取的报文结合分析了数据格式及其现场应用的实际意义与功能。但仍有以下问题&#xff1a;1.Sinec H1为通用协议&#xff0c;支持的操作较多&#xff0c;但在驱动内部仅出现了几个类型的操作&#xff1f;2.在驱动内部仅能看到固定值的操作DB块号&#xff0c;36/38/39/40&#xff0c;其余的功能数据内存块或者编号呢&#xff1f;根据经验推测&#xff1a;该SCADA的驱动为厂商定制开发&#xff0c;结合Sinec H1协议支持的功能只保留对以上提及DB块的特定操作&#xff0c;减少工程组态的工作量&#xff0c;也可以在针对特定行业开发固定工程模板&#xff0c;提高工程效率。0x02 模糊测试目前网络上流行的各类工控协议FUZZ入门测试均以Modbus为例&#xff0c;本文的Sinec H1协议经过分析其结构简单&#xff0c;同样适合初学者上手操作。因此本文从入门普及的角度&#xff0c;对该协议做以简单FUZZ测试解析。本文选取的FUZZ框架为boofuzz(其余广泛流传的文章中均以sulley、Peach为例)&#xff0c;boofuzz的详细信息下载地址https://github.com/jtpereyda/boofuzz。Boofuzz是Sulley模糊测试框架的继承者。除了修复了许多错误&#xff0c;boofuzz还提升了可扩展性。主要特性有以下几点&#xff1a;1.轻松快速的数据生成方式;2.失败后的目标重置;3.记录测试数据;4.在线文档;5.支持任意通信媒介;6.内置支持串行模糊测试、以太网、IP层和UDP广播;7.更好地记录测试数据——统一、彻底、清晰;8.测试结果通过CSV导出;9.方便的安装体验;先需要在脚本运行的PC机上安装boofuzz,<p><img src="https://i-blog.csdnimg.cn/blog_migrate/6c9bf0a4bcf13a4f71fad4e6d02887a3.jpeg" alt="9b6a2ee8b842022fbc4ee5a7d4b3ccb2.png" /></p>根据以上分析的H1协议帧结构编写fuzz脚本&#xff0c;fuzz对象为下位机PLC系统&#xff0c;因此在参数设置中均以PLC为目标对象。如下所示&#xff1a;<img src="https://i-blog.csdnimg.cn/blog_migrate/2c5bfca72e23c021f0cd239e9284603a.jpeg" alt="611c28b13615b9ef8d27fbc670c2c9ac.png" />注意&#xff1a;A.将Sinec H1协议中固定字段值设置为无需fuzz属性&#xff0c;fuzzable&#61;false;B.脚本代码依照解析出的协议子块内容编写&#xff0c;便于维护与阅读&#xff1b;C.在connecttion参数中需要注意&#xff0c;该协议不能重用连接&#xff0c;必须等待1次完成连接fuzz后再次启用1个连接&#xff1b;D.同上&#xff0c;在fuzz过程中发现了下位机PLC处理fuzz包的过程缓慢(猜测PLC接收到不在认可范围内的包处理流程复杂&#xff0c;还需断开连接操作)&#xff0c;因此restart_sleep_time值要根据实际情况调整&#xff1b;0x03 总结本文主要以西门子早期的协议Sinec H1为背景&#xff0c;介绍了协议分析和针对工控协议fuzz测试的大致思路和应用实践&#xff0c;旨在通过这些分享让更多人了解工控安全中协议方面的入门姿势&#xff0c;也希望通过本文为寻找Sinec H1协议相关资料的研究者们提供些许帮助。如若能帮助到需要的人&#xff0c;甚感欣慰。原文来源&#xff1a;绿盟科技研究通讯<p><img src="https://i-blog.csdnimg.cn/blog_migrate/6f40249bdbce470a3bb5a310a975d941.jpeg" alt="ce45f1416f1ba4017e7f5203d5c631d9.png" /></p></div>
+</div>
+                </div>
+        </div>
+<div id="recommendDown">
+</div>    </article>
+
+
+
+
+
+  <script>
+    $(function() {
+      setTimeout(function () {
+        var mathcodeList = document.querySelectorAll('.htmledit_views img.mathcode');
+        if (mathcodeList.length > 0) {
+          for (let i = 0; i < mathcodeList.length; i++) {
+            if (mathcodeList[i].complete) {
+              if (mathcodeList[i].naturalWidth === 0 || mathcodeList[i].naturalHeight === 0) {
+                var alt = mathcodeList[i].alt;
+                alt = '\\(' + alt + '\\)';
+                var curSpan = $('<span class="img-codecogs"></span>');
+                curSpan.text(alt);
+                $(mathcodeList[i]).before(curSpan);
+                $(mathcodeList[i]).remove();
+              }
+            } else {
+              mathcodeList[i].onerror = function() {
+                var alt = mathcodeList[i].alt;
+                alt = '\\(' + alt + '\\)';
+                var curSpan = $('<span class="img-codecogs"></span>');
+                curSpan.text(alt);
+                $(mathcodeList[i]).before(curSpan);
+                $(mathcodeList[i]).remove();
+              };
+            }
+          }
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }
+      }, 500)
+    });
+  </script>
+
+<div class="article-footer-categories-wrap">
+  <div class="article-footer-category-segment">
+    <div class="article-footer-category-group">
+      <span class="article-footer-label">标签</span>
+      <div class="article-footer-pill-list">
+          <a rel="nofollow" data-report-query="spm=1001.2101.3001.4223" data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"分析以太网帧结构","ab":"new","extra":"{\"searchword\":\"分析以太网帧结构\"}"}' data-report-view='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"分析以太网帧结构","ab":"new","extra":"{\"searchword\":\"分析以太网帧结构\"}"}' class="tag-link-new" href="https://so.csdn.net/so/search/s.do?q=%E5%88%86%E6%9E%90%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%B8%A7%E7%BB%93%E6%9E%84&t=all&o=vip&s=&l=&f=&viparticle=&from_tracking_code=tag_word&from_code=app_blog_art" target="_blank" rel="noopener">#分析以太网帧结构</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+<div class="directory-boxshadow-dialog" style="display:none;">
+  <div class="directory-boxshadow-dialog-box">
+  </div>
+   <div class="vip-limited-time-offer-box-new" id="vip-limited-time-offer-box-new">
+      <img class="limited-img limited-img-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/vip-limited-close-newWhite.png">
+      <div class="vip-limited-time-top">
+        确定要放弃本次机会？
+      </div>
+      <span class="vip-limited-time-text">福利倒计时</span>
+      <div class="limited-time-box-new">
+        <span class="time-hour"></span>
+        <i>:</i>
+        <span class="time-minite"></span>
+        <i>:</i>
+        <span class="time-second"></span>
+      </div>
+      <div class="limited-time-vip-box">
+        <p>
+          <img class="coupon-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/vip-limited-close-roup.png">
+          <span class="def">立减 ¥</span>
+          <span class="active limited-num"></span>
+        </p>
+        <span class="">普通VIP年卡可用</span>
+      </div>
+      <a class="limited-time-btn-new" href="https://mall.csdn.net/vip" data-report-click='{"spm":"1001.2101.3001.9621"}' data-report-query='spm=1001.2101.3001.9621'>立即使用</a>
+  </div>
+</div>
+    <div class="more-toolbox-new more-toolbar" id="toolBarBox">
+      <div class="left-toolbox">
+        <div class="toolbox-left">
+            <div class="profile-box">
+              <a class="profile-href" target="_blank" href="https://blog.csdn.net/weixin_39690958"><img class="profile-img" src="https://profile-avatar.csdnimg.cn/default.jpg!1">
+                <span class="profile-name">
+                  weixin_39690958
+                </span>
+              </a>
+            </div>
+            <div class="profile-attend">
+                <a class="tool-attend tool-bt-button tool-bt-attend" href="javascript:;" data-report-view='{"mod":"1592215036_002","spm":"1001.2101.3001.4232","extend1":"关注"}'>关注</a>
+              <a class="tool-item-follow active-animation" style="display:none;">关注</a>
+            </div>
+        </div>
+        <div class="toolbox-middle">
+          <ul class="toolbox-list">
+            <li class="tool-item tool-item-size tool-active is-like" id="is-like" data-type="bottom">
+              <a class="tool-item-href">
+                <img style="display:none;" id="is-like-imgactive-animation-like" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarThumbUpactive.png" alt="">
+                <img class="isactive" style="display:none" id="is-like-imgactive" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/like-active.png" alt="">
+                <img class="isdefault" style="display:block" id="is-like-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/like.png" alt="">
+                <span id="spanCount" class="count ">
+                      0
+                </span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">点赞</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active is-unlike" id="is-unlike">
+              <a class="tool-item-href">
+                <img class="isactive" style="margin-right:0px;display:none" id="is-unlike-imgactive" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/unlike-active.png" alt="">
+                <img class="isdefault" style="margin-right:0px;display:block" id="is-unlike-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/unlike.png" alt="">
+                <span id="unlikeCount" class="count "></span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">踩</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active is-collection ">
+              <a class="tool-item-href" href="javascript:;" data-report-click='{"mod":"popu_824","spm":"1001.2101.3001.4130","ab":"new"}'>
+                <img style="display:none" id="is-collection-img-collection" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/collect-active.png" alt="">
+                <img class="isdefault" id="is-collection-img" style="display:block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/collect.png" alt="">
+                <img class="isactive" id="is-collection-imgactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newCollectActive.png" alt="">
+                <span class="count get-collection " data-num="0" id="get-collection">
+                    0
+                </span>
+              </a>
+              <div class="tool-hover-tip collect">
+                <div class="collect-operate-box">
+                  <span class="collect-text" id="is-collection">
+                    收藏
+                  </span>
+                </div>
+              </div>
+              <div class="tool-active-list">
+                <div class="text">
+                  觉得还不错?
+                  <span class="collect-text" id="tool-active-list-collection">
+                    一键收藏
+                  </span>
+                 <img id="tool-active-list-close" src="https://csdnimg.cn/release/blogv2/dist/pc/img/collectionCloseWhite.png" alt="">
+                </div>
+              </div>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-item-comment">
+              <div class="guide-rr-first">
+                <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward01.png" alt="">
+                <button class="btn-guide-known">知道了</button>
+              </div>
+                <a class="tool-item-href" href="#commentBox" data-report-click='{"spm":"1001.2101.3001.7009"}'>
+                <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/comment.png" alt="">
+                <span class="count">
+                      0
+                </span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">评论</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-QRcode" data-type="article" id="tool-share">
+              <a class="tool-item-href" href="javascript:;" data-report-view='{"spm":"3001.4129","extra":{"type":"blogdetail"}}'>
+                <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/share.png" alt="">
+                <span class="count">分享</span>
+              </a>
+                <div class="QRcode" id="tool-QRcode">
+                <div class="share-bg-box">
+                  <div class="share-content">
+                    <a id="copyPosterUrl" data-type="link" class="btn-share">复制链接</a>
+                  </div>
+                  <div class="share-content">
+                    <a class="btn-share" data-type="qq">分享到 QQ</a>
+                  </div>
+                  <div class="share-content">
+                    <a class="btn-share" data-type="weibo">分享到新浪微博</a>
+                  </div>
+                  <div class="share-code">
+                    <div class="share-code-box" id='shareCode'></div>
+                    <div class="share-code-text">
+                      <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/share/icon-wechat.png" alt="">扫一扫
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <li class="tool-item tool-item-size tool-active is-more" id="is-more">
+            <a class="tool-item-href">
+              <img class="isdefault" style="margin-right:0px;display:block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/more.png" alt="">
+              <span class="count"></span>
+            </a>
+            <div class="more-opt-box">
+              <div class="mini-box">
+                <a class="tool-item-href" id="toolReportBtnHide">
+                  <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/report.png" alt="">
+                  <span class="count">举报</span>
+                </a>
+              </div>
+              <div class="normal-box">
+                <a class="tool-item-href" id="toolReportBtnHideNormal">
+                  <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/report.png" alt="">
+                  <span class="count">举报</span>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="toolbox-right">
+</div>
+</div>
+</div>
+<script type=text/javascript crossorigin src="https://csdnimg.cn/release/phoenix/production/qrcode-7c90a92189.min.js"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/common/csdn-login-box/csdn-login-box.js"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/collection-box/2.1.2/collection-box.js"></script>
+              <div id="dmp_ad_58" style="width:100%;overflow-x:hidden">
+                <div id="kp_box_58" data-pid="58"><iframe  src="https://kunpeng-sc.csdnimg.cn/?timestamp=1645783940/#/preview1/4304364?positionId=58&adBlockFlag=0&adId=1103725&queryWord=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5002&articleId=111702637" frameborder="0" width= "100%"  height= "75px" scrolling="no" ></iframe><img class="pre-img-lasy"  data-src="https://kunyu.csdn.net/1.png?p=58&adBlockFlag=0&adId=1103725&a=1103725&c=4304364&k=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5002&articleId=111702637&d=1&t=3&u=b96fcc8399d54ee8b29ca821074c039f" style="display: block;width: 0px;height: 0px;"><script src="https://kunpeng-render.csdnimg.cn/publisher/latest/closeAdFrame.js"></script></div>
+              </div>
+            <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_commontools-55fb7fc975.min.js" type="text/javascript" async></script>
+              <div class="second-recommend-box recommend-box ">
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/u011062044/85765206"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-1-85765206-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"1","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/u011062044/85765206"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/u011062044/85765206" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-1-85765206-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"1","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/u011062044/85765206"}'  data-report-query='spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-1-85765206-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-1-85765206-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">工业互联网安全测试技术：ZigBee协议渗透测试.docx</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">06-24</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/u011062044/85765206" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-1-85765206-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"1","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/u011062044/85765206"}'  data-report-query='spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-1-85765206-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-1-85765206-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">Zigbee协议测试实验文档
+实验原理
+协议数据包抓取软件模拟Zigbee设备的入网过程，构造相关的数据包与终端进行通信，实现抓取数据包或者控制Zigbee设备的目的。
+实验目的
+利用Ubiqua软件以及相关的Zigbee硬件模块，抓取Zigbee协议数据包并进行恶意流量<em>分析</em>。
+实验环境
+Ubiqua软件一套
+Zigbee硬件模块 <em>1</em>套
+Ubuntu20.04操作系统
+推荐课时数：2课时
+实验步骤
+Zigbee设备接入Ubiqua软件
+打开Ubiqua软件，界面如下图所示：
+图<em>1</em> Uniqua软件界面
+打开配置菜单 Tools-&gt;Options,选择 Security ,添加key，如下图所示：
+图2 添加key
+添加设备，具体设置如下图所示：
+图3 添加设备
+选择Zigbee协议，如下图所示：
+图4 选择Zigbee协议
+选择信道，具体设置如下图所示：
+图5 选择信道
+打开设备，如下图所示：
+图6 打开设备
+Ubiqua中的常用工具
+常用工具
+在抓包器中一有些常用的工具，如下图所示：
+图7 常用工具
+保存当前数据
+滚动显示
+单包分解窗显示最新包
+清空所有
+当前过滤器
+启用与关闭过滤器</div>
+			</a>
+		</div>
+	</div>
+</div>
+              </div>
+<a id="commentBox" name="commentBox"></a>
+  <div id="pcCommentBox" class="comment-box comment-box-new2 unlogin-comment-box-new" style="display:none">
+      <div class="unlogin-comment-model">
+          <span class="unlogin-comment-tit">参与评论</span>
+        <span class="unlogin-comment-text">您还未登录，请先</span>
+        <span class="unlogin-comment-bt">登录</span>
+        <span class="unlogin-comment-text">后发表或查看评论</span>
+      </div>
+  </div>
+              <div class="recommend-box insert-baidu-box recommend-box-style ">
+                <div class="recommend-item-box no-index" style="display:none"></div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/ywj209/8203837"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-2-8203837-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"2","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/ywj209/8203837"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/ywj209/8203837" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-2-8203837-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"2","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/ywj209/8203837"}'  data-report-query='spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-8203837-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-8203837-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">SIMATIC NET</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">11-27</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/ywj209/8203837" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~PaidSort-2-8203837-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"2","strategy":"2~default~BlogCommendFromBaidu~PaidSort","dest":"https://download.csdn.net/download/ywj209/8203837"}'  data-report-query='spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-8203837-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-8203837-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">SIMATIC NETSIMATIC
+S7PCTCP/IP
+ISO(<em>SINEC</em> H<em>1</em>)
+S7/
+(SEND/RECEIVE)</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_55163056/article/details/142139360"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-3-142139360-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"3","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_55163056/article/details/142139360"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_55163056/article/details/142139360" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-3-142139360-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"3","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_55163056/article/details/142139360"}'  data-report-query='spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-142139360-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-142139360-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">模糊测试平台SFUZZ全面升级，测试协议数突破200+</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_55163056" target="_blank"><span class="blog-title">weixin_55163056的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">09-11</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1692
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_55163056/article/details/142139360" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-3-142139360-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"3","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_55163056/article/details/142139360"}'  data-report-query='spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-142139360-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-142139360-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">开源网安模糊测试平台SFUZZ 3.4发布，持续高水准地帮助客户进行系统潜在漏洞测试</div>
+			</a>
+		</div>
+	</div>
+</div>
+		<dl id="recommend-item-box-tow" class="recommend-item-box type_blog clearfix">
+			
+		</dl>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_30300225/article/details/159364194"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-4-159364194-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"4","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_30300225/article/details/159364194"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_30300225/article/details/159364194" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-4-159364194-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"4","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_30300225/article/details/159364194"}'  data-report-query='spm=1001.2101.3001.6650.4&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-4-159364194-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-4-159364194-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>以太网</em>报文解析指南：用Wireshark验证CAPL生成的<em>帧结构</em>是否正确</div>
+					<div class="tag">最新发布</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_30300225" target="_blank"><span class="blog-title">weixin_30300225的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">03-23</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					50
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_30300225/article/details/159364194" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-4-159364194-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"4","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_30300225/article/details/159364194"}'  data-report-query='spm=1001.2101.3001.6650.4&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-4-159364194-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-4-159364194-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文详细介绍了如何通过CAPL脚本构造标准<em>以太网</em>帧，并利用Wireshark进行交叉验证的方法。重点解析了<em>以太网</em>报文结构、字段映射关系及常见错误排查技巧，帮助开发者确保车载<em>以太网</em>协议开发的准确性。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/WAJXY2021/article/details/140777145"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-5-140777145-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"5","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/WAJXY2021/article/details/140777145"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/WAJXY2021/article/details/140777145" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-5-140777145-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"5","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/WAJXY2021/article/details/140777145"}'  data-report-query='spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-140777145-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-140777145-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">网安加&middot;百家讲坛 | 高明：模糊测试技术在车联网安全性评估中的应用</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/WAJXY2021" target="_blank"><span class="blog-title">WAJXY2021的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">07-29</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1462
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/WAJXY2021/article/details/140777145" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-5-140777145-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"5","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/WAJXY2021/article/details/140777145"}'  data-report-query='spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-140777145-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-140777145-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">模糊测试技术的应用不仅为车联网安全提供了一种有效的评估和防护手段，更推动了汽车行业在面对网络安全挑战时的技术创新和前瞻性思考。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/xumesang/article/details/51262249"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-6-51262249-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"6","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/xumesang/article/details/51262249"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/xumesang/article/details/51262249" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-6-51262249-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"6","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/xumesang/article/details/51262249"}'  data-report-query='spm=1001.2101.3001.6650.6&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6-51262249-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6-51262249-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">开源的工控协议fuzzing框架Aegis</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/xumesang" target="_blank"><span class="blog-title">xumesang的专栏</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">04-27</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					4441
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/xumesang/article/details/51262249" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-6-51262249-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"6","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/xumesang/article/details/51262249"}'  data-report-query='spm=1001.2101.3001.6650.6&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6-51262249-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6-51262249-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">原文章是微信上的，可以访问这个地址：https://github.com/automatak
+
+
+
+
+筒子们是不是对复杂多样的工业控制协议安全性测试工作发愁呢？S给你介绍个东东，看看有用哞？
+
+ICS / SCADA
+应用需要鲁棒性高的组件，Aegis（宙斯盾）是一种智能 fuzzing 框架，支持部署对在生产系统中的工控协议的鲁棒性和通信软件的安全问题进行fuzzing测试。
+</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/m0_73736695/article/details/128102314"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-7-128102314-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"7","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/m0_73736695/article/details/128102314"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/m0_73736695/article/details/128102314" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-7-128102314-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"7","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/m0_73736695/article/details/128102314"}'  data-report-query='spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-128102314-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-128102314-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">Fuzzing(模糊测试)的前世今生（上）</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/m0_73736695" target="_blank"><span class="blog-title">m0_73736695的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">11-29</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					779
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/m0_73736695/article/details/128102314" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-7-128102314-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"7","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/m0_73736695/article/details/128102314"}'  data-report-query='spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-128102314-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-128102314-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">2008年Godefroid等人利用模糊工具SAGE发现了大型windows应用系统中的二十多个未知漏洞，他们展示了一个基于语法的白盒与黑盒结合的模糊测试方法，该方法可以利用符号执行直接产生基于语法的约束，并且输入能够到达很深的深度，也避免了死路。，虽然AFL有一定的效果，但是其设计上仍有缺陷，比如其能量分配的策略以及种子选择的策略，都会影响AFL的检测效率，而且，AFL更偏向于黑盒一些，对程序内部<em>分析</em>有限，这也限制了其检测深层漏洞的能力。目前，市面上关于模糊测试的知识点大多是碎片化的，并不系统。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/hao_13/article/details/133484733"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-133484733-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"8","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/hao_13/article/details/133484733"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/hao_13/article/details/133484733" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-133484733-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"8","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/hao_13/article/details/133484733"}'  data-report-query='spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-8-133484733-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-8-133484733-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">网络层常见协议&mdash;&mdash;IPV4、IPV6、ARP、ICMP、QoS</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/hao_13" target="_blank"><span class="blog-title">@zhujj_的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">10-03</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					3991
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/hao_13/article/details/133484733" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-8-133484733-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"8","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/hao_13/article/details/133484733"}'  data-report-query='spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-8-133484733-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-8-133484733-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">若主机 hostA 的 MAC 地址为 aa-aa-aa-aa-aa-aa，主机 hostB 的 MAC 地址为 bb-bb-bb-bb-bb-bb。而不同网段的主机之间相互通信需要使用到路由器）。但是，从H<em>1</em> 到 R<em>1</em> 后，数据帧中的目的 MAC 地址由 R<em>1</em> 的 MAC 地址变成 H2 的 MAC 地址HA2，源MAC地址由 HA<em>1</em> 变成 HA4。当出现跨网段的 ARP 请求时，由离源主机最近的路由器将自己的 MAC 地址返回给发送 MAC广播请求的主机，实现 MAC 地址代理最终使主机能够正常通信。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://devpress.csdn.net/v1/article/detail/138746307"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-9-138746307-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"9","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/138746307"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://devpress.csdn.net/v1/article/detail/138746307" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-9-138746307-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"9","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/138746307"}'  data-report-query='spm=1001.2101.3001.6650.9&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-9-138746307-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-9-138746307-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">探索网络协议测试的新境界：BooFuzz 网络协议模糊测试框架</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/gitblog_00086" target="_blank"><span class="blog-title">gitblog_00086的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-12</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1142
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://devpress.csdn.net/v1/article/detail/138746307" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-9-138746307-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"9","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/138746307"}'  data-report-query='spm=1001.2101.3001.6650.9&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-9-138746307-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-9-138746307-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">BooFuzz 是一个强大的网络协议模糊测试框架，它源自著名的 Sully 模糊测试工具，并在此基础上进行了大量改进和增强。这个项目的目标是让模糊测试变得更简单、更强大，适用于各种通信媒介的测试。无论是新手还是经验丰富的测试工程师，都可以轻松地利用 BooFuzz 来发现软件和设备中的安全漏洞。
+
+## 项目技术<em>分析</em>
+
+BooFuzz 提供了完善的数据生成机制、故障检测（instrumentati...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_43977912/article/details/113863630"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-10-113863630-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"10","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_43977912/article/details/113863630"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_43977912/article/details/113863630" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-10-113863630-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"10","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_43977912/article/details/113863630"}'  data-report-query='spm=1001.2101.3001.6650.10&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-10-113863630-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-10-113863630-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">Fuzzing技术<em>分析</em></div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_43977912" target="_blank"><span class="blog-title">weixin_43977912的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">02-19</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					2840
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_43977912/article/details/113863630" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-10-113863630-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"10","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_43977912/article/details/113863630"}'  data-report-query='spm=1001.2101.3001.6650.10&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-10-113863630-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-10-113863630-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">模糊测试是一种通过向目标系统提供非预期的输入并监视异常结果来发现软件漏洞的方法。
+模糊测试（Fuzz testing）是一种发现安全漏洞的有效的测试方法，模糊测试将随机的坏数据插入程序，观察程序是否能容忍杂乱输入，模糊测试是不合逻辑的，只是产生杂乱数据攻击程序，采用模糊测试攻击应用程序可发现其他采用逻辑思维来测试很难发现的安全漏洞。
+模糊测试的特点：
+<em>1</em>.Fuzzing测试的用例通常具备某种攻击性的畸形数据。
+2.具备良好的自动化测试能力。
+3.&ldquo;蛮力&rdquo;攻击方法。
+4.很少出现误报
+5.能够快速找到真正的漏</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/gitblog_00816/article/details/148993452"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-11-148993452-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"11","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/gitblog_00816/article/details/148993452"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/gitblog_00816/article/details/148993452" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-11-148993452-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"11","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/gitblog_00816/article/details/148993452"}'  data-report-query='spm=1001.2101.3001.6650.11&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-11-148993452-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-11-148993452-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">Sulley模糊测试框架深度解析：从入门到实战</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/gitblog_00816" target="_blank"><span class="blog-title">gitblog_00816的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">06-29</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1113
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/gitblog_00816/article/details/148993452" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-11-148993452-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"11","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/gitblog_00816/article/details/148993452"}'  data-report-query='spm=1001.2101.3001.6650.11&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-11-148993452-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-11-148993452-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">Sulley是一款功能强大的模糊测试开发框架，它超越了大多数商业和开源模糊测试工具的能力。这个框架以《怪兽电力公司》中的角色&quot;Sulley&quot;命名，不仅因为名字有趣，更因为它能像毛怪一样&quot;深入探索&quot;目标系统的每个角落。
+
+Sulley的创新之处在于它不仅关注数据生成，还提供了一套完整的模糊测试解决方案：
+
+- **数据表示**：通过层次化的块(Blocks)、乐高(Legos)和基础元素(Primi...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/jizhuan0248/10492899"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-12-10492899-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"12","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/jizhuan0248/10492899"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/jizhuan0248/10492899" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-12-10492899-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"12","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/jizhuan0248/10492899"}'  data-report-query='spm=1001.2101.3001.6650.12&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-12-10492899-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-12-10492899-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">针对私有协议的模糊测试技术研究</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">06-22</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/jizhuan0248/10492899" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-12-10492899-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"12","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/jizhuan0248/10492899"}'  data-report-query='spm=1001.2101.3001.6650.12&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-12-10492899-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-12-10492899-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">模糊测试(Fuzzing)技术是一种很有效的自动化软件漏洞挖掘技术，将其运用到网络
+协议测试领域非常具有现实意义．本文结合网络协议本身的特点，<em>分析</em>了对网络协议进行模糊
+测试需要注意的关键问题，并在传统模糊测试框架的基础上，在代码覆盖和目标监控等方面加
+以改进，提出一个基于自动化的网络协议模糊测试框架；同时，针对私有网络协议，特别是经过
+编码的私有网络协议模糊测试提出有效的测试思路，以减少在协议解析过程中，对加密例程进
+行逆向工程的艰难过程，提高漏洞挖掘的效率</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/xinxix/3312067"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-13-3312067-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"13","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/xinxix/3312067"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/xinxix/3312067" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-13-3312067-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"13","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/xinxix/3312067"}'  data-report-query='spm=1001.2101.3001.6650.13&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-13-3312067-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-13-3312067-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">网络协议Fuzzing技术</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">05-25</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/xinxix/3312067" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-13-3312067-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"13","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/xinxix/3312067"}'  data-report-query='spm=1001.2101.3001.6650.13&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-13-3312067-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-13-3312067-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">主要描述网络协议fuzzing技术的原理及实现，以及实例</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/alphagx/6486601"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-14-6486601-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"14","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/alphagx/6486601"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/alphagx/6486601" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-14-6486601-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"14","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/alphagx/6486601"}'  data-report-query='spm=1001.2101.3001.6650.14&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-6486601-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-6486601-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">基于SKIPE的网络协议Fuzzing技术</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">11-01</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/alphagx/6486601" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-14-6486601-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"14","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/alphagx/6486601"}'  data-report-query='spm=1001.2101.3001.6650.14&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-6486601-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-6486601-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">基于SKIPE的网络协议Fuzzing技术</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/weixin_45959515/86340445"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-15-86340445-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"15","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/weixin_45959515/86340445"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/weixin_45959515/86340445" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-15-86340445-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"15","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/weixin_45959515/86340445"}'  data-report-query='spm=1001.2101.3001.6650.15&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-15-86340445-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-15-86340445-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">使用boofuzz进行协议测试</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">08-07</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/weixin_45959515/86340445" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~BlogCommendFromBaidu~Rate-15-86340445-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"15","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://download.csdn.net/download/weixin_45959515/86340445"}'  data-report-query='spm=1001.2101.3001.6650.15&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-15-86340445-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EBlogCommendFromBaidu%7ERate-15-86340445-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">使用boofuzz进行协议测试</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://devpress.csdn.net/v1/article/detail/131379531"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-16-131379531-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"16","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/131379531"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://devpress.csdn.net/v1/article/detail/131379531" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-16-131379531-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"16","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/131379531"}'  data-report-query='spm=1001.2101.3001.6650.16&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-16-131379531-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-16-131379531-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">FUZZ工具&mdash;Boofuzz框架实际使用</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/samlirongsheng" target="_blank"><span class="blog-title">samli的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">06-25</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					5630
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://devpress.csdn.net/v1/article/detail/131379531" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-16-131379531-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"16","strategy":"2~default~BlogCommendFromBaidu~activity","dest":"https://devpress.csdn.net/v1/article/detail/131379531"}'  data-report-query='spm=1001.2101.3001.6650.16&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-16-131379531-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-16-131379531-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">接着上一篇文章来对框架进行实际的使用；官方提供了很多案例模板，且网上关于boofuzz的使用介绍很多，也比较成熟，在各个领域都有，可以通过官方提供的案例也看得出来，然后覆盖的面也非常的全，目前也就只有ble、zigbee这种无线电<em>通信协议</em>的覆盖不了，下面用一个简单的测试来学习一下boofuzz的使用，来挖掘一下漏洞；</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/whatday/article/details/89094450"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-17-89094450-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"17","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/whatday/article/details/89094450"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/whatday/article/details/89094450" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-17-89094450-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"17","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/whatday/article/details/89094450"}'  data-report-query='spm=1001.2101.3001.6650.17&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-17-89094450-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-17-89094450-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">使用Wireshark<em>分析</em>工控协议</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/whatday" target="_blank"><span class="blog-title">whatday的专栏</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">04-08</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					6369
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/whatday/article/details/89094450" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-17-89094450-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"17","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/whatday/article/details/89094450"}'  data-report-query='spm=1001.2101.3001.6650.17&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-17-89094450-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-17-89094450-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">在工控系统中<em>通信协议</em>存在众多标准，也存在众多私有协议，如果你有过使用组态软件的经历，你便会发现，在第一步连接设备时除连接设备的方式有<em>以太网</em>/串行等方式外，各家基本上都存在自己的私有<em>通信协议</em>。
+
+上图为，某SCADA软件驱动配置界面
+
+大家都知道普遍的工控协议在传输的过程不加密、协议上无认证，往往可以通过协议<em>分析</em>，并形成一些测试用例针对特定运行环境下支持该协议的设备达到异常运行的效果。如之前提到过的...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_33834910/article/details/94142577"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-18-94142577-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"18","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_33834910/article/details/94142577"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_33834910/article/details/94142577" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-18-94142577-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"18","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_33834910/article/details/94142577"}'  data-report-query='spm=1001.2101.3001.6650.18&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-18-94142577-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-18-94142577-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">自动化通讯协定</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_33834910" target="_blank"><span class="blog-title">weixin_33834910的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">04-03</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					375
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_33834910/article/details/94142577" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-18-94142577-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"18","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/weixin_33834910/article/details/94142577"}'  data-report-query='spm=1001.2101.3001.6650.18&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-18-94142577-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-18-94142577-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">自动化通讯协定
+
+
+
+
+程序自动化
+
+
+
+
+
+
+
+
+▪BSAP
+▪CC-Link
+▪CIP
+▪CAN
+
+
+▪CANopen
+▪ControlNet
+▪DeviceNet
+▪DF-<em>1</em>
+
+
+▪DirectNET
+▪EtherCAT
+▪Ethernet Global Data (EGD)
+▪Ethernet Power...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/qq_35029061/article/details/126018952"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-19-126018952-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"19","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/qq_35029061/article/details/126018952"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/qq_35029061/article/details/126018952" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-19-126018952-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"19","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/qq_35029061/article/details/126018952"}'  data-report-query='spm=1001.2101.3001.6650.19&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-19-126018952-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-19-126018952-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">工业通讯领域的总线、协议、规范、接口、数据采集与控制系统</div>
+					<div class="tag">热门推荐</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/qq_35029061" target="_blank"><span class="blog-title">悦分享</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">07-28</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1万+
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/qq_35029061/article/details/126018952" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-19-126018952-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"19","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/qq_35029061/article/details/126018952"}'  data-report-query='spm=1001.2101.3001.6650.19&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-19-126018952-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-19-126018952-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">工控，指的是工业控制自动化，主要利用电气、机械、软件组合的方式实现， 即是工业控制系统，或者是工厂自动化控制。工控安全指的是工业控制系统的数据、网络和系统安全。随着工业信息化的迅猛发展，德国的&ldquo;工业4.0&rdquo;、美国的&ldquo;再工业化&rdquo;风潮、&ldquo;中国制造2025&rdquo;等国家战略的推出，以及云计算、大数据、人工智能、物联网等新一代信息技术与制造技术的加速融合，工业控制系统由从原始的封闭独立走向开放、由单机走向互联、由自动化走向智能化。但在工业企业获得巨大发展动能的环境背景下，也滋生了大量安全隐患，工控安全正面临严峻的挑战 。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/Dnisdream/article/details/128656936"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.20","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-20-128656936-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"20","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/Dnisdream/article/details/128656936"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/Dnisdream/article/details/128656936" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.20","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-20-128656936-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"20","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/Dnisdream/article/details/128656936"}'  data-report-query='spm=1001.2101.3001.6650.20&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-20-128656936-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-20-128656936-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+					<div class="left ellipsis-online ellipsis-online-1">Boofuzz实战</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/Dnisdream" target="_blank"><span class="blog-title">Dnisdream的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">01-12</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					785
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/Dnisdream/article/details/128656936" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.20","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-20-128656936-blog-111702637.235^v43^pc_blog_bottom_relevance_base2\",\"dist_request_id\":\"1783563347205_00114\"}","dist_request_id":"1783563347205_00114","ab_strategy":"landing_bge_commercial_es","index":"20","strategy":"2~default~BlogCommendFromBaidu~Rate","dest":"https://blog.csdn.net/Dnisdream/article/details/128656936"}'  data-report-query='spm=1001.2101.3001.6650.20&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-20-128656936-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-20-128656936-blog-111702637.235%5Ev43%5Epc_blog_bottom_relevance_base2'>
+				<div class="desc ellipsis-online ellipsis-online-1">如何进行boofuzz测试</div>
+			</a>
+		</div>
+	</div>
+</div>
+              </div>
+<div class="blog-footer-bottom" style="margin-top:10px;"></div>
+<script src="https://g.csdnimg.cn/common/csdn-footer/csdn-footer.js" data-isfootertrack="false" type="text/javascript"></script>
+<script type="text/javascript">
+    window.csdn.csdnFooter.options = {
+        el: '.blog-footer-bottom',
+        type: 2
+    }
+</script>          </main>
+<aside class="blog_container_aside ">
+<div id="asideProfile" class="aside-box active">
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/weixin_39690958" target="_blank" data-report-click='{"mod":"popu_379","spm":"3001.4121","dest":"https://blog.csdn.net/weixin_39690958","ab":"new"}'>
+                <img src="https://profile-avatar.csdnimg.cn/default.jpg!1" class="avatar_pic">
+            </a>
+        </div>
+        <div class="user-info d-flex flex-column profile-intro-name-box">
+            <div class="profile-intro-name-boxTop">
+                <a href="https://blog.csdn.net/weixin_39690958" target="_blank" class="" id="uid" title="weixin_39690958" data-report-click='{"mod":"popu_379","spm":"3001.4122","dest":"https://blog.csdn.net/weixin_39690958","ab":"new"}'>
+                    <span class="name" username="weixin_39690958">weixin_39690958</span>
+                </a>
+            </div>
+            <div class="profile-intro-name-boxFooter-new">
+              <p class="profile-intro-name-leve">
+                <span>
+                  博客等级
+                </span>
+                  <img class="level" src="https://csdnimg.cn/identity/blog2.png">
+              </p>
+                <span class="profile-intro-name-years" title="已加入 CSDN 9年">码龄9年</span>
+               
+            </div>
+        </div>
+    </div>
+    <div class="profile-intro-rank-information">
+      <dl>
+        <a href="https://blog.csdn.net/weixin_39690958" data-report-click='{"mod":"1598321000_001","spm":"3001.4310"}' data-report-query="t=1">  
+            <dd><span >138</span></dd>
+            <dt>原创</dt>
+        </a>
+      </dl>
+       <dl title="75">
+        <dd>75</dd>
+        <dt>点赞</dt>
+      </dl>
+       <dl title="377">
+        <dd>377</dd>
+        <dt>收藏</dt>
+      </dl>
+      <dl id="fanBox" title="68">
+        <dd><span id="fan">68</span></dd>
+        <dt>粉丝</dt>
+      </dl>
+    </div>
+    <div class="profile-intro-name-boxOpration">
+        <div class="opt-letter-watch-box"> 
+            <a class="personal-watch bt-button" id="btnAttent" >关注</a>  
+        </div>
+        <div class="opt-letter-watch-box">
+        <a rel="nofollow" class="bt-button personal-letter" href="https://im.csdn.net/chat/weixin_39690958" target="_blank" rel="noopener">私信</a>
+        </div>
+    </div>
+</div>
+      <div class="swiper-slide-box-remuneration">
+        <a data-report-click='{"spm":"3001.9728","extra":{"index":"0"}}' data-report-view='{"spm":"3001.9728","extra":{"index":"0"}}' href="https://infinisynapse.cn/contest/vibe-coding?utm_source=20260707_vip_blogleftbanner" target="_blank">
+          <img src="https://i-operation.csdnimg.cn/images/4442cf24fdc9474fbde0a9c7cebb4ed6.png" alt="">
+        </a>
+      </div>
+<div class="box-shadow mb8" data-pid="blog" >
+    <div class="aside-content text-center" id="cpro_u2734133">
+        <div id="kp_box_56" data-pid="56"><iframe  src="https://kunpeng-sc.csdnimg.cn/?timestamp=1645783940/#/preview/4279963?positionId=56&adBlockFlag=0&adId=1103456&queryWord=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5000&articleId=111702637" frameborder="0" width= "300px"  height= "600px" scrolling="no" ></iframe><img class="pre-img-lasy"  data-src="https://kunyu.csdn.net/1.png?p=56&adBlockFlag=0&adId=1103456&a=1103456&c=4279963&k=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5000&articleId=111702637&d=1&t=3&u=9530aed6aaba4fb39af8fc27c23bb8d2" style="display: block;width: 0px;height: 0px;"><script src="https://kunpeng-render.csdnimg.cn/publisher/latest/closeAdFrame.js"></script></div>
+    </div>
+</div>
+
+
+
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+			<li>
+				<a href="https://blog.csdn.net/weixin_39690958/article/details/111841519" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/weixin_39690958/article/details/111841519","ab":"new"}'>
+				core sync是什么软件_强制删除文件CoreSync_x64.dll
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">25196</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_39690958/article/details/112482178" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/weixin_39690958/article/details/112482178","ab":"new"}'>
+				gwas snp 和_理清SNP、SNV、CNV等一些概念
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">18760</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_39690958/article/details/111574572" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/weixin_39690958/article/details/111574572","ab":"new"}'>
+				spring eureka漏洞_Spring boot相关漏洞利用（1）
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">12614</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_39690958/article/details/111796751" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/weixin_39690958/article/details/111796751","ab":"new"}'>
+				冰点还原离线激活_冰点还原密钥,详细教您如何激活冰点还原
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">8867</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_39690958/article/details/111167684" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/weixin_39690958/article/details/111167684","ab":"new"}'>
+				ffmpeg占用cpu过高_CPU占用率过高，导致电脑卡顿？这四步操作就可以解决掉！
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">8028</span>
+                </a>
+			</li>
+		</ul>
+	</div>
+</div>
+  <div class="article-previous" id="article-previous">
+      <dl data-report-click='{"spm":"3001.10752","extend1":"上一篇"}' data-report-view='{"spm":"3001.10752","extend1":"上一篇"}'>
+          <dt>
+              上一篇：
+          </dt>
+          <dd>
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/118802575" data-report-query="spm=3001.10752">
+              powermockito测试私有方法,使用PowerMockito模拟私有方法
+            </a>
+          </dd>
+      </dl>
+      <dl class="next" data-report-click='{"spm":"3001.10796","extend1":"下一篇"}' data-report-view='{"spm":"3001.10796","extend1":"下一篇"}'>
+          <dt>
+            下一篇：
+          </dt>
+          <dd >
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/111952120" data-report-query="spm=3001.10796">
+              metastore作用_Hive为什么要启用Metastore？
+            </a>
+          </dd>
+      </dl>
+  </div>
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">大家在看</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+			<li>
+				<a href="https://blog.csdn.net/qq_35160742/article/details/162628512" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/qq_35160742/article/details/162628512","strategy":"202_1052723-4308261_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/qq_35160742/article/details/162628512","strategy":"202_1052723-4308261_RCMD","ab":"new"}'>
+				分布式配置中心选型实战：Nacos与Consul在创业场景下的对比——从需求出发，而非从技术出发
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">288</span>
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_43272162/article/details/162716593" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/weixin_43272162/article/details/162716593","strategy":"202_1052723-4308249_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/weixin_43272162/article/details/162716593","strategy":"202_1052723-4308249_RCMD","ab":"new"}'>
+				Agent 工具描述规范：工具文档写不好，Agent 就用不好
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">8</span>
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/iymei4986533030/article/details/162694369" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/iymei4986533030/article/details/162694369","strategy":"202_1052723-4308265_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/iymei4986533030/article/details/162694369","strategy":"202_1052723-4308265_RCMD","ab":"new"}'>
+				PostgreSQL 分区表实战——从大表查询 43 秒到 0.3 秒的分区策略迁移
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">213</span>
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/2601_96506848/article/details/162719912" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/2601_96506848/article/details/162719912","strategy":"202_1052723-4308348_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/2601_96506848/article/details/162719912","strategy":"202_1052723-4308348_RCMD","ab":"new"}'>
+				企业级大模型AI API 中转平台哪家靠谱？2026 架构拆解与选型决策指南
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/w776341482/article/details/162718831" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/w776341482/article/details/162718831","strategy":"202_1052723-4308323_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/w776341482/article/details/162718831","strategy":"202_1052723-4308323_RCMD","ab":"new"}'>
+				调查研究-223 一个请求在 vLLM 里的一生：从 HTTP 到 token streaming
+        </a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div id="asideArchive" class="aside-box" style=" width:300px;">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119591043" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119591043","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119591043","ab":"left"}'>怎么看服务器上的ftp信息,怎么查看服务器上ftp地址</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119507839" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119507839","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119507839","ab":"left"}'>vb ini 读取服务器信息,VB读写INI文件</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119467462" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119467462","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119467462","ab":"left"}'>&lt;f ajax&gt;,f：ajax监听器不叫</a>
+            </li>
+        </ul>
+        <div class="archive-bar"></div>
+        <div class="archive-box">
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2021&amp;month=08" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2021&amp;month=08"}'><span class="year">2021年</span><span class="num">146篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2020&amp;month=12" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2020&amp;month=12"}'><span class="year">2020年</span><span class="num">222篇</span></a></div>
+        </div>
+    </div>
+</div>
+    <div id="footerRightAds" class="isShowFooterAds">
+      <div class="aside-box">
+        <div id="kp_box_57" data-pid="57"><iframe  src="https://kunpeng-sc.csdnimg.cn/?timestamp=1645783940/#/preview/4300976?positionId=57&adBlockFlag=0&adId=1103706&queryWord=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5001&articleId=111702637" frameborder="0" width= "300px"  height= "600px" scrolling="no" ></iframe><img class="pre-img-lasy"  data-src="https://kunyu.csdn.net/1.png?p=57&adBlockFlag=0&adId=1103706&a=1103706&c=4300976&k=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.5001&articleId=111702637&d=1&t=3&u=3d660219cd57484bb4ee2f5902b7cf03" style="display: block;width: 0px;height: 0px;"><script src="https://kunpeng-render.csdnimg.cn/publisher/latest/closeAdFrame.js"></script></div>
+      </div>
+    </div>
+    <!-- 详情页显示目录 -->
+<div class="aside-box cknows-side-card js-aside-cknows">
+  <div class="cknows-side-header">
+    <div class="cknows-side-header-row">
+      <div class="cknows-side-logo-wrap">
+        <img class="cknows-side-logo" src="https://csdnimg.cn/release/blogv2/dist/pc/img/c-blog-slidelogo-White.png" alt="C知道">
+      </div>
+      <p class="cknows-side-brand">· AI 阅读助手</p>
+    </div>
+  </div>
+  <div class="swiper cknows-side-swiper">
+    <div class="swiper-wrapper cknows-swiper-wrapper"></div>
+    <div class="cknows-side-pagination swiper-pagination"></div>
+  </div>
+</div>
+<!--文章目录-->
+<div id="asidedirectory" class="aside-box">
+    <div class='groupfile groupfile-active' id="directory">
+        <h3 class="aside-title">目录</h3>
+        <div class="align-items-stretch group_item" id="align-items-stretch">
+            <div class="pos-box">
+            <div class="scroll-box">
+                <div class="toc-box"></div>
+            </div>
+            </div>
+        </div>
+          <p class="flexible-btn-new" id="flexible-btn-groupfile" data-report-click='{"spm":"3001.10780","strategy":"展开全部"}' data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch"><span class="text">展开全部</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-bot-White.png" alt=""></p>
+          <p class="flexible-btn-new-close close" data-report-click='{"spm":"3001.10780","strategy":"收起"}'  data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch"><span class="text">收起</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-top-White.png" alt=""></p>
+    </div>
+</div>
+<div class="gitcode-qc-left-box aside-box" data-report-click='{"spm":"3001.11256", "extra":"{\"position\":\"left\"}"}'></div>
+</aside>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).parents("p.text-center").remove();
+	})
+</script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-tooltip/2.7/user-tooltip.js"></script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-medal/2.0.0/user-medal.js"></script>
+        </div>
+<div class="recommend-right align-items-stretch clearfix" id="rightAside" data-type="recommend">
+    <aside class="recommend-right_aside">
+            <div class="rightside-fixed-hide">
+              <div class="programmer1Box">
+                  <div id="kp_box_530" data-pid="530"><iframe  src="https://kunpeng-sc.csdnimg.cn/?timestamp=1645783940/#/preview/4261693?positionId=530&adBlockFlag=0&adId=1103432&queryWord=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.4647&articleId=111702637" frameborder="0" width= "300px"  height= "600px" scrolling="no" ></iframe><img class="pre-img-lasy"  data-src="https://kunyu.csdn.net/1.png?p=530&adBlockFlag=0&adId=1103432&a=1103432&c=4261693&k=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.4647&articleId=111702637&d=1&t=3&u=fd88fa6d428b4803af6d34a8c0e5efd0" style="display: block;width: 0px;height: 0px;"><script src="https://kunpeng-render.csdnimg.cn/publisher/latest/closeAdFrame.js"></script></div>
+              </div>
+      </div>
+        <div id="recommend-right" >
+<div class="aside-box cknows-side-card js-aside-cknows">
+  <div class="cknows-side-header">
+    <div class="cknows-side-header-row">
+      <div class="cknows-side-logo-wrap">
+        <img class="cknows-side-logo" src="https://csdnimg.cn/release/blogv2/dist/pc/img/c-blog-slidelogo-White.png" alt="C知道">
+      </div>
+      <p class="cknows-side-brand">· AI 阅读助手</p>
+    </div>
+  </div>
+  <div class="swiper cknows-side-swiper">
+    <div class="swiper-wrapper cknows-swiper-wrapper"></div>
+    <div class="cknows-side-pagination swiper-pagination"></div>
+  </div>
+</div>
+          <div class='flex-column aside-box groupfile groupfile-active ' id="groupfile">
+              <div class="groupfile-div">
+              <h3 class="aside-title">目录</h3>
+              <div class="align-items-stretch group_item" id="align-items-stretch-right">
+                  <div class="pos-box">
+                      <div class="scroll-box">
+                          <div class="toc-box"></div>
+                      </div>
+                  </div>
+              </div>
+                <p class="flexible-btn-new" id="flexible-btn-groupfile" data-report-click='{"spm":"3001.10782","strategy":"展开全部"}' data-traigger="true" data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch-right"><span class="text">展开全部</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-bot-White.png" alt=""></p>
+                <p class="flexible-btn-new-close close" data-report-click='{"spm":"3001.10782","strategy":"收起"}' data-traigger="true"  data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch-right"><span class="text">收起</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-top-White.png" alt=""></p>
+              </div>
+          </div>
+          <div class="gitcode-qc-right-box aside-box" data-report-click='{"spm":"3001.11256", "extra":"{\"position\":\"right\"}"}'></div>
+              <div id="recommendAdBox">
+                  <div id="kp_box_479" data-pid="479"><div class="wwads-cn wwads-vertical" data-id="149" style="max-width:300px;margin-top:10px;background-color: #fff;"></div> 
+<style>.wwads-img img {width: 150px; margin-top:10px}</style><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=479&adId=1100447&adBlockFlag=0&a=1100447&c=0&k=分析以太网帧结构_Sinec H1通信协议分析及模糊测试&spm=1001.2101.3001.4834&articleId=111702637&d=1&t=3&u=a920c777cc3d40289b8584c469caaf58" style="display: block;width: 0px;height: 0px;"></div>
+              </div>
+  <div class="article-previous" id="article">
+      <dl data-report-click='{"spm":"3001.10752","extend1":"上一篇"}' data-report-view='{"spm":"3001.10752","extend1":"上一篇"}'>
+          <dt>
+              上一篇：
+          </dt>
+          <dd>
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/118802575" data-report-query="spm=3001.10752">
+              powermockito测试私有方法,使用PowerMockito模拟私有方法
+            </a>
+          </dd>
+      </dl>
+      <dl class="next" data-report-click='{"spm":"3001.10796","extend1":"下一篇"}' data-report-view='{"spm":"3001.10796","extend1":"下一篇"}'>
+          <dt>
+            下一篇：
+          </dt>
+          <dd >
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/111952120" data-report-query="spm=3001.10796">
+              metastore作用_Hive为什么要启用Metastore？
+            </a>
+          </dd>
+      </dl>
+  </div>
+<div id="asideArchive" class="aside-box" style=" width:300px;">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119591043" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119591043","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119591043","ab":"right"}'>怎么看服务器上的ftp信息,怎么查看服务器上ftp地址</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119507839" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119507839","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119507839","ab":"right"}'>vb ini 读取服务器信息,VB读写INI文件</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_39690958/article/details/119467462" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119467462","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/weixin_39690958/article/details/119467462","ab":"right"}'>&lt;f ajax&gt;,f：ajax监听器不叫</a>
+            </li>
+        </ul>
+        <div class="archive-bar"></div>
+        <div class="archive-box">
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2021&amp;month=08" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2021&amp;month=08"}'><span class="year">2021年</span><span class="num">146篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2020&amp;month=12" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/weixin_39690958?type=blog&amp;year=2020&amp;month=12"}'><span class="year">2020年</span><span class="num">222篇</span></a></div>
+        </div>
+    </div>
+</div>
+        </div>
+    </aside>
+</div>
+
+<div class="recommend-right1  align-items-stretch clearfix" id="rightAsideConcision" data-type="recommend">
+    <aside class="recommend-right_aside">
+        <div id="recommend-right-concision" >
+            <div class='flex-column aside-box groupfile' id="groupfileConcision">
+                <div class="groupfile-div1">
+                <h3 class="aside-title">目录</h3>
+                <div class="align-items-stretch group_item">
+                    <div class="pos-box">
+                        <div class="scroll-box">
+                            <div class="toc-box"></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+      </div>
+      <div class="mask-dark"></div>
+        <script type="text/javascript">
+        var timert = setInterval(function() {
+          sideToolbar = $(".csdn-side-toolbar");
+          if (sideToolbar.length > 0) {
+            sideToolbar.css('cssText', 'bottom:64px !important;')
+            clearInterval(timert);
+          }
+        }, 200);
+        </script>
+      <div class="skin-boxshadow"></div>
+      <div class="directory-boxshadow"></div>
+<div class="comment-side-box-shadow comment-side-tit-close" id="commentSideBoxshadow">
+<div class="comment-side-content">
+	<div class="comment-side-tit">
+		<span class="comment-side-tit-count">评论</span>	
+	<img class="comment-side-tit-close" src="https://csdnimg.cn/release/blogv2/dist/pc/img/closeBt.png"></div>
+  <div id="pcCommentSideBox" class="comment-box comment-box-new2 unlogin-comment-box-new" style="display:none">
+	
+	</div>
+	<div id="pcFlodCommentSideBox" class="pc-flodcomment-sidebox">
+		<div class="comment-fold-tit"><span id="lookUnFlodComment" class="back"><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/commentArrowLeftWhite.png" alt=""></span>被折叠的&nbsp;<span class="count"></span>&nbsp;条评论
+		 <a href="https://blogdev.blog.csdn.net/article/details/122245662" class="tip" target="_blank">为什么被折叠?</a>
+		 <a href="https://bbs.csdn.net/forums/FreeZone" class="park" target="_blank">
+		 <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/iconPark.png">到【灌水乐园】发言</a>                                
+		</div>
+		<div class="comment-fold-content"></div>
+		<div id="lookBadComment" class="look-bad-comment side-look-comment">
+			<a class="look-more-comment">查看更多评论<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/commentArrowDownWhite.png" alt=""></a>
+		</div>
+	</div>
+</div>
+<div class="comment-rewarddialog-box">
+  <div class="form-box">
+    <div class="title-box">
+      添加红包
+      <a class="btn-form-close"></a>
+    </div>
+    <form id="commentRewardForm">
+      <div class="ipt-box">
+        <label for="txtName">祝福语</label>
+        <div class="ipt-btn-box">
+          <input type="text" name="name" id="txtName" autocomplete="off" maxlength="50">
+          <a class="btn-ipt btn-random"></a>
+        </div>
+        <p class="notice">请填写红包祝福语或标题</p>
+      </div>
+      <div class="ipt-box">
+        <label for="txtSendAmount">红包数量</label>
+        <div class="ipt-txt-box">
+          <input type="text" name="sendAmount" maxlength="4" id="txtSendAmount" placeholder="请填写红包数量(最小10个)" autocomplete="off">
+          <span class="after-txt">个</span>
+        </div>
+        <p class="notice">红包个数最小为10个</p>
+      </div>
+      <div class="ipt-box">
+        <label for="txtMoney">红包总金额</label>
+        <div class="ipt-txt-box error">
+          <input type="text" name="money" maxlength="5" id="txtMoney" placeholder="请填写总金额(最低5元)" autocomplete="off">
+          <span class="after-txt">元</span>
+        </div>
+        <p class="notice">红包金额最低5元</p>
+      </div>
+      <div class="balance-info-box">
+        <label>余额支付</label>
+        <div class="balance-info">
+          当前余额<span class="balance">3.43</span>元
+          <a href="https://i.csdn.net/#/wallet/balance/recharge" class="link-charge" target="_blank">前往充值 ></a>
+        </div>
+      </div>
+      <div class="opt-box">
+        <div class="pay-info">
+          需支付：<span class="price">10.00</span>元
+        </div>
+        <button type="button" class="ml-auto btn-cancel">取消</button>
+        <button type="button" class="ml8 btn-submit" disabled="true">确定</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="rr-guide-box">
+  <div class="rr-first-box">
+    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward02.png" alt="">
+    <button class="btn-guide-known next">下一步</button>
+  </div>
+  <div class="rr-second-box">
+    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward03.png" alt="">
+    <button class="btn-guide-known known">知道了</button>
+  </div>
+</div>
+</div>
+
+<div class="redEnvolope" id="redEnvolope">
+  <div class="env-box">
+    <div class="env-container">
+      <div class="pre-open" id="preOpen">
+        <div class="top">
+          <header>
+            <img class="clearTpaErr" :src="redpacketAuthor.avatar" alt="" />
+            <div class="author">成就一亿技术人!</div>
+          </header>
+          <div class="bot-icon"></div>
+        </div>
+        <footer>
+          <div class="red-openbtn open-start"></div>
+          <div class="tip">
+            领取后你会自动成为博主和红包主的粉丝
+            <a class="rule" target="_blank">规则</a>
+          </div>
+        </footer>
+      </div>
+      <div class="opened" id="opened">
+        <div class="bot-icon">
+          <header>
+            <a class="creatorUrl" href="" target="_blank">
+              <img class="clearTpaErr" src="https://profile-avatar.csdnimg.cn/default.jpg!2" alt="" />
+            </a>
+            <div class="author">
+              <div class="tt">hope_wisdom</div> 发出的红包
+            </div>
+          </header>
+        </div>
+        <div class="receive-box">
+          <header></header>
+          <div class="receive-list">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="close-btn"></div>
+  </div>
+</div>
+      
+      <div class="pay-code">
+      <div class="pay-money">实付<span class="pay-money-span" data-nowprice='' data-oldprice=''>元</span></div>
+      <div class="content-blance"><a class="blance-bt" href="javascript:;">使用余额支付</a></div>
+      <div class="content-code">
+        <div id="payCode" data-id="">
+          <div class="renovate">
+            <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/pay-time-out.png">
+            <span>点击重新获取</span>
+          </div>
+        </div>
+        <div class="pay-style"><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/weixin.png"></span><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/zhifubao.png"></span><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/jingdong.png"></span><span class="text">扫码支付</span></div>
+      </div>
+      <div class="bt-close">
+        <svg t="1567152543821" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10924" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12">
+          <defs>
+            <style type="text/css"></style>
+          </defs>
+          <path d="M512 438.378667L806.506667 143.893333a52.032 52.032 0 1 1 73.6 73.621334L585.621333 512l294.485334 294.485333a52.074667 52.074667 0 0 1-73.6 73.642667L512 585.621333 217.514667 880.128a52.053333 52.053333 0 1 1-73.621334-73.642667L438.378667 512 143.893333 217.514667a52.053333 52.053333 0 1 1 73.621334-73.621334L512 438.378667z" fill="" p-id="10925"></path>
+        </svg>
+      </div>
+      <div class="pay-balance">
+        <input type="radio" class="pay-code-radio" data-type="details">
+        <span class="span">钱包余额</span>
+          <span class="balance" style="color:#FC5531;font-size:14px;">0</span>
+          <div class="pay-code-tile">
+            <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/pay-help.png" alt="">
+            <div class="pay-code-content">
+              <div class="span">
+                <p class="title">抵扣说明：</p>
+                <p> 1.余额是钱包充值的虚拟货币，按照1:1的比例进行支付金额的抵扣。<br> 2.余额无法直接购买下载，可以购买VIP、付费专栏及课程。</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <a class="pay-balance-con" href="https://i.csdn.net/#/wallet/balance/recharge" target="_blank"><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/recharge.png" alt=""><span>余额充值</span></a>
+    </div>
+    <div style="display:none;">
+      <img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+    </div>
+    <div class="keyword-dec-box" id="keywordDecBox"></div>
+  </body>
+    <!-- 富文本柱状图  -->
+    <link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/chart.css" />
+    <script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/lib/chart.min.js"></script>
+    <script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/widget2chart.js"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/axios-83fa28cedf.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_highlight-8defd55d6e.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_common-3c7b273c43.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/edit_copy_code-43c2d050a0.min.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/lib/cboxEditor/1.1.6/embed-editor.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://g.csdnimg.cn/lib/cboxEditor/1.1.6/embed-editor.min.css">
+  <link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+  <script src="https://g.csdnimg.cn/user-accusation/1.0.6/user-accusation.js" type="text/javascript"></script>
+  <script>
+    // 全局声明
+    if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    var sideToolbarOpt = {}
+    $(function() {
+      $(document).on('click', "#toolReportBtnHideNormal,#toolReportBtnHide", function() {
+        window.csdn.loginBox.key({
+          biz: 'blog',
+          subBiz: 'other_service',
+          cb: function() {
+            window.csdn.feedback({
+              "type": 'blog',
+              "rtype": 'article',
+              "rid": articleId,
+              "reportedName": username,
+              "submitOptions": {
+                "title": articleTitle,
+                "contentUrl": articleDetailUrl
+              },
+              "callback": function() {
+                showToast({
+                  text: "感谢您的举报，我们会尽快审核！",
+                  bottom: '10%',
+                  zindex: 9000,
+                  speed: 500,
+                  time: 1500
+                })
+              }
+            })
+          }
+        })
+      });
+    })
+      window.csdn.sideToolbar = {
+        options: {
+          ...sideToolbarOpt,
+          theme: 'white',
+        }
+      }
+  </script>
+    <script src="https://g.csdnimg.cn/baidu-search/1.0.12/baidu-search.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/download/old_static/js/qrcode.js"></script>
+  <script src="https://g.csdnimg.cn/lib/qrcode/1.0.0/qrcode.min.js"></script>
+  <script src="https://g.csdnimg.cn/user-ordercart/3.0.1/user-ordercart.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/user-ordertip/5.0.3/user-ordertip.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/order-payment/4.0.5/order-payment.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/common-48ed13f265.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/detail-140515fa2a.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/column-efcae2ca36.min.js" type="text/javascript"></script>
+    <script src="https://g.csdnimg.cn/side-toolbar/3.6/side-toolbar.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/copyright/1.0.4/copyright.js" type="text/javascript"></script>
+  <script>
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+      $('div.markdown_views')[0].className = 'markdown_views';
+    }
+  </script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processClass: "mathjax",
+        ignoreClass: "title-article|no-mathjax",
+        preview: "none"
+      },
+      
+      // 优先使用 HTML-CSS 而非 NativeMML
+      "HTML-CSS": {
+        preferredFont: "STIX",        // 使用 STIX 字体
+        availableFonts: ["STIX", "TeX"],
+        webFont: "STIX-Web",
+        scale: 100,                   // 放大 20%
+        minScaleAdjust: 100,
+        linebreaks: { 
+          automatic: true, 
+          width: "90% container" 
+        },
+        matchFontHeight: true,
+        styles: {
+          ".MathJax": {
+            "font-weight": "500 !important"  // 加粗
+          }
+        }
+      },
+      
+      // 禁用 NativeMML（浏览器原生渲染质量不好）
+      NativeMML: {
+        scale: 100
+      },
+      
+      // 设置优先级：HTML-CSS > SVG > NativeMML
+      menuSettings: {
+        renderer: "HTML-CSS"
+      },
+      
+      messageStyle: "none"
+    });
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+  </script>
+  <script src="https://g.csdnimg.cn/static/mathjax-2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/common/csdn-login-box/csdn-login-box.js"></script></html>
